@@ -1,14 +1,41 @@
 {
   "schema_version": "0.3",
-  "revision": 1,
+  "revision": 2,
   "application_implemented": false,
   "phase": "P00",
-  "coordinator": null,
-  "last_integrated_commit": null,
-  "readiness": "implementation_in_progress",
+  "coordinator": {
+    "run_id": "coord-20261025-p00",
+    "tool": "claude-code",
+    "host": "PC-MYoga",
+    "checkout": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack",
+    "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5"
+  },
+  "last_integrated_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5",
   "completed_task_ids": [],
-  "active_tasks": [],
-  "blockers": [],
+  "active_tasks": [
+    "T00"
+  ],
+  "blockers": [
+    {
+      "id": "B01",
+      "summary": "Rust toolchain (cargo/rustc/rustup) absent; MSVC build tools not detected",
+      "blocks": [
+        "test:native",
+        "test:audio",
+        "package",
+        "test:installer"
+      ],
+      "recorded_at": "2026-10-24T23:24:32Z"
+    },
+    {
+      "id": "B02",
+      "summary": "No STT/LLM provider keys and LIVE_TESTS_ENABLED is false",
+      "blocks": [
+        "test:live"
+      ],
+      "recorded_at": "2026-10-24T23:24:32Z"
+    }
+  ],
   "gates": {
     "static_unit": {
       "status": "not_run",
@@ -56,9 +83,9 @@
     }
   },
   "next_actions": [
-    "Inspect repository and capabilities",
-    "Implement P00 verification commands",
-    "Prove P01 replay vertical slice before independent parallel lanes"
+    "Commit T00 doctor tooling and mark T00 implemented",
+    "Begin T01: scaffold portable TS core + Tauri layout, attempt Rust/MSVC setup",
+    "Design T02 verification command contract (check/test:*/verify/report)"
   ],
   "max_parallel_workers": 3
 }

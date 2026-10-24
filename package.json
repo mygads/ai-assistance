@@ -1,0 +1,13 @@
+{
+  "name": "conversation-assistant",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Windows conversation companion: continuous dual-source transcription, on-demand streaming answers, local voice-follow teleprompter.",
+  "scripts": {
+    "doctor": "node scripts/doctor.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

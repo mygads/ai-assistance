@@ -12,10 +12,12 @@
         "doctor"
       ],
       "acceptance_ids": [],
-      "status": "pending",
+      "status": "implemented",
       "worktree": null,
-      "baseline_commit": null,
-      "evidence_refs": []
+      "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5",
+      "evidence_refs": [
+        ".agent/evidence/doctor-2026-10-24T23-24-32-846Z.json"
+      ]
     },
     {
       "id": "T01",
