@@ -5,9 +5,29 @@
   "type": "module",
   "description": "Windows conversation companion: continuous dual-source transcription, on-demand streaming answers, local voice-follow teleprompter.",
   "scripts": {
-    "doctor": "node scripts/doctor.mjs"
+    "doctor": "node scripts/doctor.mjs",
+    "setup": "node scripts/setup.mjs",
+    "check": "node scripts/check.mjs",
+    "test:unit": "node scripts/test-unit.mjs",
+    "dev:ui": "vite",
+    "build:ui": "vite build"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "ajv": "^8.20.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.12.4",
+    "@tauri-apps/plugin-store": "^2.5.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }

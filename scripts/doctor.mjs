@@ -10,9 +10,9 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-function run(cmd, args, { timeout = 30000, shell = false } = {}) {
+function run(cmd, args, { timeout = 30000, shell = false, env } = {}) {
   return new Promise((resolve) => {
-    execFile(cmd, args, { timeout, shell }, (error, stdout, stderr) => {
+    execFile(cmd, args, { timeout, shell, env }, (error, stdout, stderr) => {
       if (error) {
         resolve({ ok: false, stdout: stdout?.trim() ?? "", stderr: (stderr ?? error.message).trim() });
       } else {
@@ -25,8 +25,14 @@ function run(cmd, args, { timeout = 30000, shell = false } = {}) {
 async function toolVersion(cmd, args = ["--version"]) {
   // Version probes run through the shell: on Windows npm is an npm.cmd
   // shim that execFile cannot spawn directly (EINVAL without a shell).
-  // Arguments are fixed "--version" strings, so shell quoting is safe.
-  const r = await run(cmd, args, { shell: true });
+  // The command line is assembled here from fixed literals only — no
+  // caller input ever reaches the shell — so no escaping hazard exists.
+  // Cargo lives in the user profile, not on PATH, so expose it explicitly.
+  const home = process.env.USERPROFILE ?? process.env.HOME ?? "";
+  const sep = process.platform === "win32" ? ";" : ":";
+  const env = { ...process.env, PATH: `${path.join(home, ".cargo", "bin")}${sep}${process.env.PATH ?? ""}` };
+  const line = [cmd, ...args].join(" ");
+  const r = await run(line, [], { shell: true, env });
   return { available: r.ok, version: r.ok ? r.stdout.split("\n")[0] : null };
 }
 

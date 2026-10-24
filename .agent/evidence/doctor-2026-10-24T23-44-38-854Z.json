@@ -1,0 +1,104 @@
+{
+  "kind": "doctor",
+  "generated_utc": "2026-10-24T23:44:38.854Z",
+  "host": {
+    "hostname": "PC-MYoga",
+    "platform": "win32",
+    "release": "10.0.26300",
+    "arch": "x64",
+    "cpus": 12,
+    "total_mem_mb": 14188
+  },
+  "windows": {
+    "probe_ok": true,
+    "os_caption": "Microsoft Windows 11 Pro",
+    "interactive_gui": true,
+    "webview2_pv": "155.0.4283.62",
+    "os_build": "26300",
+    "sound_devices": [
+      {
+        "name": "USB Audio Device",
+        "status": "OK"
+      },
+      {
+        "name": "AMD High Definition Audio Device",
+        "status": "OK"
+      },
+      {
+        "name": "USB Audio Device",
+        "status": "OK"
+      },
+      {
+        "name": "AMD Audio Device",
+        "status": "OK"
+      },
+      {
+        "name": "NVIDIA Virtual Audio Device (Wave Extensible) (WDM)",
+        "status": "OK"
+      },
+      {
+        "name": "Realtek High Definition Audio",
+        "status": "OK"
+      }
+    ],
+    "os_version": "10.0.26300"
+  },
+  "toolchains": {
+    "node": {
+      "available": true,
+      "version": "v26.11.1"
+    },
+    "npm": {
+      "available": true,
+      "version": "11.21.0"
+    },
+    "git": {
+      "available": true,
+      "version": "git version 2.42.0.windows.2"
+    },
+    "cargo": {
+      "available": false,
+      "version": null
+    },
+    "rustc": {
+      "available": false,
+      "version": null
+    },
+    "rustup": {
+      "available": false,
+      "version": null
+    },
+    "python": {
+      "available": true,
+      "version": "Python 3.14.3"
+    }
+  },
+  "native_build_ready": false,
+  "audio": {
+    "sound_devices_found": 6,
+    "devices": [
+      "USB Audio Device",
+      "AMD High Definition Audio Device",
+      "USB Audio Device",
+      "AMD Audio Device",
+      "NVIDIA Virtual Audio Device (Wave Extensible) (WDM)",
+      "Realtek High Definition Audio"
+    ],
+    "note": "Win32_SoundDevice enumeration only; WASAPI endpoint routing/capture is verified by test:audio on a real endpoint lease, not by this probe."
+  },
+  "provider_keys": {
+    "SONIOX_API_KEY": false,
+    "DEEPGRAM_API_KEY": false,
+    "LLM_API_KEY": false,
+    "LIVE_TESTS_ENABLED": false
+  },
+  "live_budget": "unknown_or_disabled: live gates stay blocked until keys + caps are supplied",
+  "capabilities": {
+    "desktop_interactive": true,
+    "os_windows": true,
+    "webview2": true,
+    "rust": false,
+    "audio_devices": true,
+    "provider_keys_present": false
+  }
+}

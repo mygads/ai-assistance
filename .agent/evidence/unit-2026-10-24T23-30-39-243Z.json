@@ -1,0 +1,30 @@
+{
+  "kind": "app_test",
+  "run_id": "unit-2026-10-24T23-30-39-243Z",
+  "level": "L0",
+  "command": "npm run test:unit",
+  "exit_code": 1,
+  "status": "fail",
+  "cases": [
+    {
+      "id": "L0-domain",
+      "level": "L0",
+      "status": "fail",
+      "replaced_boundaries": []
+    }
+  ],
+  "counts": {
+    "pass": 12,
+    "fail": 1
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\unit-2026-10-24T23-30-39-243Z.json"
+  ]
+}
