@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.3",
+  "revision": 1,
+  "application_implemented": false,
+  "phase": "P00",
+  "coordinator": null,
+  "last_integrated_commit": null,
+  "readiness": "implementation_in_progress",
+  "completed_task_ids": [],
+  "active_tasks": [],
+  "blockers": [],
+  "gates": {
+    "static_unit": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "replay": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "browser": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "native": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "physical_audio": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "live_provider": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "capture": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "soak": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "installer": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "production_isolation": {
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    "independent_review": {
+      "status": "not_run",
+      "evidence_refs": []
+    }
+  },
+  "next_actions": [
+    "Inspect repository and capabilities",
+    "Implement P00 verification commands",
+    "Prove P01 replay vertical slice before independent parallel lanes"
+  ],
+  "max_parallel_workers": 3
+}

@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ApplicationVerificationRun",
+  "type": "object",
+  "required": [
+    "kind",
+    "run_id",
+    "code_revision",
+    "environment",
+    "command",
+    "exit_code",
+    "status",
+    "cases",
+    "evidence_refs"
+  ],
+  "properties": {
+    "kind": {
+      "const": "app_test"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "code_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dirty_tree_fingerprint": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "os"
+      ],
+      "properties": {
+        "os": {
+          "type": "string"
+        },
+        "versions": {
+          "type": "object"
+        }
+      }
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_code": {
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "blocked",
+        "not_run",
+        "waived"
+      ]
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "level",
+          "status",
+          "replaced_boundaries"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "L0",
+              "L1",
+              "L2",
+              "L3",
+              "L4",
+              "L5",
+              "L6"
+            ]
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "blocked",
+              "not_run",
+              "waived"
+            ]
+          },
+          "replaced_boundaries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "pass"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "exit_code": {
+            "const": 0
+          },
+          "cases": {
+            "minItems": 1
+          },
+          "evidence_refs": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "$comment": "Aggregation must additionally reject all-skipped suites, absent/empty artifacts, incompatible code fingerprints and unmet required levels; schema validity alone does not prove a pass."
+}

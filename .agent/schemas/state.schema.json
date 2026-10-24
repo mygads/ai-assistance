@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CoordinatorState",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "revision",
+    "application_implemented",
+    "phase",
+    "last_integrated_commit",
+    "gates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.3"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "application_implemented": {
+      "type": "boolean"
+    },
+    "phase": {
+      "enum": [
+        "P00",
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P05",
+        "P06"
+      ]
+    },
+    "last_integrated_commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "status",
+          "evidence_refs"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "blocked",
+              "not_run",
+              "waived"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

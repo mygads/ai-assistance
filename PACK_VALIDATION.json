@@ -1,0 +1,47 @@
+{
+  "kind": "pack_check",
+  "status": "pass",
+  "scope": "Instruction-package consistency only; no application/native/audio/provider tests executed",
+  "application_test_status": "not_run",
+  "counts": {
+    "tasks": 28,
+    "requirements": 22,
+    "scenario_specs": 32
+  },
+  "json_schema": "structural_only",
+  "errors": [],
+  "warnings": [
+    "Full Draft 2020-12 validation unavailable; P00 must install a proper schema validator"
+  ],
+  "sha256": {
+    "START_HERE.md": "f09b9c1c8c9b64b05d8e001b8211a34a6f466dc6ba91359ca9425a2b9e40734b",
+    "AGENTS.md": "aa34343bb375f5a0cfa39892b32a7d6726500fbf398428d033a2830347d530c1",
+    "CLAUDE.md": "ce498c2631cebca713b7e32f9742bf7a99b88e3b67f40b58a0dff6116d1008a1",
+    "docs/ARCHITECTURE.md": "971457f5d89fbb48b55a7c7b90157c29260205adf99fb8cafac441aa98dc6820",
+    "docs/EXECUTION.md": "59b1a13457d2235c2df517fb07388fd2b98f8cd8df3f65f48ceb7cb3f154c20e",
+    "docs/IMPLEMENTATION_PLAN.md": "8231f0ad00d5f2b197e5f4a0bd40dd058eceedd70e51cb96c5637e6ee0e998b9",
+    "docs/TESTING.md": "9547f218587aa4d132b991d07739ad6ad271ef7baff7a3a7ec8c57524649267a",
+    "docs/CONTRACTS.md": "2e7440831933738cd5309959da583961c84a03e696b78f89a7288ffb85486207",
+    "docs/DECISIONS.md": "01f957c598f424c7d620071d71b57579dadaed652ca6d1539b3e9a597976410f",
+    "docs/SOURCES_WORKFLOW.md": "0a6e3ad0f8652f454b711545ea5b2c52455d16807cabae0dd7acb8c87327cad8",
+    "docs/DELIVERY_TEMPLATE.md": "151ec5d1cd1e0e521986c7dd9f680ba6db97d30738de9ed82bbeede724856d34",
+    "prompts/START.md": "8ce63c4bbbb87b317abaa799acb8f65c39dffb8cb06af71936964a8f42ed2436",
+    "prompts/RESUME.md": "af38f896e998909758c9d9b4fd145ac6f679d6dbb031d667915ee2130f388f57",
+    "prompts/WORKER.md": "d2514ef84cbfe34a67f16c587376caa38b928a4230eba2cd6bc4005b16cc9468",
+    "prompts/REVIEW.md": "0fb88655e2df12ecc3dc1030cf0cb6b01bc3afa903b059d5e24c12baa5abc1c0",
+    ".agent/state.json": "56ae63ca30180f4d5f929ce995e06ab9b6adc4fd4aa75e95c7518fce6bab9393",
+    ".agent/tasks.json": "6b342c089997c13ae3b66c7fb905bfa79f7d80ad6d37d6efde41c871dd5b94d6",
+    ".agent/acceptance.json": "48bd817f72650602532db4b2b8f65d269346d70bf027cdf85851e42d59744e98",
+    ".agent/NEXT.md": "35b4577be2cb396fc486b7b150bfec4aa45dbf454365bbb705652172143b3db6",
+    "tests/scenarios.json": "9e6b113d3580f9d7178512498fbe27e7fd39296a2b553331f3d178762237a2c0",
+    "tests/fixtures/replay/partial-and-overlap.json": "67de212d969dd24e66fe6c59462dc54da76818c91a9d2bb176d091d9bff9a3e5",
+    "roles/AUDIO.md": "1989a0ebc49ebd60565c125d0da1c29d8ee3543370003e426674577d03189a55",
+    "roles/UI_PROMPTER.md": "89a18c9c9c4fb39ebc4acf4e11e3802ec20f9e7256022481ecaf11ddab2545dc",
+    "roles/CONTEXT.md": "9ace8409dd321ffea9792a17a34881d9e906d915610b3ef1c803d419ced6667d",
+    "roles/VERIFIER.md": "6c1d71a16c1360fb226c43b1f38053615f57de505fdaa7c6a0a7a243ea0a4fec",
+    ".agent/schemas/state.schema.json": "d18715d161d922e0089be948cdc6833749efe57da67d5c29c64dac54170ea0ba",
+    ".agent/schemas/transcript-event.schema.json": "35394f44a869d306ab7d21577c27c37de569993583addf0d5918473415a8ea0c",
+    ".agent/schemas/generation-event.schema.json": "b5ecc48271a03c995e94e540198ab81d6c6764b8a9d85d11d8a45d026414fa22",
+    ".agent/schemas/run-report.schema.json": "dffd427d57a8f60d76d87f402e5f2a8539f06a3a5c5eb74053c0223c99355706"
+  }
+}

@@ -1,0 +1,577 @@
+{
+  "schema_version": "0.3",
+  "dependency_rule": "Implementation dependencies may advance from implemented or verified; verification/release status requires its own evidence. Missing platform/provider gates do not become pass.",
+  "tasks": [
+    {
+      "id": "T00",
+      "phase": "P00",
+      "title": "Preflight and reconcile repository",
+      "owner": "coordinator",
+      "depends_on": [],
+      "required_checks": [
+        "doctor"
+      ],
+      "acceptance_ids": [],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T01",
+      "phase": "P00",
+      "title": "Scaffold portable core and Tauri UI",
+      "owner": "coordinator",
+      "depends_on": [
+        "T00"
+      ],
+      "required_checks": [
+        "check",
+        "test:unit"
+      ],
+      "acceptance_ids": [],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T02",
+      "phase": "P00",
+      "title": "Freeze schemas and implement verification commands",
+      "owner": "coordinator",
+      "depends_on": [
+        "T01"
+      ],
+      "required_checks": [
+        "check",
+        "test:integration"
+      ],
+      "acceptance_ids": [],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T03",
+      "phase": "P01",
+      "title": "Prove replay-to-Send-to-reader vertical slice",
+      "owner": "coordinator",
+      "depends_on": [
+        "T02"
+      ],
+      "required_checks": [
+        "test:replay",
+        "test:ui"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A03",
+        "A05",
+        "A06"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T04",
+      "phase": "P01",
+      "title": "Prove smallest native real-IPC slice",
+      "owner": "coordinator",
+      "depends_on": [
+        "T03"
+      ],
+      "required_checks": [
+        "test:native"
+      ],
+      "acceptance_ids": [
+        "A15"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T05",
+      "phase": "P02",
+      "title": "Implement WASAPI routing and recovery",
+      "owner": "audio",
+      "depends_on": [
+        "T03"
+      ],
+      "required_checks": [
+        "test:unit",
+        "test:integration"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A16"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T06",
+      "phase": "P02",
+      "title": "Implement STT adapters and protocol fixtures",
+      "owner": "audio",
+      "depends_on": [
+        "T03"
+      ],
+      "required_checks": [
+        "test:integration",
+        "test:replay"
+      ],
+      "acceptance_ids": [
+        "A03",
+        "A04",
+        "A18"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T07",
+      "phase": "P02",
+      "title": "Implement dashboard and reading overlay",
+      "owner": "ui",
+      "depends_on": [
+        "T03"
+      ],
+      "required_checks": [
+        "test:ui"
+      ],
+      "acceptance_ids": [
+        "A12"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T08",
+      "phase": "P02",
+      "title": "Implement stable lexical voice-follow",
+      "owner": "ui",
+      "depends_on": [
+        "T07"
+      ],
+      "required_checks": [
+        "test:unit",
+        "test:replay"
+      ],
+      "acceptance_ids": [
+        "A06",
+        "A07"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T09",
+      "phase": "P02",
+      "title": "Implement import, provenance and retrieval",
+      "owner": "context",
+      "depends_on": [
+        "T03"
+      ],
+      "required_checks": [
+        "test:integration"
+      ],
+      "acceptance_ids": [
+        "A08",
+        "A09"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T10",
+      "phase": "P02",
+      "title": "Integrate P02 lanes and regenerate contracts",
+      "owner": "coordinator",
+      "depends_on": [
+        "T05",
+        "T06",
+        "T08",
+        "T09"
+      ],
+      "required_checks": [
+        "check",
+        "test:replay",
+        "test:integration"
+      ],
+      "acceptance_ids": [],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T11",
+      "phase": "P03",
+      "title": "Implement streaming LLM adapters and cancellation",
+      "owner": "audio",
+      "depends_on": [
+        "T10"
+      ],
+      "required_checks": [
+        "test:integration"
+      ],
+      "acceptance_ids": [
+        "A05",
+        "A18"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T12",
+      "phase": "P03",
+      "title": "Integrate model switch, context and full user flow",
+      "owner": "coordinator",
+      "depends_on": [
+        "T11"
+      ],
+      "required_checks": [
+        "test:replay",
+        "test:native"
+      ],
+      "acceptance_ids": [
+        "A02",
+        "A04",
+        "A05",
+        "A13",
+        "A15"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T13",
+      "phase": "P04",
+      "title": "Implement scoped memory and feedback learning",
+      "owner": "context",
+      "depends_on": [
+        "T12"
+      ],
+      "required_checks": [
+        "test:integration"
+      ],
+      "acceptance_ids": [
+        "A09",
+        "A10"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T14",
+      "phase": "P04",
+      "title": "Implement provenance-preserving compaction",
+      "owner": "context",
+      "depends_on": [
+        "T13"
+      ],
+      "required_checks": [
+        "test:integration"
+      ],
+      "acceptance_ids": [
+        "A11",
+        "A13"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T15",
+      "phase": "P04",
+      "title": "Implement recovery and adverse network behavior",
+      "owner": "audio",
+      "depends_on": [
+        "T12"
+      ],
+      "required_checks": [
+        "test:integration",
+        "test:replay"
+      ],
+      "acceptance_ids": [
+        "A14",
+        "A16"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T16",
+      "phase": "P04",
+      "title": "Complete E2E corpus and strict report aggregation",
+      "owner": "coordinator",
+      "depends_on": [
+        "T14",
+        "T15"
+      ],
+      "required_checks": [
+        "test:integration",
+        "test:ui",
+        "test:replay"
+      ],
+      "acceptance_ids": [
+        "A20",
+        "A22"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T17",
+      "phase": "P05",
+      "title": "Native Windows real-IPC end-to-end verification",
+      "owner": "verifier",
+      "depends_on": [
+        "T16",
+        "T04"
+      ],
+      "required_checks": [
+        "test:native"
+      ],
+      "acceptance_ids": [
+        "A15"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T18",
+      "phase": "P05",
+      "title": "Physical audio and routing verification",
+      "owner": "verifier",
+      "depends_on": [
+        "T16",
+        "T05"
+      ],
+      "required_checks": [
+        "test:audio"
+      ],
+      "acceptance_ids": [
+        "A01",
+        "A16"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T19",
+      "phase": "P05",
+      "title": "Bounded live STT and LLM verification",
+      "owner": "verifier",
+      "depends_on": [
+        "T16",
+        "T06",
+        "T11"
+      ],
+      "required_checks": [
+        "test:live"
+      ],
+      "acceptance_ids": [
+        "A18"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T20",
+      "phase": "P05",
+      "title": "Visual, focus, scaling and capture verification",
+      "owner": "verifier",
+      "depends_on": [
+        "T17"
+      ],
+      "required_checks": [
+        "test:ui",
+        "test:capture"
+      ],
+      "acceptance_ids": [
+        "A12",
+        "A17"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T21",
+      "phase": "P05",
+      "title": "Real-time soak and resource measurement",
+      "owner": "verifier",
+      "depends_on": [
+        "T17",
+        "T18"
+      ],
+      "required_checks": [
+        "test:soak"
+      ],
+      "acceptance_ids": [
+        "A19"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T22",
+      "phase": "P06",
+      "title": "Produce production build and installer",
+      "owner": "coordinator",
+      "depends_on": [
+        "T16"
+      ],
+      "required_checks": [
+        "package"
+      ],
+      "acceptance_ids": [
+        "A21"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T23",
+      "phase": "P06",
+      "title": "Installer and updater-policy verification",
+      "owner": "verifier",
+      "depends_on": [
+        "T22"
+      ],
+      "required_checks": [
+        "test:installer"
+      ],
+      "acceptance_ids": [
+        "A21"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T24",
+      "phase": "P06",
+      "title": "Verify production test hooks absent and secrets isolated",
+      "owner": "verifier",
+      "depends_on": [
+        "T22"
+      ],
+      "required_checks": [
+        "test:integration",
+        "test:installer"
+      ],
+      "acceptance_ids": [
+        "A20"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T25",
+      "phase": "P06",
+      "title": "Independent review of integrated code and evidence",
+      "owner": "verifier",
+      "depends_on": [
+        "T17",
+        "T18",
+        "T19",
+        "T20",
+        "T21",
+        "T23",
+        "T24"
+      ],
+      "required_checks": [
+        "review"
+      ],
+      "acceptance_ids": [
+        "A22"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T26",
+      "phase": "P06",
+      "title": "Repair findings and rehearse final revision",
+      "owner": "coordinator",
+      "depends_on": [
+        "T25"
+      ],
+      "required_checks": [
+        "verify:release"
+      ],
+      "acceptance_ids": [
+        "A22"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    },
+    {
+      "id": "T27",
+      "phase": "P06",
+      "title": "Deliver source, hashes, artifacts and evidence",
+      "owner": "coordinator",
+      "depends_on": [
+        "T26"
+      ],
+      "required_checks": [
+        "report"
+      ],
+      "acceptance_ids": [
+        "A22"
+      ],
+      "status": "pending",
+      "worktree": null,
+      "baseline_commit": null,
+      "evidence_refs": []
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+node_modules/
+target/
+dist/
+artifacts/
+.env
+.env.*
+!.env.example
+config/*.local.*
+config/*.local.env
+!.agent/
+.agent/coordinator-lock.json
+.agent/runtime/
+.worktrees/
+*.log
+

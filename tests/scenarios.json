@@ -1,0 +1,262 @@
+{
+  "schema_version": "0.3",
+  "status": "specification_only",
+  "cases": [
+    {
+      "id": "C01",
+      "title": "Separated roles in overlapping replay",
+      "primary_level": "L1",
+      "steps": "Replay self and remote with overlapping times.",
+      "assertion": "Both roles/times retained; no mixing; remote does not advance reader.",
+      "status": "not_run"
+    },
+    {
+      "id": "C02",
+      "title": "Real loopback routing",
+      "primary_level": "L4",
+      "steps": "Play known output fixture and capture selected endpoint.",
+      "assertion": "Real WASAPI buffers, expected route/duration/correlation; host recorded.",
+      "status": "not_run"
+    },
+    {
+      "id": "C03",
+      "title": "No hidden generation calls",
+      "primary_level": "L3",
+      "steps": "Run manual session including silence, new question and correction; then Send.",
+      "assertion": "0 generative requests before Send and exactly 1 normal answer request after; STT counted separately.",
+      "status": "not_run"
+    },
+    {
+      "id": "C04",
+      "title": "Partial upsert",
+      "primary_level": "L1",
+      "steps": "Deliver multiple revisions of one segment.",
+      "assertion": "Single evolving segment and one final persisted result.",
+      "status": "not_run"
+    },
+    {
+      "id": "C05",
+      "title": "Reconnect time mapping",
+      "primary_level": "L1",
+      "steps": "Reset provider timestamp on new connection and deliver duplicates.",
+      "assertion": "No global timeline reset or duplicate committed text.",
+      "status": "not_run"
+    },
+    {
+      "id": "C06",
+      "title": "Multi-part question snapshot",
+      "primary_level": "L3",
+      "steps": "Select question with several remote segments and self context, click Send.",
+      "assertion": "Real backend payload includes chosen segment revisions and relevant self context.",
+      "status": "not_run"
+    },
+    {
+      "id": "C07",
+      "title": "ASR watermark lag",
+      "primary_level": "L1",
+      "steps": "Click Send while captured audio leads transcription.",
+      "assertion": "Tail handled by documented wait/provisional policy; no silent omission.",
+      "status": "not_run"
+    },
+    {
+      "id": "C08",
+      "title": "Cancel old stream",
+      "primary_level": "L3",
+      "steps": "Cancel A; start B; release late A deltas.",
+      "assertion": "Only B updates active answer; A remains interrupted if stored.",
+      "status": "not_run"
+    },
+    {
+      "id": "C09",
+      "title": "Unread revision",
+      "primary_level": "L1",
+      "steps": "Read paragraph 1, request rewrite and stream new suffix.",
+      "assertion": "Read prefix frozen; new version/source mapping valid.",
+      "status": "not_run"
+    },
+    {
+      "id": "C10",
+      "title": "Self lexical following",
+      "primary_level": "L1",
+      "steps": "Replay near-verbatim self speech while remote also speaks.",
+      "assertion": "Cursor follows self only; LLM request count unchanged.",
+      "status": "not_run"
+    },
+    {
+      "id": "C11",
+      "title": "Skip/repeat/number/acronym",
+      "primary_level": "L0",
+      "steps": "Run Indonesian/English repeated phrases, numeric variants and skips.",
+      "assertion": "Bounded moves to correct anchors; no global common-word jump.",
+      "status": "not_run"
+    },
+    {
+      "id": "C12",
+      "title": "Off-script and interim retraction",
+      "primary_level": "L1",
+      "steps": "Leave script, revise interim hypothesis, then rejoin.",
+      "assertion": "Tentative progress retracts safely; viewport freezes/reacquires.",
+      "status": "not_run"
+    },
+    {
+      "id": "C13",
+      "title": "Known-source import",
+      "primary_level": "L1",
+      "steps": "Parse actual controlled PDF/Office fixtures.",
+      "assertion": "Expected text/page/section extracted, failures flagged, no mocked parser-only pass.",
+      "status": "not_run"
+    },
+    {
+      "id": "C14",
+      "title": "Cross-language and scale retrieval",
+      "primary_level": "L1",
+      "steps": "Search known ID/English/Indonesian facts among distractors.",
+      "assertion": "Correct evidence/neighbor context found within budget; synthetic scale labeled.",
+      "status": "not_run"
+    },
+    {
+      "id": "C15",
+      "title": "Workspace isolation",
+      "primary_level": "L3",
+      "steps": "Switch between two workspaces with conflicting facts.",
+      "assertion": "Prompt and memory contain only selected workspace/profile sources.",
+      "status": "not_run"
+    },
+    {
+      "id": "C16",
+      "title": "Suggestion contamination",
+      "primary_level": "L1",
+      "steps": "Generate false experience claim, then replay user reading it.",
+      "assertion": "Unverified claim not promoted to confirmed profile.",
+      "status": "not_run"
+    },
+    {
+      "id": "C17",
+      "title": "Correction and rollback",
+      "primary_level": "L1",
+      "steps": "Apply explicit correction, consolidate, supersede and rollback.",
+      "assertion": "New fact scoped/provenanced; old version recoverable.",
+      "status": "not_run"
+    },
+    {
+      "id": "C18",
+      "title": "Compaction",
+      "primary_level": "L1",
+      "steps": "Exceed active budget with pinned fact/question/correction.",
+      "assertion": "Active items/source IDs preserved; originals retained.",
+      "status": "not_run"
+    },
+    {
+      "id": "C19",
+      "title": "Browser reading UI",
+      "primary_level": "L2",
+      "steps": "Run keyboard and long-text flows at UI sizes.",
+      "assertion": "Readable layout, no overflow/unstable paragraph, reduced-motion behavior.",
+      "status": "not_run"
+    },
+    {
+      "id": "C20",
+      "title": "Native focus/scaling",
+      "primary_level": "L3",
+      "steps": "Use hotkey while another window focused; inspect actual Windows scales.",
+      "assertion": "No unintended focus stealing; controls usable at recorded scales.",
+      "status": "not_run"
+    },
+    {
+      "id": "C21",
+      "title": "Model interchange",
+      "primary_level": "L5",
+      "steps": "Select two configured model routes and a smaller context limit.",
+      "assertion": "Actual route/model recorded, context repacked; fixture-only parts distinctly labeled.",
+      "status": "not_run"
+    },
+    {
+      "id": "C22",
+      "title": "Restart recovery",
+      "primary_level": "L3",
+      "steps": "Persist session, stop owned app, relaunch isolated profile.",
+      "assertion": "Final segments/settings recover; no duplicate provider request.",
+      "status": "not_run"
+    },
+    {
+      "id": "C23",
+      "title": "Native real backend flow",
+      "primary_level": "L3",
+      "steps": "Launch built Tauri binary with boundary fixture servers.",
+      "assertion": "Real IPC/storage/context executes; visible streaming response matches captured backend payload.",
+      "status": "not_run"
+    },
+    {
+      "id": "C24",
+      "title": "Physical mic",
+      "primary_level": "L4",
+      "steps": "Capture actual selected microphone signal.",
+      "assertion": "Actual buffers/device identity recorded; absent controlled speech remains unverified.",
+      "status": "not_run"
+    },
+    {
+      "id": "C25",
+      "title": "Device recovery",
+      "primary_level": "L4",
+      "steps": "Exercise available real endpoint change/disconnect.",
+      "assertion": "Observed transition/gap/recovery; simulation separately labeled.",
+      "status": "not_run"
+    },
+    {
+      "id": "C26",
+      "title": "Capture compatibility",
+      "primary_level": "L6",
+      "steps": "Capture calibration pattern through named API/meeting mode.",
+      "assertion": "Observed exclusion result with app/OS versions; no universal claim.",
+      "status": "not_run"
+    },
+    {
+      "id": "C27",
+      "title": "Live STT",
+      "primary_level": "L5",
+      "steps": "Send controlled ID/EN/mixed WAV within caps.",
+      "assertion": "Actual provider transcript, word/entity errors and stream semantics measured.",
+      "status": "not_run"
+    },
+    {
+      "id": "C28",
+      "title": "Live grounded LLM",
+      "primary_level": "L5",
+      "steps": "Send fixture context through selected model.",
+      "assertion": "Actual text streaming, source correctness, cancellation and usage evidenced.",
+      "status": "not_run"
+    },
+    {
+      "id": "C29",
+      "title": "Real-time soak",
+      "primary_level": "L4",
+      "steps": "Run 30–60 minutes with controlled streams and metrics.",
+      "assertion": "Wall-clock duration, queue/resource growth/dropouts/recovery recorded.",
+      "status": "not_run"
+    },
+    {
+      "id": "C30",
+      "title": "Production isolation",
+      "primary_level": "L6",
+      "steps": "Probe release for test control and inspect secret/log/export boundaries.",
+      "assertion": "Privileged test hooks absent/rejected; no secret disclosure; appropriate negative assertions.",
+      "status": "not_run"
+    },
+    {
+      "id": "C31",
+      "title": "Installer/update lifecycle",
+      "primary_level": "L6",
+      "steps": "Install, launch, persist settings, exercise test update-policy, uninstall isolated profile.",
+      "assertion": "Artifact hashes/revision known; lifecycle matches data policy; signing status accurate.",
+      "status": "not_run"
+    },
+    {
+      "id": "C32",
+      "title": "Final rehearsal and review",
+      "primary_level": "L3",
+      "steps": "Independent review and final gate aggregation on integrated revision.",
+      "assertion": "No unresolved critical findings; required fail/blocked/not_run prevent release-verified label.",
+      "status": "not_run"
+    }
+  ]
+}

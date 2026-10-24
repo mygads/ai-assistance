@@ -1,0 +1,144 @@
+{
+  "fixture_kind": "normalized_transcript_replay",
+  "license": "CC0-1.0",
+  "synthetic": true,
+  "note": "Authored transcript events only. This fixture is not audio, ASR, native capture, or provider evidence.",
+  "send_at_ms": 2200,
+  "suggested_script": "Saya menyimpan profil dan memori secara terpisah. Dokumen menjadi sumber bukti, sedangkan skill mengatur cara menyusun jawaban.",
+  "events": [
+    {
+      "at_ms": 500,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-01",
+        "revision": 0,
+        "start_ms": 0,
+        "end_ms": 500,
+        "status": "partial",
+        "text": "Mengapa memilih"
+      }
+    },
+    {
+      "at_ms": 900,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-01",
+        "revision": 1,
+        "start_ms": 0,
+        "end_ms": 900,
+        "status": "final",
+        "text": "Mengapa memilih arsitektur ini?"
+      }
+    },
+    {
+      "at_ms": 1400,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-01",
+        "revision": 0,
+        "start_ms": 950,
+        "end_ms": 1400,
+        "status": "final",
+        "text": "Fokus saya adalah respons cepat dan konteks yang jelas."
+      }
+    },
+    {
+      "at_ms": 2000,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-02",
+        "revision": 0,
+        "start_ms": 1450,
+        "end_ms": 2000,
+        "status": "final",
+        "text": "How do you keep context across sessions?"
+      }
+    },
+    {
+      "at_ms": 3100,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-02",
+        "revision": 0,
+        "start_ms": 2500,
+        "end_ms": 3100,
+        "status": "partial",
+        "text": "Saya menyimpan profil"
+      }
+    },
+    {
+      "at_ms": 3300,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-02",
+        "revision": 1,
+        "start_ms": 2500,
+        "end_ms": 3300,
+        "status": "partial",
+        "text": "Saya menyimpan profil dan memori"
+      }
+    },
+    {
+      "at_ms": 3500,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-03",
+        "revision": 0,
+        "start_ms": 3200,
+        "end_ms": 3500,
+        "status": "final",
+        "text": "Okay, please continue."
+      }
+    },
+    {
+      "at_ms": 3700,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-01",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-02",
+        "revision": 2,
+        "start_ms": 2500,
+        "end_ms": 3700,
+        "status": "final",
+        "text": "Saya menyimpan profil dan memori secara terpisah."
+      }
+    }
+  ],
+  "expectations": {
+    "answer_model_calls_before_send": 0,
+    "normal_send_answer_calls": 1,
+    "remote_never_advances_reader": true,
+    "final_self_02_occurrences": 1
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GenerationEvent",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "session_id",
+    "request_id",
+    "suggestion_version",
+    "sequence",
+    "kind"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.3"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suggestion_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "kind": {
+      "enum": [
+        "started",
+        "text_delta",
+        "completed",
+        "cancelled",
+        "failed"
+      ]
+    },
+    "text": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "error_code": {
+      "type": "string"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "text_delta"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "text"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

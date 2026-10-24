@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TranscriptEvent",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "session_id",
+    "source_id",
+    "role",
+    "connection_id",
+    "segment_id",
+    "revision",
+    "start_ms",
+    "end_ms",
+    "status",
+    "text"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.3"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "enum": [
+        "self",
+        "remote"
+      ]
+    },
+    "connection_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "segment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "start_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "end_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "status": {
+      "enum": [
+        "partial",
+        "final"
+      ]
+    },
+    "text": {
+      "type": "string"
+    },
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "words": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "text",
+          "start_ms",
+          "end_ms"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "start_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end_ms": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$comment": "Domain validation also enforces end_ms >= start_ms, monotonic segment revisions and valid word ranges."
+}

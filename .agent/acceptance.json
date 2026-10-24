@@ -1,0 +1,301 @@
+{
+  "schema_version": "0.3",
+  "note": "Specifications only; each required level needs separate executed evidence before acceptance.",
+  "requirements": [
+    {
+      "id": "A01",
+      "title": "Dual audio/source attribution",
+      "required_levels": [
+        "L1",
+        "L4"
+      ],
+      "scenario_ids": [
+        "C01",
+        "C02"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A02",
+      "title": "Manual mode makes no unsolicited answer or maintenance calls",
+      "required_levels": [
+        "L1",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C03"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A03",
+      "title": "Partial/final upsert and common timestamps",
+      "required_levels": [
+        "L0",
+        "L1"
+      ],
+      "scenario_ids": [
+        "C04",
+        "C05"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A04",
+      "title": "Send snapshots full question and handles ASR lag",
+      "required_levels": [
+        "L1",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C06",
+        "C07"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A05",
+      "title": "Streaming, cancellation and versions",
+      "required_levels": [
+        "L1",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C08",
+        "C09"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A06",
+      "title": "Reader follows self speech locally",
+      "required_levels": [
+        "L0",
+        "L1",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C10"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A07",
+      "title": "Reader handles skips/repeats/partial/off-script",
+      "required_levels": [
+        "L0",
+        "L1"
+      ],
+      "scenario_ids": [
+        "C11",
+        "C12"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A08",
+      "title": "Import and retrieval with valid source references",
+      "required_levels": [
+        "L1"
+      ],
+      "scenario_ids": [
+        "C13",
+        "C14"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A09",
+      "title": "Workspace and profile isolation",
+      "required_levels": [
+        "L1",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C15"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A10",
+      "title": "Memory learning never self-confirms AI facts",
+      "required_levels": [
+        "L1"
+      ],
+      "scenario_ids": [
+        "C16",
+        "C17"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A11",
+      "title": "Compaction preserves durable evidence",
+      "required_levels": [
+        "L1"
+      ],
+      "scenario_ids": [
+        "C18"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A12",
+      "title": "Readable accessible UI and focus preservation",
+      "required_levels": [
+        "L2",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C19",
+        "C20"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A13",
+      "title": "Actual model switch and budget repacking",
+      "required_levels": [
+        "L1",
+        "L5"
+      ],
+      "scenario_ids": [
+        "C21"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A14",
+      "title": "Persistence/restart preserves session state",
+      "required_levels": [
+        "L1",
+        "L3"
+      ],
+      "scenario_ids": [
+        "C22"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A15",
+      "title": "Built native app uses real IPC and backend",
+      "required_levels": [
+        "L3"
+      ],
+      "scenario_ids": [
+        "C23"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A16",
+      "title": "Native audio/device/reconnect behavior",
+      "required_levels": [
+        "L4"
+      ],
+      "scenario_ids": [
+        "C24",
+        "C25"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A17",
+      "title": "Specific capture-exclusion compatibility",
+      "required_levels": [
+        "L6"
+      ],
+      "scenario_ids": [
+        "C26"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A18",
+      "title": "Actual configured providers work within caps",
+      "required_levels": [
+        "L5"
+      ],
+      "scenario_ids": [
+        "C27",
+        "C28"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A19",
+      "title": "Real-time soak and resource evidence",
+      "required_levels": [
+        "L3",
+        "L4"
+      ],
+      "scenario_ids": [
+        "C29"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A20",
+      "title": "Production test hooks absent; secrets isolated",
+      "required_levels": [
+        "L0",
+        "L3",
+        "L6"
+      ],
+      "scenario_ids": [
+        "C30"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A21",
+      "title": "Installable artifact and lifecycle",
+      "required_levels": [
+        "L6"
+      ],
+      "scenario_ids": [
+        "C31"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    },
+    {
+      "id": "A22",
+      "title": "Final evidence and independent review",
+      "required_levels": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "L6"
+      ],
+      "scenario_ids": [
+        "C32"
+      ],
+      "status": "not_run",
+      "evidence_refs": []
+    }
+  ]
+}
