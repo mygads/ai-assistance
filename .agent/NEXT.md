@@ -1,9 +1,8 @@
 # Next actions
-Status: P00 in progress. T00 implemented; pack baseline e6c8b78 committed.
+Status: P00 in progress. T00 + T01 implemented and integrated at d31425c; T02 in progress.
 
-1. Begin T01: scaffold portable TS core (session/transcript/snapshot/context/reader/memory), Vite+React UI skeleton, Tauri/Rust layout; add `check` and `test:unit` commands (non-empty, no placeholders).
-2. Attempt Rust (rustup) + MSVC Build Tools setup within existing permissions; if unavailable, record exact limitation and keep portable work unblocked.
-3. Add ajv (or equivalent) so `check` performs full Draft 2020-12 schema validation per pack warning.
-4. Then T02: freeze schemas, generate TS types, implement full verification command contract (integration/replay/ui/native/audio/live/soak/capture/package/installer/verify/report).
+1. T02: freeze schemas, generate TS types from Rust command surface, implement the full verification command contract (test:integration/replay/ui/native/audio/live/soak/capture/package/installer/verify/report) with exit-code discipline 0/1/2.
+2. T03 (after T02): replay-to-Send-to-reader vertical slice + native real-IPC slice; only then fan out P02 lanes (audio/providers, UI/prompter, context/data) with isolated worktrees.
+3. Add ajv already done in T01 (`check` validates Draft 2020-12 + fixture timeline + state.json).
 
-Blockers carried forward: B01 (no Rust/MSVC → native/audio/package/installer gated), B02 (no provider keys → live gated).
+Blockers carried forward: B01 resolved (Rust 1.99.1 + MSVC 14.44 + WebView2 SDK compile verified). B02 remains (no provider keys → test:live blocked, owner: user).

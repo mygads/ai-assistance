@@ -32,10 +32,14 @@
         "test:unit"
       ],
       "acceptance_ids": [],
-      "status": "pending",
+      "status": "implemented",
       "worktree": null,
-      "baseline_commit": null,
-      "evidence_refs": []
+      "baseline_commit": "d31425c54d4e6ed6363b5ef6233a93ecfa4120bd",
+      "evidence_refs": [
+        ".agent/evidence/unit-2026-10-24T23-45-45-938Z.json",
+        ".agent/evidence/doctor-2026-10-24T23-45-22-989Z.json",
+        "docs/ADR/ADR-013-domain-core-typescript.md"
+      ]
     },
     {
       "id": "T02",
@@ -50,9 +54,9 @@
         "test:integration"
       ],
       "acceptance_ids": [],
-      "status": "pending",
+      "status": "in_progress",
       "worktree": null,
-      "baseline_commit": null,
+      "baseline_commit": "d31425c54d4e6ed6363b5ef6233a93ecfa4120bd",
       "evidence_refs": []
     },
     {
