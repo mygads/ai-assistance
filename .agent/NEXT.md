@@ -7,6 +7,8 @@ Status: P01 complete (T00–T04 integrated at b331d9b). P02 executing SERIALLY �
 4. T08 DONE: stable voice-follow (ReaderSession + src/domain/reader.test.ts 12/12); unit ts 35/0, replay 8/8, ui 10/10, check 5/5.
 5. T09 DONE (coordinator-implemented): import/provenance/retrieval (A08/A09). L1-context-retrieval 5/5, validateSourceRefs 6/6; check 5/5, unit ts 41/0 + rs 36/0, integration 8/8, replay 8/8, ui 10/10. T10 DONE: barrier verify 45 pass / 0 fail / 7 blocked (known prerequisites only), ADR-017 defers device IPC to T12, new baseline frozen.
 
-6. T11 ACTIVE: streaming LLM adapters + cancellation (A05/A18) — src-tauri/src/providers/** + loopback LLM fixtures; required check test:integration.
+6. T11 DONE (coordinator-implemented): LLM streaming seam (A05/A18 L0/L1). drive_stream + FixtureLlmAdapter + AnswerAssembler; worker routed, usage persisted; L1-llm-adapters 5/5; check 5/5, unit ts 41/0 + rs 45/0, integration 9/9, native 6/6, verify fail=0 blocked=3.
+
+7. T12 ACTIVE: model switch + context + full user flow (A02/A04/A05/A13/A15) — repack on profile switch, retrieval-backed answers, continue/revise actions; required checks test:replay + test:native.
 
 Blockers carried forward: B01 resolved. B02 remains (no provider keys → test:live blocked, owner: user). Physical-audio capture and meeting-capture calibration remain blocked on hardware/session prerequisites, not passes.

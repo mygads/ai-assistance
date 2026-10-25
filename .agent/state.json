@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 14,
+  "revision": 15,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -22,10 +22,11 @@
     "T07",
     "T08",
     "T09",
-    "T10"
+    "T10",
+    "T11"
   ],
   "active_tasks": [
-    "T11"
+    "T12"
   ],
   "blockers": [
     {
@@ -46,19 +47,19 @@
   "gates": {
     "static_unit": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json", ".agent/evidence/check-2026-10-25T01-06-15-894Z.json", ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json", ".agent/evidence/check-2026-10-25T03-25-50-038Z.json", ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json"]
+      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json", ".agent/evidence/check-2026-10-25T01-06-15-894Z.json", ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json", ".agent/evidence/check-2026-10-25T03-25-50-038Z.json", ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json", ".agent/evidence/check-2026-10-25T03-41-08-406Z.json", ".agent/evidence/unit-2026-10-25T03-41-14-363Z.json"]
     },
     "replay": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json", ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json", ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json", ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json", ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json"]
+      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json", ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json", ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json", ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json", ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json", ".agent/evidence/test-integration-2026-10-25T03-42-08-124Z.json", ".agent/evidence/test-replay-2026-10-25T03-42-14-679Z.json"]
     },
     "browser": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json", ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json"]
+      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json", ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json", ".agent/evidence/test-ui-2026-10-25T03-42-40-147Z.json"]
     },
     "native": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json", ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json", ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"]
+      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json", ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json", ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json", ".agent/evidence/test-native-2026-10-25T03-43-24-538Z.json"]
     },
     "physical_audio": {
       "status": "blocked",
@@ -74,7 +75,7 @@
     },
     "soak": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-soak-2026-10-25T00-29-00-962Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"]
+      "evidence_refs": [".agent/evidence/test-soak-2026-10-25T00-29-00-962Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json", ".agent/evidence/verify-2026-10-25T03-43-30-796Z.json"]
     },
     "installer": {
       "status": "not_run",
@@ -97,7 +98,8 @@
     "T08 (completed): stable voice-follow — ReaderSession versioning + rescript in reader.ts, src/domain/reader.test.ts 12/12, replay L1-reader-version-rebase + L1-reader-skip-repeat-offscript, overlay wired to session; unit ts 35/0, replay 8/8, ui 10/10",
     "T09 (completed): import/provenance/retrieval (A08/A09) — documents + documents_fts (unicode61) in store.rs, import_document persists via open_conn, retrieve_sections with InvalidInput mapping, L1-context-retrieval 5/5, validateSourceRefs + context.test.ts 6/6; check 5/5, unit ts 41/0 + rs 36/0, integration 8/8, replay 8/8, ui 10/10",
     "T10 (completed): P02 integration barrier — zero contract/manifest drift since P01 (frozen 13 commands, gen:ipc byte-identical), ADR-017 keeps device-selection IPC deferred to T12, full verify 45 pass / 0 fail / 7 blocked (all known prerequisites); new baseline frozen at this commit",
-    "T11 (active): streaming LLM adapters + cancellation (A05/A18), depends on T10",
+    "T11 (completed, coordinator-implemented): streaming LLM adapter seam (A05/A18 L0/L1) — providers/llm.rs (LlmAdapter poll seam, FixtureLlmAdapter scripted deltas, AnswerAssembler single-provider rule, drive_stream with cancel/retry-once-before-output/usage, validate_configuration key-presence boolean), worker routed through seam (identical observables), usage columns + snapshot/usage store fns, L1-llm-adapters 5/5; check 5/5, unit ts 41/0 + rs 45/0, integration 9/9, replay 8/8, ui 10/10, native 6/6, verify fail=0 blocked=3 (known prerequisites)",
+    "T12 (active): model switch + context + full user flow (A02/A04/A05/A13/A15), depends on T11",
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
   ],

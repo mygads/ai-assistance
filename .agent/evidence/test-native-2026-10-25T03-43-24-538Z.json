@@ -1,0 +1,73 @@
+{
+  "kind": "app_test",
+  "run_id": "test-native-2026-10-25T03-43-24-538Z",
+  "level": "L3",
+  "command": "npm run test:native",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T03:42:45.440Z",
+  "cases": [
+    {
+      "id": "L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "L3-window-launches",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "title=Conversation Assistant"
+    },
+    {
+      "id": "L3-real-ipc-start-session",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"
+      ],
+      "note": "Sesi session-00a2c73d34bb49aeb9d85eae8e4c0e81 · tangkapan connecting"
+    },
+    {
+      "id": "L3-real-ipc-persisted-read",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Tersimpan 2 segmen final"
+    },
+    {
+      "id": "L3-real-ipc-send-answer",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"
+      ],
+      "note": "meta=Saran v1 · req-ca4980df9 script_chars=54"
+    },
+    {
+      "id": "L3-send-dedup",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "identical resend returned Saran v1 · req-ca4980df9"
+    }
+  ],
+  "counts": {
+    "pass": 6,
+    "fail": 0,
+    "blocked": 0,
+    "total": 6
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-native-2026-10-25T03-43-24-538Z.json"
+  ]
+}

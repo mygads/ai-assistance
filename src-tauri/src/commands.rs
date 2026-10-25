@@ -3,6 +3,7 @@
 // (tests/native in P01/P03). These handlers own validation + store writes;
 // provider streaming and audio capture are separate P02/P03 modules.
 
+use crate::providers::LlmAdapter;
 use crate::store::{
     AppState, AudioSource, CommandError, CommandResult, FinalSegment, SessionRecord,
 };
@@ -470,10 +471,11 @@ pub fn send_answer(
         .lock()
         .map_err(|e| CommandError::Storage(e.to_string()))?
         .insert(fingerprint, output.clone());
-    // Stream deterministic fixture deltas on a worker thread. Each chunk
-    // re-reads the generation row: a cancel flips it to cancelled and the
-    // stream stops, emitting a cancelled done-event instead of more text.
-    // Late deltas after done/cancel are never emitted, never merged.
+    // Stream through the LLM adapter seam on a worker thread. The fixture
+    // adapter yields the same deterministic deltas the P01 worker emitted
+    // inline, so no observable event changes; the seam now owns chunking,
+    // cancel propagation, single-provider enforcement, retry policy, and
+    // usage. Late deltas after done/cancel are never emitted, never merged.
     let worker_session = input.session_id.clone();
     std::thread::spawn(move || {
         let finals: Vec<FinalSegment> = app
@@ -483,52 +485,56 @@ pub fn send_answer(
             .and_then(|c| crate::store::final_segments(&c, &worker_session, None, None, None).ok())
             .unwrap_or_default();
         let text = synthesize_suggestion(&finals, suggestion_version);
-        let chunks: Vec<String> = text
-            .split_whitespace()
-            .collect::<Vec<_>>()
-            .chunks(6)
-            .map(|c| c.join(" "))
-            .collect();
-        let mut emitted = 0usize;
-        for (i, chunk) in chunks.iter().enumerate() {
-            let cancelled = app
-                .state::<AppState>()
+        let prompt_chars = app
+            .state::<AppState>()
+            .open_conn()
+            .ok()
+            .and_then(|c| crate::store::generation_snapshot(&c, &request_id).ok())
+            .flatten()
+            .map(|s| s.len())
+            .unwrap_or(0);
+        let make_adapter = || -> Box<dyn LlmAdapter> {
+            Box::new(crate::providers::FixtureLlmAdapter::for_suggestion(&text))
+        };
+        let should_cancel = || {
+            app.state::<AppState>()
                 .open_conn()
                 .ok()
                 .and_then(|c| crate::store::generation_status(&c, &request_id).ok())
                 .map(|s| s.map(|(_, st)| st == "cancelled").unwrap_or(true))
-                .unwrap_or(true);
-            if cancelled {
-                break;
-            }
-            if i > 0 {
+                .unwrap_or(true)
+        };
+        let mut on_delta = |index: u32, delta: &str| {
+            if index > 0 {
                 std::thread::sleep(std::time::Duration::from_millis(40));
             }
-            let tail = if i + 1 < chunks.len() { " " } else { "" };
-            if app
-                .emit(
-                    "suggestion-delta",
-                    &SuggestionDelta {
-                        request_id: request_id.clone(),
-                        generation_id: generation_id.clone(),
-                        index: i as u32,
-                        text_delta: format!("{chunk}{tail}"),
-                        fixture: true,
-                    },
-                )
-                .is_err()
-            {
-                break;
-            }
-            emitted += 1;
-        }
-        let status = if emitted == chunks.len() && !chunks.is_empty() {
-            "done"
-        } else {
-            "cancelled"
+            app.emit(
+                "suggestion-delta",
+                &SuggestionDelta {
+                    request_id: request_id.clone(),
+                    generation_id: generation_id.clone(),
+                    index,
+                    text_delta: delta.to_string(),
+                    fixture: true,
+                },
+            )
+            .is_ok()
         };
+        let outcome = crate::providers::drive_stream(
+            make_adapter,
+            prompt_chars,
+            &should_cancel,
+            &mut on_delta,
+            1,
+        );
         if let Ok(c) = app.state::<AppState>().open_conn() {
-            let _ = crate::store::set_generation_status(&c, &request_id, status);
+            let _ = crate::store::set_generation_status(&c, &request_id, outcome.status);
+            let _ = crate::store::set_generation_usage(
+                &c,
+                &request_id,
+                outcome.usage.prompt_tokens,
+                outcome.usage.completion_tokens,
+            );
         }
         let _ = app.emit(
             "suggestion-done",
@@ -536,7 +542,7 @@ pub fn send_answer(
                 request_id: request_id.clone(),
                 generation_id: generation_id.clone(),
                 suggestion_version,
-                status: status.to_string(),
+                status: outcome.status.to_string(),
                 fixture: true,
             },
         );

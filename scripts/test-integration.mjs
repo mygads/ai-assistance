@@ -122,6 +122,7 @@ for (const [target, caseId, boundary] of [
   ["audio_routing", "L1-audio-routing", "WASAPI hardware -> deterministic fixture capture"],
   ["stt_adapters", "L1-stt-adapters", "provider network -> deterministic wire scripts"],
   ["context_retrieval", "L1-context-retrieval", "corpus network -> workspace-scoped SQLite FTS5"],
+  ["llm_streaming", "L1-llm-adapters", "provider network -> deterministic LLM scripts"],
 ]) {
   try {
     const r = spawnSync(`cargo test --test ${target}`, {

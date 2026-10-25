@@ -188,6 +188,18 @@ pub fn migrate(conn: &Connection) -> Result<(), CommandError> {
         "generation_requests",
         "suggestion_version INTEGER NOT NULL DEFAULT 1",
     )?;
+    // T11: token usage recorded per generation (heuristic estimates, labeled
+    // wherever shown). Older rows default to zero, never to invented counts.
+    add_column(
+        conn,
+        "generation_requests",
+        "prompt_tokens INTEGER NOT NULL DEFAULT 0",
+    )?;
+    add_column(
+        conn,
+        "generation_requests",
+        "completion_tokens INTEGER NOT NULL DEFAULT 0",
+    )?;
     Ok(())
 }
 
@@ -633,6 +645,47 @@ pub fn set_generation_status(
         )
         .map_err(|e| CommandError::Storage(e.to_string()))?;
     Ok(n == 1)
+}
+
+/// Records heuristic token usage for a generation. The prompt side is
+/// estimated from the frozen snapshot; the completion side from the text
+/// actually assembled by the stream driver — never from a guess.
+pub fn set_generation_usage(
+    conn: &Connection,
+    request_id: &str,
+    prompt_tokens: u32,
+    completion_tokens: u32,
+) -> Result<bool, CommandError> {
+    let n = conn
+        .execute(
+            "UPDATE generation_requests SET prompt_tokens=?1, completion_tokens=?2 WHERE id=?3",
+            params![prompt_tokens as i64, completion_tokens as i64, request_id],
+        )
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    Ok(n == 1)
+}
+
+/// The frozen snapshot JSON stored for a generation, for usage estimation.
+pub fn generation_snapshot(
+    conn: &Connection,
+    request_id: &str,
+) -> Result<Option<String>, CommandError> {
+    let mut stmt = conn
+        .prepare("SELECT snapshot_json FROM generation_requests WHERE id=?1")
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let mut rows = stmt
+        .query(params![request_id])
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    match rows
+        .next()
+        .map_err(|e| CommandError::Storage(e.to_string()))?
+    {
+        None => Ok(None),
+        Some(row) => Ok(Some(
+            row.get(0)
+                .map_err(|e| CommandError::Storage(e.to_string()))?,
+        )),
+    }
 }
 
 /// Applies a user correction as a new final revision of the stored segment.
