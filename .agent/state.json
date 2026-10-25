@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 16,
+  "revision": 17,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -10,7 +10,7 @@
     "checkout": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack",
     "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5"
   },
-  "last_integrated_commit": "5c2bb40",
+  "last_integrated_commit": "cdd189d",
   "completed_task_ids": [
     "T00",
     "T01",
@@ -24,10 +24,11 @@
     "T09",
     "T10",
     "T11",
-    "T12"
+    "T12",
+    "T13"
   ],
   "active_tasks": [
-    "T13"
+    "T14"
   ],
   "blockers": [
     {
@@ -48,35 +49,81 @@
   "gates": {
     "static_unit": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json", ".agent/evidence/check-2026-10-25T01-06-15-894Z.json", ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json", ".agent/evidence/check-2026-10-25T03-25-50-038Z.json", ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json", ".agent/evidence/check-2026-10-25T03-41-08-406Z.json", ".agent/evidence/unit-2026-10-25T03-41-14-363Z.json", ".agent/evidence/check-2026-10-25T04-39-16-726Z.json", ".agent/evidence/unit-2026-10-25T04-41-59-622Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T00-26-04-497Z.json",
+        ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json",
+        ".agent/evidence/check-2026-10-25T01-06-15-894Z.json",
+        ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json",
+        ".agent/evidence/check-2026-10-25T03-25-50-038Z.json",
+        ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json",
+        ".agent/evidence/check-2026-10-25T03-41-08-406Z.json",
+        ".agent/evidence/unit-2026-10-25T03-41-14-363Z.json",
+        ".agent/evidence/check-2026-10-25T04-39-16-726Z.json",
+        ".agent/evidence/unit-2026-10-25T04-41-59-622Z.json"
+      ]
     },
     "replay": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json", ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json", ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json", ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json", ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json", ".agent/evidence/test-integration-2026-10-25T03-42-08-124Z.json", ".agent/evidence/test-replay-2026-10-25T03-42-14-679Z.json", ".agent/evidence/test-integration-2026-10-25T04-36-16-757Z.json", ".agent/evidence/test-replay-2026-10-25T04-36-47-971Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json",
+        ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json",
+        ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json",
+        ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json",
+        ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json",
+        ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json",
+        ".agent/evidence/test-integration-2026-10-25T03-42-08-124Z.json",
+        ".agent/evidence/test-replay-2026-10-25T03-42-14-679Z.json",
+        ".agent/evidence/test-integration-2026-10-25T04-36-16-757Z.json",
+        ".agent/evidence/test-replay-2026-10-25T04-36-47-971Z.json"
+      ]
     },
     "browser": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json", ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json", ".agent/evidence/test-ui-2026-10-25T03-42-40-147Z.json", ".agent/evidence/test-ui-2026-10-25T04-36-58-669Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json",
+        ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json",
+        ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json",
+        ".agent/evidence/test-ui-2026-10-25T03-42-40-147Z.json",
+        ".agent/evidence/test-ui-2026-10-25T04-36-58-669Z.json"
+      ]
     },
     "native": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json", ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json", ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json", ".agent/evidence/test-native-2026-10-25T03-43-24-538Z.json", ".agent/evidence/test-native-2026-10-25T04-39-36-664Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json",
+        ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json",
+        ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json",
+        ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json",
+        ".agent/evidence/test-native-2026-10-25T03-43-24-538Z.json",
+        ".agent/evidence/test-native-2026-10-25T04-39-36-664Z.json"
+      ]
     },
     "physical_audio": {
       "status": "blocked",
-      "evidence_refs": [".agent/evidence/test-audio-2026-10-25T00-27-57-868Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-audio-2026-10-25T00-27-57-868Z.json"
+      ]
     },
     "live_provider": {
       "status": "blocked",
-      "evidence_refs": [".agent/evidence/test-live-2026-10-25T00-27-59-484Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-live-2026-10-25T00-27-59-484Z.json"
+      ]
     },
     "capture": {
       "status": "blocked",
-      "evidence_refs": [".agent/evidence/test-capture-2026-10-25T00-29-04-582Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-capture-2026-10-25T00-29-04-582Z.json"
+      ]
     },
     "soak": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-soak-2026-10-25T00-29-00-962Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json", ".agent/evidence/verify-2026-10-25T03-43-30-796Z.json", ".agent/evidence/verify-2026-10-25T04-39-48-834Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-soak-2026-10-25T00-29-00-962Z.json",
+        ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json",
+        ".agent/evidence/verify-2026-10-25T03-43-30-796Z.json",
+        ".agent/evidence/verify-2026-10-25T04-39-48-834Z.json"
+      ]
     },
     "installer": {
       "status": "not_run",
@@ -89,7 +136,11 @@
     "independent_review": {
       "status": "not_run",
       "evidence_refs": []
-    }
+    },
+    "check-2026-10-25T04-55": "pass 5/5 (tsc, freeze, schemas, fmt, clippy)",
+    "unit-2026-10-25T04-55": "pass ts=47/0 rs=50/0",
+    "integration-2026-10-25T04-56": "pass 11/11 incl L1-memory-learning (6/6 Rust)",
+    "verify-2026-10-25T04-39": "carried from T12: 49 pass / 0 fail / 7 blocked (known prerequisites)"
   },
   "next_actions": [
     "SERIAL FALLBACK 2026-10-25: subagent worktree isolation unavailable (Agent tool: 'Cannot create agent worktree: not in a git repository and no WorktreeCreate hooks are configured'); per AGENTS.md/EXECUTION.md executing the P02 graph serially with lane-role discipline, one lane per commit. Wave-1 worktrees removed; no worker results invented.",
@@ -101,9 +152,9 @@
     "T10 (completed): P02 integration barrier — zero contract/manifest drift since P01 (frozen 13 commands, gen:ipc byte-identical), ADR-017 keeps device-selection IPC deferred to T12, full verify 45 pass / 0 fail / 7 blocked (all known prerequisites); new baseline frozen at this commit",
     "T11 (completed, coordinator-implemented): streaming LLM adapter seam (A05/A18 L0/L1) — providers/llm.rs (LlmAdapter poll seam, FixtureLlmAdapter scripted deltas, AnswerAssembler single-provider rule, drive_stream with cancel/retry-once-before-output/usage, validate_configuration key-presence boolean), worker routed through seam (identical observables), usage columns + snapshot/usage store fns, L1-llm-adapters 5/5; check 5/5, unit ts 41/0 + rs 45/0, integration 9/9, replay 8/8, ui 10/10, native 6/6, verify fail=0 blocked=3 (known prerequisites)",
     "T12 (completed): model switch + retrieval-backed context + action-aware flow (A02/A04/A05 L1+L3, A13 L1 with L5 blocked on B02, A15 L3) — context.rs budgets + sanitized FTS query + greedy pack, snapshot carries profile/retrieval/packet, action-aware synthesis mirrored in TS, fence release on settle, L1-model-switch-repack + L1-context-assembly + L3-model-switch-next-request; check 5/5, unit ts 41/0 + rs 50/0, integration 10/10, replay 9/9, ui 10/10, native 7/7, verify 49/0/7 blocked (known prerequisites)",
-    "T13 (active): scoped memory and feedback learning (A09/A10), depends on T12",
     "Then T10 integration barrier; P03–P06 after",
-    "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
+    "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live",
+    "T14: session compaction + restart/refresh recovery (A16/A17); then T15 tools, T16 E2E UI+memory IPC surface"
   ],
   "max_parallel_workers": 3
 }

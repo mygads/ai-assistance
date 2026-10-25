@@ -120,7 +120,11 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json", ".agent/evidence/verify-2026-10-25T01-06-09-194Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json",
+        ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json",
+        ".agent/evidence/verify-2026-10-25T01-06-09-194Z.json"
+      ]
     },
     {
       "id": "T05",
@@ -141,7 +145,11 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/unit-2026-10-25T01-18-36-652Z.json", ".agent/evidence/test-integration-2026-10-25T01-19-05-380Z.json", ".agent/evidence/check-2026-10-25T01-19-24-104Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/unit-2026-10-25T01-18-36-652Z.json",
+        ".agent/evidence/test-integration-2026-10-25T01-19-05-380Z.json",
+        ".agent/evidence/check-2026-10-25T01-19-24-104Z.json"
+      ]
     },
     {
       "id": "T06",
@@ -163,7 +171,12 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/unit-2026-10-25T01-28-10-029Z.json", ".agent/evidence/test-integration-2026-10-25T01-28-56-357Z.json", ".agent/evidence/test-replay-2026-10-25T01-28-57-571Z.json", ".agent/evidence/check-2026-10-25T01-29-15-182Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/unit-2026-10-25T01-28-10-029Z.json",
+        ".agent/evidence/test-integration-2026-10-25T01-28-56-357Z.json",
+        ".agent/evidence/test-replay-2026-10-25T01-28-57-571Z.json",
+        ".agent/evidence/check-2026-10-25T01-29-15-182Z.json"
+      ]
     },
     {
       "id": "T07",
@@ -182,7 +195,15 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/check-2026-10-25T03-10-31-843Z.json", ".agent/evidence/unit-2026-10-25T03-10-32-948Z.json", ".agent/evidence/test-integration-2026-10-25T03-11-12-174Z.json", ".agent/evidence/test-replay-2026-10-25T03-11-13-618Z.json", ".agent/evidence/test-ui-2026-10-25T03-11-38-812Z.json", ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json", ".agent/evidence/verify-2026-10-25T03-10-22-771Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T03-10-31-843Z.json",
+        ".agent/evidence/unit-2026-10-25T03-10-32-948Z.json",
+        ".agent/evidence/test-integration-2026-10-25T03-11-12-174Z.json",
+        ".agent/evidence/test-replay-2026-10-25T03-11-13-618Z.json",
+        ".agent/evidence/test-ui-2026-10-25T03-11-38-812Z.json",
+        ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json",
+        ".agent/evidence/verify-2026-10-25T03-10-22-771Z.json"
+      ]
     },
     {
       "id": "T08",
@@ -203,7 +224,12 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/check-2026-10-25T03-17-52-775Z.json", ".agent/evidence/unit-2026-10-25T03-18-02-352Z.json", ".agent/evidence/test-replay-2026-10-25T03-18-12-584Z.json", ".agent/evidence/test-ui-2026-10-25T03-18-27-389Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T03-17-52-775Z.json",
+        ".agent/evidence/unit-2026-10-25T03-18-02-352Z.json",
+        ".agent/evidence/test-replay-2026-10-25T03-18-12-584Z.json",
+        ".agent/evidence/test-ui-2026-10-25T03-18-27-389Z.json"
+      ]
     },
     {
       "id": "T09",
@@ -223,7 +249,13 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/check-2026-10-25T03-25-50-038Z.json", ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json", ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json", ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json", ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T03-25-50-038Z.json",
+        ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json",
+        ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json",
+        ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json",
+        ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json"
+      ]
     },
     {
       "id": "T10",
@@ -245,7 +277,9 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"
+      ]
     },
     {
       "id": "T11",
@@ -265,7 +299,15 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/check-2026-10-25T03-41-08-406Z.json", ".agent/evidence/unit-2026-10-25T03-41-14-363Z.json", ".agent/evidence/test-integration-2026-10-25T03-42-08-124Z.json", ".agent/evidence/test-replay-2026-10-25T03-42-14-679Z.json", ".agent/evidence/test-ui-2026-10-25T03-42-40-147Z.json", ".agent/evidence/test-native-2026-10-25T03-43-24-538Z.json", ".agent/evidence/verify-2026-10-25T03-43-30-796Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T03-41-08-406Z.json",
+        ".agent/evidence/unit-2026-10-25T03-41-14-363Z.json",
+        ".agent/evidence/test-integration-2026-10-25T03-42-08-124Z.json",
+        ".agent/evidence/test-replay-2026-10-25T03-42-14-679Z.json",
+        ".agent/evidence/test-ui-2026-10-25T03-42-40-147Z.json",
+        ".agent/evidence/test-native-2026-10-25T03-43-24-538Z.json",
+        ".agent/evidence/verify-2026-10-25T03-43-30-796Z.json"
+      ]
     },
     {
       "id": "T12",
@@ -289,7 +331,15 @@
       "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": [".agent/evidence/check-2026-10-25T04-39-16-726Z.json", ".agent/evidence/unit-2026-10-25T04-41-59-622Z.json", ".agent/evidence/test-integration-2026-10-25T04-36-16-757Z.json", ".agent/evidence/test-replay-2026-10-25T04-36-47-971Z.json", ".agent/evidence/test-ui-2026-10-25T04-36-58-669Z.json", ".agent/evidence/test-native-2026-10-25T04-39-36-664Z.json", ".agent/evidence/verify-2026-10-25T04-39-48-834Z.json"]
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T04-39-16-726Z.json",
+        ".agent/evidence/unit-2026-10-25T04-41-59-622Z.json",
+        ".agent/evidence/test-integration-2026-10-25T04-36-16-757Z.json",
+        ".agent/evidence/test-replay-2026-10-25T04-36-47-971Z.json",
+        ".agent/evidence/test-ui-2026-10-25T04-36-58-669Z.json",
+        ".agent/evidence/test-native-2026-10-25T04-39-36-664Z.json",
+        ".agent/evidence/verify-2026-10-25T04-39-48-834Z.json"
+      ]
     },
     {
       "id": "T13",
@@ -306,10 +356,14 @@
         "A09",
         "A10"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        "check-2026-10-25T04-55-25-421Z.json",
+        "unit-2026-10-25T04-55-25-968Z.json",
+        "test-integration-2026-10-25T04-56-16-968Z.json"
+      ]
     },
     {
       "id": "T14",

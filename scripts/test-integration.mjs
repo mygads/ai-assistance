@@ -123,6 +123,7 @@ for (const [target, caseId, boundary] of [
   ["stt_adapters", "L1-stt-adapters", "provider network -> deterministic wire scripts"],
   ["context_retrieval", "L1-context-retrieval", "corpus network -> workspace-scoped SQLite FTS5"],
   ["context_assembly", "L1-context-assembly", "provider network -> sanitized FTS query + profile budgets"],
+  ["memory_learning", "L1-memory-learning", "provider network -> local user-evidence rules (no model call)"],
   ["llm_streaming", "L1-llm-adapters", "provider network -> deterministic LLM scripts"],
 ]) {
   try {

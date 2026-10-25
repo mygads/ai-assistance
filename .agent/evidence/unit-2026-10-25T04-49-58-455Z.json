@@ -1,0 +1,45 @@
+{
+  "kind": "app_test",
+  "run_id": "unit-2026-10-25T04-49-58-455Z",
+  "level": "L0",
+  "command": "npm run test:unit",
+  "exit_code": 0,
+  "status": "fail",
+  "cases": [
+    {
+      "id": "L0-domain-ts",
+      "level": "L0",
+      "status": "fail",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "L0-domain-rs",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    }
+  ],
+  "counts": {
+    "pass": 84,
+    "fail": 1,
+    "ts": {
+      "pass": 34,
+      "fail": 1
+    },
+    "rs": {
+      "pass": 50,
+      "fail": 0,
+      "status": "pass"
+    }
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\unit-2026-10-25T04-49-58-455Z.json"
+  ]
+}

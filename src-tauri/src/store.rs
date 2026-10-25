@@ -152,6 +152,16 @@ CREATE TABLE IF NOT EXISTS documents(
   created_at TEXT NOT NULL);
 CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5(
   doc_id UNINDEXED, file_name, content_text, workspace_id UNINDEXED, tokenize='unicode61');
+-- T13: scoped memory with feedback learning. Suggested text is NEVER confirmed
+-- on arrival: rows start as draft; only explicit user evidence (a correction,
+-- a confirmation, or the user's own speech) promotes to confirmed (A10).
+-- Supersede preserves the old row for rollback instead of overwriting it.
+CREATE TABLE IF NOT EXISTS memory_items(
+  id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+  profile_id TEXT NOT NULL DEFAULT '', session_id TEXT NOT NULL DEFAULT '',
+  kind TEXT NOT NULL, content TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'draft',
+  evidence_json TEXT NOT NULL DEFAULT '[]', version INTEGER NOT NULL DEFAULT 1,
+  supersedes_id TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL);
 ";
 
 /// Best-effort migration for dev databases created before a column existed.
@@ -441,6 +451,273 @@ fn map_fts_error(msg: String) -> CommandError {
     } else {
         CommandError::Storage(msg)
     }
+}
+
+/// T13 scoped memory (A09/A10): actual speech, AI suggestions, user
+/// corrections, and confirmed personal facts stay distinct rows. A memory row
+/// is born `draft` and only becomes `confirmed` on explicit user evidence;
+/// `confirm_memory` rejects AI-only provenance so replaying a suggestion can
+/// never self-confirm it (C16). Corrections supersede: the old row is kept
+/// with status `superseded` for rollback instead of being overwritten (C17).
+/// Recall is always workspace-scoped and optionally profile-scoped: rows with
+/// an empty profile_id are workspace-wide, others are visible only to the
+/// same profile.
+#[derive(Debug, Clone)]
+pub struct MemoryItem {
+    pub id: String,
+    pub workspace_id: String,
+    pub profile_id: String,
+    pub session_id: String,
+    pub kind: String,
+    pub content: String,
+    pub status: String,
+    pub evidence_json: String,
+    pub version: i64,
+    pub supersedes_id: String,
+    pub created_at: String,
+}
+
+const MEMORY_KINDS: &[&str] = &["fact", "preference", "procedure", "episodic"];
+/// Evidence that counts as explicit user feedback and may confirm a draft.
+/// Mirrors the T01 MemoryStore CONFIRMING set (plus self_speech: the user
+/// speaking a fact is first-party evidence, not an AI suggestion).
+const USER_EVIDENCE_KINDS: &[&str] = &[
+    "user_correction",
+    "user_confirmation",
+    "self_speech",
+    "curated_import",
+];
+const EVIDENCE_KINDS: &[&str] = &[
+    "ai_suggestion",
+    "user_correction",
+    "user_confirmation",
+    "self_speech",
+    "curated_import",
+    "session_summary",
+    "remote_speech",
+    "read_aloud",
+    "document",
+];
+
+fn read_memory_row(row: &rusqlite::Row) -> rusqlite::Result<MemoryItem> {
+    Ok(MemoryItem {
+        id: row.get(0)?,
+        workspace_id: row.get(1)?,
+        profile_id: row.get(2)?,
+        session_id: row.get(3)?,
+        kind: row.get(4)?,
+        content: row.get(5)?,
+        status: row.get(6)?,
+        evidence_json: row.get(7)?,
+        version: row.get(8)?,
+        supersedes_id: row.get(9)?,
+        created_at: row.get(10)?,
+    })
+}
+
+const MEMORY_COLS: &str = "id, workspace_id, profile_id, session_id, kind, content, \
+     status, evidence_json, version, supersedes_id, created_at";
+
+/// Evidence entries look like {"kind": "...", "ref": "..."}. Returns true when
+/// at least one entry is explicit user feedback (C16 guard).
+fn evidence_qualifies_for_confirm(evidence_json: &str) -> Result<bool, CommandError> {
+    let entries: Vec<serde_json::Value> = serde_json::from_str(evidence_json).map_err(|e| {
+        CommandError::InvalidInput(format!("evidence_json must be a JSON array: {e}"))
+    })?;
+    for e in &entries {
+        let kind = e.get("kind").and_then(|k| k.as_str()).ok_or_else(|| {
+            CommandError::InvalidInput("every evidence entry needs a string kind".to_string())
+        })?;
+        if !EVIDENCE_KINDS.contains(&kind) {
+            return Err(CommandError::InvalidInput(format!(
+                "unknown evidence kind {kind}"
+            )));
+        }
+    }
+    Ok(entries.iter().any(|e| {
+        USER_EVIDENCE_KINDS.contains(&e.get("kind").and_then(|k| k.as_str()).unwrap_or(""))
+    }))
+}
+
+/// Parameters for a new memory row (T16 IPC commands build this struct).
+pub struct NewMemory<'a> {
+    pub id: &'a str,
+    pub workspace_id: &'a str,
+    pub profile_id: &'a str,
+    pub session_id: &'a str,
+    pub kind: &'a str,
+    pub content: &'a str,
+    pub evidence_json: &'a str,
+}
+
+impl<'a> NewMemory<'a> {
+    /// Workspace-wide draft; override `profile_id` for profile-scoped rows.
+    pub fn draft(
+        id: &'a str,
+        workspace_id: &'a str,
+        session_id: &'a str,
+        kind: &'a str,
+        content: &'a str,
+        evidence_json: &'a str,
+    ) -> Self {
+        Self {
+            id,
+            workspace_id,
+            profile_id: "",
+            session_id,
+            kind,
+            content,
+            evidence_json,
+        }
+    }
+}
+
+pub fn record_memory(conn: &Connection, m: &NewMemory) -> Result<MemoryItem, CommandError> {
+    if m.id.trim().is_empty() || m.workspace_id.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "memory/workspace ids must not be empty".to_string(),
+        ));
+    }
+    if !MEMORY_KINDS.contains(&m.kind) {
+        return Err(CommandError::InvalidInput(format!(
+            "unknown memory kind {}",
+            m.kind
+        )));
+    }
+    if m.content.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "memory content must not be empty".to_string(),
+        ));
+    }
+    // Validates shape now; confirmation re-checks user provenance later.
+    evidence_qualifies_for_confirm(m.evidence_json)?;
+    conn.execute(
+        "INSERT OR IGNORE INTO workspaces(id,title) VALUES(?1,?2)",
+        params![m.workspace_id, m.workspace_id],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let created_at = Utc::now().to_rfc3339();
+    conn.execute(
+        "INSERT INTO memory_items(id,workspace_id,profile_id,session_id,kind,content,status,evidence_json,version,supersedes_id,created_at) \
+         VALUES(?1,?2,?3,?4,?5,?6,'draft',?7,1,'',?8)",
+        params![m.id, m.workspace_id, m.profile_id, m.session_id, m.kind, m.content, m.evidence_json, created_at],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    load_memory(conn, m.id)?
+        .ok_or_else(|| CommandError::Storage(format!("memory {} vanished after insert", m.id)))
+}
+
+pub fn load_memory(conn: &Connection, id: &str) -> Result<Option<MemoryItem>, CommandError> {
+    let mut stmt = conn
+        .prepare(&format!(
+            "SELECT {MEMORY_COLS} FROM memory_items WHERE id=?1"
+        ))
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let mut rows = stmt
+        .query_map(params![id], read_memory_row)
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    match rows.next() {
+        None => Ok(None),
+        Some(row) => Ok(Some(row.map_err(|e| CommandError::Storage(e.to_string()))?)),
+    }
+}
+
+/// Promote a draft on explicit user evidence. AI-only provenance
+/// (ai_suggestion/document without any user entry) is rejected: replaying or
+/// re-reading a suggestion must never confirm it. Idempotent for confirmed rows.
+pub fn confirm_memory(conn: &Connection, id: &str) -> Result<MemoryItem, CommandError> {
+    let item =
+        load_memory(conn, id)?.ok_or_else(|| CommandError::NotFound(format!("memory {id}")))?;
+    if item.status == "confirmed" {
+        return Ok(item);
+    }
+    if item.status == "superseded" {
+        return Err(CommandError::Conflict(format!(
+            "memory {id} is superseded; confirm its successor"
+        )));
+    }
+    if !evidence_qualifies_for_confirm(&item.evidence_json)? {
+        return Err(CommandError::InvalidInput(
+            "ai suggestions never self-confirm: confirm needs user_correction, user_confirmation, self_speech, or curated_import evidence".to_string(),
+        ));
+    }
+    conn.execute(
+        "UPDATE memory_items SET status='confirmed' WHERE id=?1",
+        params![id],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    load_memory(conn, id)?
+        .ok_or_else(|| CommandError::Storage(format!("memory {id} vanished after confirm")))
+}
+
+/// Explicit correction (C17): the old row is preserved as `superseded` and the
+/// new row carries version+1 with the supersedes link. The successor starts
+/// confirmed only when its own evidence qualifies; otherwise it stays draft.
+pub fn supersede_memory(
+    conn: &Connection,
+    new_id: &str,
+    superseded_id: &str,
+    content: &str,
+    evidence_json: &str,
+) -> Result<MemoryItem, CommandError> {
+    let old = load_memory(conn, superseded_id)?
+        .ok_or_else(|| CommandError::NotFound(format!("memory {superseded_id}")))?;
+    if old.status == "superseded" {
+        return Err(CommandError::Conflict(format!(
+            "memory {superseded_id} already superseded"
+        )));
+    }
+    if content.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "memory content must not be empty".to_string(),
+        ));
+    }
+    let qualifies = evidence_qualifies_for_confirm(evidence_json)?;
+    let created_at = Utc::now().to_rfc3339();
+    conn.execute(
+        "UPDATE memory_items SET status='superseded' WHERE id=?1",
+        params![superseded_id],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let status = if qualifies { "confirmed" } else { "draft" };
+    conn.execute(
+        "INSERT INTO memory_items(id,workspace_id,profile_id,session_id,kind,content,status,evidence_json,version,supersedes_id,created_at) \
+         VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)",
+        params![
+            new_id, old.workspace_id, old.profile_id, old.session_id, old.kind,
+            content, status, evidence_json, old.version + 1, superseded_id, created_at,
+        ],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    load_memory(conn, new_id)?
+        .ok_or_else(|| CommandError::Storage(format!("memory {new_id} vanished after insert")))
+}
+
+/// Scoped recall (A09): the workspace filter is mandatory; within it,
+/// workspace-wide rows (empty profile_id) mix with rows for the caller's
+/// profile only. Superseded rows are history, not recall candidates.
+pub fn recall_memory(
+    conn: &Connection,
+    workspace_id: &str,
+    profile_id: &str,
+) -> Result<Vec<MemoryItem>, CommandError> {
+    if workspace_id.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "workspace_id must not be empty".to_string(),
+        ));
+    }
+    let mut stmt = conn
+        .prepare(&format!(
+            "SELECT {MEMORY_COLS} FROM memory_items \
+             WHERE workspace_id=?1 AND (profile_id='' OR profile_id=?2) AND status != 'superseded' \
+             ORDER BY status DESC, created_at ASC"
+        ))
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let rows = stmt
+        .query_map(params![workspace_id, profile_id], read_memory_row)
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| CommandError::Storage(e.to_string()))
 }
 
 /// Ingest outcome, mirroring the TypeScript TranscriptStore discipline:
