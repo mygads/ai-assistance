@@ -242,10 +242,10 @@
         "test:integration"
       ],
       "acceptance_ids": [],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"]
     },
     {
       "id": "T11",

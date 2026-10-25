@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 13,
+  "revision": 14,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -21,10 +21,11 @@
     "T06",
     "T07",
     "T08",
-    "T09"
+    "T09",
+    "T10"
   ],
   "active_tasks": [
-    "T10"
+    "T11"
   ],
   "blockers": [
     {
@@ -57,7 +58,7 @@
     },
     "native": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json", ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json"]
+      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json", ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json", ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"]
     },
     "physical_audio": {
       "status": "blocked",
@@ -73,7 +74,7 @@
     },
     "soak": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-soak-2026-10-25T00-29-00-962Z.json"]
+      "evidence_refs": [".agent/evidence/test-soak-2026-10-25T00-29-00-962Z.json", ".agent/evidence/verify-2026-10-25T03-28-58-392Z.json"]
     },
     "installer": {
       "status": "not_run",
@@ -95,7 +96,8 @@
     "T07 (completed): dashboard + reading overlay — src/ui/{dashboard,overlay}.tsx; test:ui 10/10 (focus-preserved, drawer focus-return, token seek, compact mode, readiness); verify fail=0 blocked=3",
     "T08 (completed): stable voice-follow — ReaderSession versioning + rescript in reader.ts, src/domain/reader.test.ts 12/12, replay L1-reader-version-rebase + L1-reader-skip-repeat-offscript, overlay wired to session; unit ts 35/0, replay 8/8, ui 10/10",
     "T09 (completed): import/provenance/retrieval (A08/A09) — documents + documents_fts (unicode61) in store.rs, import_document persists via open_conn, retrieve_sections with InvalidInput mapping, L1-context-retrieval 5/5, validateSourceRefs + context.test.ts 6/6; check 5/5, unit ts 41/0 + rs 36/0, integration 8/8, replay 8/8, ui 10/10",
-    "T10 (active, coordinator-implemented): integration barrier — regenerate contracts, required checks check + test:replay + test:integration",
+    "T10 (completed): P02 integration barrier — zero contract/manifest drift since P01 (frozen 13 commands, gen:ipc byte-identical), ADR-017 keeps device-selection IPC deferred to T12, full verify 45 pass / 0 fail / 7 blocked (all known prerequisites); new baseline frozen at this commit",
+    "T11 (active): streaming LLM adapters + cancellation (A05/A18), depends on T10",
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
   ],
