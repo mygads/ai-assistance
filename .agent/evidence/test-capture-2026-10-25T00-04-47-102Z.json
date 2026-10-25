@@ -1,0 +1,81 @@
+{
+  "kind": "app_test",
+  "run_id": "test-capture-2026-10-25T00-04-47-102Z",
+  "level": "L6",
+  "command": "npm run test:capture",
+  "exit_code": 2,
+  "status": "blocked",
+  "started_utc": "2026-10-25T00:04:43.965Z",
+  "cases": [
+    {
+      "id": "L6-capture-api-availability",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "os_build=26300 graphics_capture_supported=true"
+    },
+    {
+      "id": "L6-meeting-tools-inventoried",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "found: Microsoft Teams Meeting Add-in for Microsoft Office 1.26.25904; OBS Studio 32.2.2; Teams Machine-Wide Installer 1.6.0.11166; Zoom Workplace 7.1.9 (48550)"
+    },
+    {
+      "id": "L6-calibration-absence-in-capture",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "running app + real meeting capture -> inventory only"
+      ],
+      "note": "Requires the T04 native slice to show a calibration pattern in-app, then capture it via installed meeting tools (T20). No capture was taken, so absence is unproven."
+    },
+    {
+      "id": "L6-scaling-focus-matrix",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "interactive desktop session -> inventory only"
+      ],
+      "note": "100/125/150% scaling, focus preservation, and scrolled-text stability need the running native app (T20)."
+    }
+  ],
+  "counts": {
+    "pass": 2,
+    "fail": 0,
+    "blocked": 2,
+    "total": 4
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-capture-2026-10-25T00-04-47-102Z.json"
+  ],
+  "matrix": {
+    "meeting_apps": [
+      {
+        "DisplayName": "Microsoft Teams Meeting Add-in for Microsoft Office",
+        "DisplayVersion": "1.26.25904"
+      },
+      {
+        "DisplayName": "OBS Studio",
+        "DisplayVersion": "32.2.2"
+      },
+      {
+        "DisplayName": "Teams Machine-Wide Installer",
+        "DisplayVersion": "1.6.0.11166"
+      },
+      {
+        "DisplayName": "Zoom Workplace",
+        "DisplayVersion": "7.1.9 (48550)"
+      }
+    ],
+    "graphics_capture_supported": true,
+    "build": 26300
+  }
+}

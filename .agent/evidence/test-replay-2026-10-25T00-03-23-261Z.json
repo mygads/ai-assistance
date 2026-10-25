@@ -1,0 +1,48 @@
+{
+  "kind": "app_test",
+  "run_id": "test-replay-2026-10-25T00-03-23-261Z",
+  "level": "L1",
+  "command": "npm run test:replay",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T00:03:23.167Z",
+  "cases": [
+    {
+      "id": "L1-replay-correction-overlap",
+      "level": "L1",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "event 0 violates 0 <= start <= end <= at_ms"
+    },
+    {
+      "id": "L1-replay-partial-and-overlap",
+      "level": "L1",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "event 0 violates 0 <= start <= end <= at_ms"
+    },
+    {
+      "id": "L1-replay-reconnect-reset",
+      "level": "L1",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "event 0 violates 0 <= start <= end <= at_ms"
+    }
+  ],
+  "counts": {
+    "pass": 0,
+    "fail": 3,
+    "blocked": 0,
+    "total": 3
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-replay-2026-10-25T00-03-23-261Z.json"
+  ]
+}

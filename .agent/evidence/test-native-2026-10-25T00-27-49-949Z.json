@@ -1,0 +1,59 @@
+{
+  "kind": "app_test",
+  "run_id": "test-native-2026-10-25T00-27-49-949Z",
+  "level": "L3",
+  "command": "npm run test:native",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T00:27:01.049Z",
+  "cases": [
+    {
+      "id": "L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "L3-window-launches",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "title=Conversation Assistant"
+    },
+    {
+      "id": "L3-real-ipc-start-session",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"
+      ],
+      "note": "Sesi session-86e05d30acb443ea9875079b86947ad5 · capture connecting"
+    },
+    {
+      "id": "L3-real-ipc-send-answer",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"
+      ],
+      "note": "suggestion rendered from real IPC start_session + send_answer"
+    }
+  ],
+  "counts": {
+    "pass": 4,
+    "fail": 0,
+    "blocked": 0,
+    "total": 4
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-native-2026-10-25T00-27-49-949Z.json"
+  ]
+}

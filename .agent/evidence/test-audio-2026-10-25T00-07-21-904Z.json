@@ -1,0 +1,450 @@
+{
+  "kind": "app_test",
+  "run_id": "test-audio-2026-10-25T00-07-21-904Z",
+  "level": "L4",
+  "command": "npm run test:audio",
+  "exit_code": 2,
+  "status": "blocked",
+  "started_utc": "2026-10-25T00:07:18.397Z",
+  "cases": [
+    {
+      "id": "L4-endpoints-enumerated",
+      "level": "L4",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "mmdevice endpoints: total=63 active=4 render=2 capture=2"
+    },
+    {
+      "id": "L4-default-devices-identified",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "COM default-endpoint query -> MMDevice registry enumeration"
+      ],
+      "note": "GetDefaultAudioEndpoint COM activation (REGDB_E_CLASSNOTREG) unavailable from the automation shell; default identity is resolved at stream-open time by the T05 capture module, not guessed here."
+    },
+    {
+      "id": "L4-exclusive-lease-capture",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "WASAPI stream -> registry enumeration only"
+      ],
+      "note": "No audio stream opened. Exclusive-lease loopback/mic capture requires the T05 cpal module; opening a stream is not attempted from this probe."
+    },
+    {
+      "id": "L4-mic-signal-quality",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "physical speech -> no controlled sound produced"
+      ],
+      "note": "Manual/controlled-speech scenario. No speech was produced or assumed; reporting signal quality without it would be fabrication."
+    },
+    {
+      "id": "L4-loopback-correlation",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "known playback -> fixture WAV not played"
+      ],
+      "note": "Requires playing a fixture WAV to the default render endpoint while capturing loopback (T05/T18)."
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "fail": 0,
+    "blocked": 4,
+    "total": 5
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-audio-2026-10-25T00-07-21-904Z.json"
+  ],
+  "endpoints": [
+    {
+      "id": "{04270c53-06e5-4f43-a42b-8e0b8fed11fc}",
+      "flow": "Render",
+      "state": 4,
+      "name": "디지털 출력"
+    },
+    {
+      "id": "{0614d8e3-1601-4601-ab54-c3512915ee56}",
+      "flow": "Render",
+      "state": 4,
+      "name": "2 - SAMSUNG"
+    },
+    {
+      "id": "{06571fe8-f81d-4562-835f-8039766bcdbd}",
+      "flow": "Render",
+      "state": 4,
+      "name": "2 - EPSON PJ"
+    },
+    {
+      "id": "{0764eb2e-da38-4382-8ae1-eaacd925ae21}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - C24F390"
+    },
+    {
+      "id": "{1a01e96f-b927-4ca8-9778-841593587227}",
+      "flow": "Render",
+      "state": 4,
+      "name": "2 - EPSON PJ"
+    },
+    {
+      "id": "{205a327a-59e2-4592-9521-23bbcf451478}",
+      "flow": "Render",
+      "state": 8,
+      "name": "Headphones"
+    },
+    {
+      "id": "{20ee9d31-dabd-44a9-933a-e1e961de66d7}",
+      "flow": "Render",
+      "state": 8,
+      "name": "헤드폰"
+    },
+    {
+      "id": "{2b8d3ad4-f467-4c6e-af01-833cea504840}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - 22B2WG5"
+    },
+    {
+      "id": "{325a7b4c-f0ad-40d3-bf46-ef50256d7b09}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - LG TV SSCR2"
+    },
+    {
+      "id": "{35ff4439-3844-49dd-877a-d025e57fecf6}",
+      "flow": "Render",
+      "state": 8,
+      "name": "Headphones"
+    },
+    {
+      "id": "{397ac284-362c-4155-add0-862235363a65}",
+      "flow": "Render",
+      "state": 4,
+      "name": "1 - L24i-40"
+    },
+    {
+      "id": "{41b94b2b-c46b-40c9-9132-9e07cad739a9}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "Digital Audio (HDMI)"
+    },
+    {
+      "id": "{456301ac-5e92-495e-8d96-982916394cef}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - LG ULTRAWIDE"
+    },
+    {
+      "id": "{4bbce2cf-839f-4cfd-9abf-baacf2455eb9}",
+      "flow": "Render",
+      "state": 4,
+      "name": "2 - PT-LB386"
+    },
+    {
+      "id": "{57aad99a-cdcf-4a30-b850-d1a9a80de047}",
+      "flow": "Render",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{5a918bcc-c5ba-49e3-9eea-e984d867f030}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - Smart TV"
+    },
+    {
+      "id": "{65ea31fb-7366-4730-b541-c1fa1821056d}",
+      "flow": "Render",
+      "state": 8,
+      "name": "Speakers"
+    },
+    {
+      "id": "{6ba39b58-262c-4b0f-98ef-cf9654be0a0a}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - Smart TV"
+    },
+    {
+      "id": "{82b21784-9cfd-4a1c-9978-3f15dfbf8ecf}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - NP-MC302X"
+    },
+    {
+      "id": "{8466ab86-662b-4069-86e1-19a59631f590}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - SAMSUNG"
+    },
+    {
+      "id": "{88d8ec0e-ec68-46cc-bc50-c9d6a17ff10a}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - LG ULTRAWIDE"
+    },
+    {
+      "id": "{8dd49399-97aa-4192-a7fe-28f50bc96b8c}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "1 - L24i-30"
+    },
+    {
+      "id": "{97575872-7d8c-464e-880a-8fd0be4a419d}",
+      "flow": "Render",
+      "state": 4,
+      "name": "디지털 출력"
+    },
+    {
+      "id": "{9871caf0-b0e6-4a74-aba8-24ac2432a202}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - NP-M402Xs"
+    },
+    {
+      "id": "{99945082-5858-4e51-bf2f-3954d083afeb}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "1 - 40QQ3"
+    },
+    {
+      "id": "{a4a1d5b6-12e3-4f53-8042-ab87289baa9f}",
+      "flow": "Render",
+      "state": 4,
+      "name": "디지털 출력"
+    },
+    {
+      "id": "{a519baff-0aa0-416a-8b7d-38f4a2b0e806}",
+      "flow": "Render",
+      "state": 4,
+      "name": "2 - EPSON PJ"
+    },
+    {
+      "id": "{a5cd49e4-442a-4813-ac34-8b69af69ad43}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - NP-MC342X"
+    },
+    {
+      "id": "{a5e54edf-f8a4-4cb4-a337-22a686cc8ecc}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "1 - Beyond TV"
+    },
+    {
+      "id": "{a7e09a5a-24ac-4a38-bbb8-18b681aaaff0}",
+      "flow": "Render",
+      "state": 1,
+      "name": "Speakers"
+    },
+    {
+      "id": "{a9774ddf-9add-40a2-85b2-84e843731140}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "1 - LG TV SSCR2"
+    },
+    {
+      "id": "{aa1ab3ab-be64-4e94-9d22-a5e6900642c4}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - EPSON PJ"
+    },
+    {
+      "id": "{ac45cecb-0ae6-4087-b816-d09da876d474}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - ASUS VP228"
+    },
+    {
+      "id": "{b36b07d2-353c-4378-9b3d-0d5d6a94b65d}",
+      "flow": "Render",
+      "state": 4,
+      "name": "1 - K243Y E"
+    },
+    {
+      "id": "{bd101d96-7ced-4d13-af21-6f29863a4bce}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "1 - Mi Monitor"
+    },
+    {
+      "id": "{cadc1694-51c7-49cd-a278-87e9d80c1d0d}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - K243Y E"
+    },
+    {
+      "id": "{ccdb047e-0b82-4a19-9173-756c6344f358}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "스피커"
+    },
+    {
+      "id": "{db41e42e-60b2-42ac-afdf-23e0adb66cef}",
+      "flow": "Render",
+      "state": 8,
+      "name": "Headset"
+    },
+    {
+      "id": "{de2e2325-ee17-477f-bd08-41bbae2f8d7f}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "Headphones"
+    },
+    {
+      "id": "{e0061184-6de2-4c28-83a1-4290776ebb02}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "1 - C24F390"
+    },
+    {
+      "id": "{e29b9032-9a54-4566-98a0-7fcafceb0f4c}",
+      "flow": "Render",
+      "state": 1,
+      "name": "Realtek Speaker"
+    },
+    {
+      "id": "{e5008563-994a-493b-8bcf-2a8ca15f427c}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "Digital Audio (HDMI)"
+    },
+    {
+      "id": "{e6eedcfa-9221-40ca-8188-eab08ded05a9}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - L24i-30"
+    },
+    {
+      "id": "{eb16f93b-ac92-4b1b-b1d4-68fe28e036dd}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "Digital Audio (HDMI)"
+    },
+    {
+      "id": "{edee6f1b-3689-4890-9c94-4b3329e907c9}",
+      "flow": "Render",
+      "state": 8,
+      "name": "Headset"
+    },
+    {
+      "id": "{f809ee12-a24f-4390-b556-e8b84862d23e}",
+      "flow": "Render",
+      "state": 553648132,
+      "name": "2 - Beyond TV"
+    },
+    {
+      "id": "{06d81990-6c4d-4a77-bf1b-6d2ed0b62e20}",
+      "flow": "Capture",
+      "state": 553648132,
+      "name": "Microphone"
+    },
+    {
+      "id": "{15ca9866-4da5-4363-9941-cc177fabb886}",
+      "flow": "Capture",
+      "state": 4,
+      "name": "Microphone"
+    },
+    {
+      "id": "{231d4e3e-2088-4823-bea8-fe2266996f77}",
+      "flow": "Capture",
+      "state": 8,
+      "name": "Headset"
+    },
+    {
+      "id": "{433dba91-5568-488e-93e7-07b5b3743568}",
+      "flow": "Capture",
+      "state": 8,
+      "name": "마이크"
+    },
+    {
+      "id": "{5d9472c4-923d-4dd9-8397-b4bf8e040374}",
+      "flow": "Capture",
+      "state": 4,
+      "name": "Capture Input terminal"
+    },
+    {
+      "id": "{7e78217d-87d2-46a9-b984-d413edb2868d}",
+      "flow": "Capture",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{8b266f9d-7477-408c-9b0b-503778c8c77c}",
+      "flow": "Capture",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{92ca9bf2-50c2-4777-a763-12c2c9f37ce5}",
+      "flow": "Capture",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{a9b58171-c289-403b-bf87-997cf6a9f203}",
+      "flow": "Capture",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{b318a315-0339-4a62-9c9a-992b761e277d}",
+      "flow": "Capture",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{b5f6227d-8e67-405e-840f-428c6ee23939}",
+      "flow": "Capture",
+      "state": 8,
+      "name": "Microphone"
+    },
+    {
+      "id": "{b8ce0210-9e8f-42c7-b3f7-b892397fbd82}",
+      "flow": "Capture",
+      "state": 8,
+      "name": "Headset"
+    },
+    {
+      "id": "{c65e9e45-b80b-4d58-a11d-6c271ae23303}",
+      "flow": "Capture",
+      "state": 1,
+      "name": "Microphone Array"
+    },
+    {
+      "id": "{cb7dd9f0-6b0f-41d6-a7cb-ed5990eada8b}",
+      "flow": "Capture",
+      "state": 822083588,
+      "name": "내부 AUX 잭"
+    },
+    {
+      "id": "{d06b75cd-55bc-49b8-8df1-6f3cca2ddf56}",
+      "flow": "Capture",
+      "state": 268435457,
+      "name": "스테레오 믹스"
+    },
+    {
+      "id": "{d6775770-64bd-4677-9fdd-2996af257f07}",
+      "flow": "Capture",
+      "state": 8,
+      "name": "Microphone"
+    },
+    {
+      "id": "{fe92221b-3b91-48e6-abc2-9750d8483d6e}",
+      "flow": "Capture",
+      "state": 1,
+      "name": "Microphone"
+    }
+  ]
+}

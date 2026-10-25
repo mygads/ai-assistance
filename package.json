@@ -8,7 +8,21 @@
     "doctor": "node scripts/doctor.mjs",
     "setup": "node scripts/setup.mjs",
     "check": "node scripts/check.mjs",
+    "gen:ipc": "node scripts/gen-ipc-types.mjs",
     "test:unit": "node scripts/test-unit.mjs",
+    "test:integration": "node scripts/test-integration.mjs",
+    "test:replay": "node scripts/test-replay.mjs",
+    "test:ui": "node scripts/test-ui.mjs",
+    "test:native": "node scripts/test-native.mjs",
+    "test:audio": "node scripts/test-audio.mjs",
+    "test:live": "node scripts/test-live.mjs",
+    "test:soak": "node scripts/test-soak.mjs",
+    "test:capture": "node scripts/test-capture.mjs",
+    "package": "node scripts/package.mjs",
+    "test:installer": "node scripts/test-installer.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:release": "node scripts/verify-release.mjs",
+    "report": "node scripts/report.mjs",
     "dev:ui": "vite",
     "build:ui": "vite build"
   },
@@ -16,13 +30,16 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.12.4",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "ajv": "^8.20.0",
+    "playwright": "^1.64.1",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "webdriverio": "^10.1.0"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.4",

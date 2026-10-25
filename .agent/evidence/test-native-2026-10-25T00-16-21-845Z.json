@@ -1,0 +1,48 @@
+{
+  "kind": "app_test",
+  "run_id": "test-native-2026-10-25T00-16-21-845Z",
+  "level": "L3",
+  "command": "npm run test:native",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T00:15:58.791Z",
+  "cases": [
+    {
+      "id": "L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "L3-window-launches",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "title=Conversation Assistant"
+    },
+    {
+      "id": "L3-native-session",
+      "level": "L3",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "native session: element (\"[data-testid=\"session-id\"]\") still not existing after 15000ms"
+    }
+  ],
+  "counts": {
+    "pass": 2,
+    "fail": 1,
+    "blocked": 0,
+    "total": 3
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-native-2026-10-25T00-16-21-845Z.json"
+  ]
+}

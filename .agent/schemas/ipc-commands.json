@@ -1,0 +1,94 @@
+{
+  "contract_version": "0.3",
+  "frozen_at": "2026-10-25",
+  "note": "Coordinator-owned. Command names frozen per docs/CONTRACTS.md (adapt-once rule consumed in P00). Any rename requires a T-task, ADR, and regeneration of src/ui/ipc.ts. Payload shapes mirror src-tauri/src/commands.rs + store.rs exactly.",
+  "error_envelope": "{ code: 'NotFound|InvalidInput|Conflict|Storage', message: sanitized }",
+  "commands": [
+    {
+      "name": "list_sources",
+      "args": { "session_id": "string" },
+      "returns": "AudioSource[]",
+      "types": {
+        "AudioSource": "{ id: string; session_id: string; device_id: string; role: string; enabled: boolean }"
+      }
+    },
+    {
+      "name": "start_session",
+      "args": { "input": "StartSessionInput" },
+      "returns": "SessionRecord",
+      "types": {
+        "StartSessionInput": "{ workspace_id: string; profile_id?: string }",
+        "SessionRecord": "{ id: string; workspace_id: string; started_at: string; active_revision: number; capture: string; generation: string; prompter: string; settings_snapshot: string }"
+      }
+    },
+    {
+      "name": "pause_session",
+      "args": { "session_id": "string" },
+      "returns": "SessionRecord"
+    },
+    {
+      "name": "resume_session",
+      "args": { "session_id": "string" },
+      "returns": "SessionRecord"
+    },
+    {
+      "name": "stop_session",
+      "args": { "session_id": "string" },
+      "returns": "SessionRecord"
+    },
+    {
+      "name": "select_transcript_range",
+      "args": { "input": "TranscriptRangeInput" },
+      "returns": "string[]",
+      "types": {
+        "TranscriptRangeInput": "{ session_id: string; source_id?: string; from_ms?: number; to_ms?: number }"
+      }
+    },
+    {
+      "name": "send_answer",
+      "args": { "input": "SendAnswerInput" },
+      "returns": "SendAnswerOutput",
+      "types": {
+        "SendAnswerInput": "{ session_id: string; action: \"answer\" | \"shorten\" | \"expand\" | \"continue_unread\" | \"revise_unread\"; target_segment_ids?: string[]; instruction?: string; output_language?: string }",
+        "SendAnswerOutput": "{ request_id: string; generation_id: string; suggestion_version: number }"
+      }
+    },
+    {
+      "name": "cancel_answer",
+      "args": { "request_id": "string" },
+      "returns": "boolean"
+    },
+    {
+      "name": "seek_reader",
+      "args": { "input": "SeekReaderInput" },
+      "returns": "number",
+      "types": {
+        "SeekReaderInput": "{ session_id: string; token_index: number }"
+      }
+    },
+    {
+      "name": "save_correction",
+      "args": { "input": "SaveCorrectionInput" },
+      "returns": "boolean",
+      "types": {
+        "SaveCorrectionInput": "{ session_id: string; segment_id: string; corrected_text: string }"
+      }
+    },
+    {
+      "name": "import_document",
+      "args": { "input": "ImportDocumentInput" },
+      "returns": "string",
+      "types": {
+        "ImportDocumentInput": "{ workspace_id: string; file_name: string; content_text?: string }"
+      }
+    },
+    {
+      "name": "select_model_profile",
+      "args": { "input": "SelectModelProfileInput" },
+      "returns": "SessionRecord",
+      "types": {
+        "SelectModelProfileInput": "{ session_id: string; model_profile_id: string }"
+      }
+    }
+  ]
+}

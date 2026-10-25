@@ -1,0 +1,33 @@
+{
+  "kind": "app_test",
+  "run_id": "report-2026-10-25T00-29-14-415Z",
+  "level": "L0",
+  "command": "npm run report",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T00:29:14.287Z",
+  "cases": [
+    {
+      "id": "report-generated",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "fail": 0,
+    "blocked": 0,
+    "total": 1
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\report-2026-10-25T00-29-14-415Z.json"
+  ]
+}

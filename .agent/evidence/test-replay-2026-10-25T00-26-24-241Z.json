@@ -1,0 +1,54 @@
+{
+  "kind": "app_test",
+  "run_id": "test-replay-2026-10-25T00-26-24-241Z",
+  "level": "L1",
+  "command": "npm run test:replay",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T00:26:24.115Z",
+  "cases": [
+    {
+      "id": "L1-replay-correction-overlap",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "L1-replay-partial-and-overlap",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "L1-replay-reconnect-reset",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    }
+  ],
+  "counts": {
+    "pass": 3,
+    "fail": 0,
+    "blocked": 0,
+    "total": 3
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-replay-2026-10-25T00-26-24-241Z.json"
+  ]
+}

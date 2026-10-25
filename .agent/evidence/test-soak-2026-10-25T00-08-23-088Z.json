@@ -1,0 +1,64 @@
+{
+  "kind": "app_test",
+  "run_id": "test-soak-2026-10-25T00-08-23-088Z",
+  "level": "L2",
+  "command": "npm run test:soak",
+  "exit_code": 2,
+  "status": "blocked",
+  "started_utc": "2026-10-25T00:07:23.080Z",
+  "cases": [
+    {
+      "id": "soak-accelerated-no-exceptions",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock time -> as-fast-as-possible loop"
+      ],
+      "note": "errors=0 processed=11159087 cycles=2510794 wall_min=1.00 (true gate: real-time long-run)"
+    },
+    {
+      "id": "soak-accelerated-heap-bounded",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock time -> as-fast-as-possible loop"
+      ],
+      "note": "heap_growth_mb=3.7 (true gate: real-time long-run)"
+    },
+    {
+      "id": "soak-accelerated-tick-lag",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock time -> as-fast-as-possible loop"
+      ],
+      "note": "max_tick_lag_ms=42 (true gate: real-time long-run)"
+    },
+    {
+      "id": "soak-mode-label",
+      "level": "L2",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "wall-clock time -> as-fast-as-possible loop"
+      ],
+      "note": "accelerated mode is diagnostic only; the soak gate requires --realtime --minutes>=30"
+    }
+  ],
+  "counts": {
+    "pass": 3,
+    "fail": 0,
+    "blocked": 1,
+    "total": 4
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-soak-2026-10-25T00-08-23-088Z.json"
+  ],
+  "note": "Soak provenance: realtime mode is the gate; accelerated mode is labeled non-gate. L2 is the closest schema level; these cases assert long-run stability, not browser behavior."
+}

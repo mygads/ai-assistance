@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { bridgeInvoke, bridgeMode, FIXTURE_SCRIPT, type SessionInfo } from "./bridge.ts";
+import { bridgeMode, FIXTURE_SCRIPT } from "./bridge.ts";
+import { send_answer, start_session, type SessionRecord } from "./ipc.ts";
 import { TranscriptStore, type TranscriptEvent } from "../domain/transcript.ts";
 import { buildScript, ReaderCursor } from "../domain/reader.ts";
 
@@ -22,7 +23,7 @@ function seedEvents(sessionId: string): TranscriptEvent[] {
 export default function App() {
   const mode = bridgeMode();
   const [view, setView] = useState<"dashboard" | "overlay">("dashboard");
-  const [session, setSession] = useState<SessionInfo | null>(null);
+  const [session, setSession] = useState<SessionRecord | null>(null);
   const [answer, setAnswer] = useState<string>("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string>("");
@@ -43,7 +44,7 @@ export default function App() {
   async function start() {
     setError("");
     try {
-      const r = await bridgeInvoke<SessionInfo>("start_session", { workspace_id: "default" });
+      const r = await start_session({ workspace_id: "default" });
       setSession(r.data);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -55,7 +56,7 @@ export default function App() {
     setSending(true);
     setError("");
     try {
-      const r = await bridgeInvoke<{ request_id: string }>("send_answer", {
+      const r = await send_answer({
         session_id: session.id,
         action: "answer",
         target_segment_ids: finals.filter((f) => f.event.role === "remote").map((f) => f.event.segment_id),

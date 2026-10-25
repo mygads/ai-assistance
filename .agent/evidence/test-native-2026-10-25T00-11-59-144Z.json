@@ -1,0 +1,41 @@
+{
+  "kind": "app_test",
+  "run_id": "test-native-2026-10-25T00-11-59-144Z",
+  "level": "L3",
+  "command": "npm run test:native",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T00:11:54.236Z",
+  "cases": [
+    {
+      "id": "L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "L3-native-session",
+      "level": "L3",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "native session: Unable to connect to \"http://127.0.0.1:4444/\", make sure browser driver is running on that address.\nIt seems like the service failed to start or is rejecting any connections."
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "fail": 1,
+    "blocked": 0,
+    "total": 2
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-native-2026-10-25T00-11-59-144Z.json"
+  ]
+}

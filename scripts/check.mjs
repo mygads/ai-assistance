@@ -2,12 +2,15 @@
 // Exit 0 = pass; 1 = fail (real defect); 2 = blocked (toolchain missing).
 // Blocked sections are reported, never silently skipped.
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
+import { finish } from "./lib/harness.mjs";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const startedUtc = new Date().toISOString();
 const failures = [];
 const blocked = [];
 const passed = [];
@@ -30,8 +33,32 @@ section("tsc --noEmit", () => {
   if (r.status !== 0) throw new Error(out.slice(0, 2000) || `tsc exit ${r.status}`);
 });
 
-// 2. JSON Schema: Draft 2020-12 validity + fixture/state conformance.
-section("schemas (ajv draft 2020-12)", () => {
+// 2b. Contract freeze: frozen IPC surface matches Rust handlers,
+// generated TS matches the frozen contract (drift fails the gate).
+section("contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)", () => {
+  const frozen = JSON.parse(readFileSync(path.join(rootDir, ".agent", "schemas", "ipc-commands.json"), "utf8"));
+  const rs = readFileSync(path.join(rootDir, "src-tauri", "src", "commands.rs"), "utf8");
+  const missing = frozen.commands
+    .map((c) => c.name)
+    .filter((name) => !new RegExp(`pub fn ${name}\\s*\\(`).test(rs));
+  if (missing.length > 0) throw new Error(`handlers missing in commands.rs: ${missing.join(", ")}`);
+  const lib = readFileSync(path.join(rootDir, "src-tauri", "src", "lib.rs"), "utf8");
+  const registered = (lib.match(/generate_handler!\s*\[([\s\S]*?)\]/)?.[1] ?? "")
+    .split(",").map((s) => s.trim().replace(/^commands::/, "")).filter(Boolean);
+  const unregistered = frozen.commands.map((c) => c.name).filter((n) => !registered.includes(n));
+  if (unregistered.length > 0) throw new Error(`commands not in generate_handler!: ${unregistered.join(", ")}`);
+  // ipc.ts freshness: regenerate and compare with the committed file.
+  const ipcPath = path.join(rootDir, "src", "ui", "ipc.ts");
+  const before = readFileSync(ipcPath, "utf8");
+  execFileSync(process.execPath, [path.join(rootDir, "scripts", "gen-ipc-types.mjs")], { cwd: rootDir, encoding: "utf8" });
+  const after = readFileSync(ipcPath, "utf8");
+  if (before !== after) throw new Error("src/ui/ipc.ts is stale: run npm run gen:ipc and commit the result");
+  const hashes = {};
+  for (const f of ["state.schema.json", "transcript-event.schema.json", "generation-event.schema.json", "run-report.schema.json", "ipc-commands.json"]) {
+    hashes[f] = createHash("sha256").update(readFileSync(path.join(rootDir, ".agent", "schemas", f))).digest("hex").slice(0, 16);
+  }
+  console.log(`  freeze hashes: ${JSON.stringify(hashes)}`);
+});section("schemas (ajv draft 2020-12)", () => {
   // strictRequired disabled: it rejects spec-valid if/then/required patterns
   // used by the pack's generation-event schema. Spec validity is the gate.
   const ajv = new Ajv2020({ strict: false, allErrors: true });
@@ -90,12 +117,12 @@ section("cargo clippy", () => {
 });
 
 console.log(JSON.stringify({ passed, blocked, failures }, null, 2));
-if (failures.length > 0) {
-  console.error(`check FAIL: ${failures.length} failing section(s)`);
-  process.exit(1);
-}
-if (blocked.length > 0) {
-  console.log(`check BLOCKED: ${blocked.join(", ")} (toolchain prerequisite missing)`);
-  process.exit(2);
-}
-console.log("check PASS");
+const cases = [
+  ...passed.map((name) => ({ id: name, level: "L0", status: "pass", replaced_boundaries: [] })),
+  ...blocked.map((name) => ({ id: name, level: "L0", status: "blocked", replaced_boundaries: [], note: "toolchain prerequisite missing" })),
+  ...failures.map((f) => {
+    const name = f.split(":")[0];
+    return { id: name, level: "L0", status: "fail", replaced_boundaries: [], note: f.slice(0, 300) };
+  }),
+];
+finish({ script: "check", level: "L0", cases, startedUtc });
