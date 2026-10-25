@@ -3,7 +3,7 @@
 // Blocked sections are reported, never silently skipped.
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -85,7 +85,47 @@ section("contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)", () => 
   }
 });
 
-// 3. Rust formatting + lints (requires cargo; clippy needs the MSVC linker on Windows).
+// 2c. Production isolation, A20 L0 slice (C30): privileged test hooks must
+// be absent from production code paths and no secret values may be checked
+// in. L3 (built binary) and L6 (installer) negatives ride on test:native and
+// test:installer in P05/P06; this gate holds the static half.
+section("production isolation (A20 L0)", () => {
+  const rsFiles = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (["target", "node_modules"].includes(e.name)) continue;
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".rs") || e.name.endsWith(".ts") || e.name.endsWith(".tsx") || e.name.endsWith(".mjs")) rsFiles.push(p);
+    }
+  };
+  walk(path.join(rootDir, "src-tauri", "src"));
+  walk(path.join(rootDir, "src"));
+  walk(path.join(rootDir, "scripts"));
+  const violations = [];
+  for (const f of rsFiles) {
+    const text = readFileSync(f, "utf8");
+    if (/cfg\(\s*feature\s*=\s*"test-harness"\s*\)/.test(text)) {
+      violations.push(`${path.relative(rootDir, f)}: feature-gated test hook in shipped source`);
+    }
+  }
+  // No test-harness cfg anywhere in shipped source: every #[cfg(test)] block
+  // compiles out of the binary, and no feature flag can smuggle one back in.
+  const secretRe = /sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|xox[bpas]-[A-Za-z0-9-]{10,}|ghp_[A-Za-z0-9]{20,}|BEGIN [A-Z ]*PRIVATE KEY/;
+  for (const f of rsFiles) {
+    if (/\.agent|evidence/.test(f)) continue;
+    if (secretRe.test(readFileSync(f, "utf8"))) violations.push(`${path.relative(rootDir, f)}: secret-shaped literal`);
+  }
+  const fixtureSrv = readFileSync(path.join(rootDir, "scripts", "lib", "fixture-server.mjs"), "utf8");
+  if (!fixtureSrv.includes("127.0.0.1")) throw new Error("fixture server lost its loopback bind marker");
+  if (fixtureSrv.includes("0.0.0.0")) throw new Error("fixture server binds a non-loopback interface");
+  const bridge = readFileSync(path.join(rootDir, "src", "ui", "bridge.ts"), "utf8");
+  if (!bridge.includes("__TAURI_INTERNALS__")) throw new Error("bridge lost its native-mode detection");
+  if (!/"native" : "fixture"/.test(bridge) && !/\? "native" : "fixture"/.test(bridge)) {
+    throw new Error("bridge must prefer native IPC under Tauri and fixture only outside it");
+  }
+  if (violations.length > 0) throw new Error(violations.slice(0, 8).join("; "));
+});
 function cargoEnv() {
   const home = process.env.USERPROFILE ?? process.env.HOME ?? "";
   const bin = path.join(home, ".cargo", "bin");

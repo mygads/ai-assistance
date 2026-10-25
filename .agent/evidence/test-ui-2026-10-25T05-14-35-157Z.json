@@ -1,0 +1,118 @@
+{
+  "kind": "app_test",
+  "run_id": "test-ui-2026-10-25T05-14-35-157Z",
+  "level": "L2",
+  "command": "npm run test:ui",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T05:14:22.326Z",
+  "cases": [
+    {
+      "id": "L2-ui-build",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "L2-dashboard-renders",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "bridge label: bridge: fixture"
+    },
+    {
+      "id": "L2-start-session-journey",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "Sesi fixture-session-01 · tangkapan live | Tersimpan 2 segmen final"
+    },
+    {
+      "id": "L2-overlay-send-journey",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "script_chars=55 meta=Saran v1 · req-fixture-1 reader=committed=0 tentative=0 confidence=tracking"
+    },
+    {
+      "id": "L2-focus-preserved-during-stream",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "activeElement=send-answer"
+    },
+    {
+      "id": "L2-send-action-shorten",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "second send streamed as v2"
+    },
+    {
+      "id": "L2-drawer-focus-return",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "rows=2 focus=drawer-toggle"
+    },
+    {
+      "id": "L2-token-seek-band",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "band=BAND BACA: draf ringkas v2 fixture mengapa"
+    },
+    {
+      "id": "L2-overlay-compact-mode",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "compact labels + separate statuses present"
+    },
+    {
+      "id": "L2-dashboard-readiness",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "sources + profile + language + docs + pause/resume"
+    }
+  ],
+  "counts": {
+    "pass": 10,
+    "fail": 0,
+    "blocked": 0,
+    "total": 10
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-ui-2026-10-25T05-14-35-157Z.json"
+  ],
+  "screenshots": [
+    "dashboard.png",
+    "overlay.png"
+  ]
+}

@@ -433,10 +433,19 @@
         "A20",
         "A22"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        "check-2026-10-25T05-15-20-837Z.json",
+        "unit-2026-10-25T05-15-21-516Z.json",
+        "test-integration-2026-10-25T05-16-03-305Z.json",
+        "test-replay-2026-10-25T05-16-04-133Z.json",
+        "test-ui-2026-10-25T05-16-09-944Z.json",
+        "test-native-2026-10-25T05-16-30-924Z.json",
+        "verify-2026-10-25T05-15-15-604Z.json",
+        "report-2026-10-25T05-17-45-577Z.json"
+      ]
     },
     {
       "id": "T17",

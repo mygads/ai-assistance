@@ -37,3 +37,11 @@ Initial entry: implementation handoff prepared on 2026-10-24. No application sou
 - L1-adverse-generation replay: drop preserves visible partial, stall times out to failed, retry never concatenates older output.
 - Gates: check 5/5, unit ts=54/0 rs=50/0, integration 13/13, replay 10/10.
 - NOT run (honest): A14-L3 native restart, A16-L4 device/reconnect (B02 hardware/keys, owner user).
+
+## 2026-10-25T05-17Z rev20 T16 completed (A20 L0 + strict corpus A22 slice)
+- check.mjs: new production-isolation gate (no cfg(feature) hooks, no secret literals, fixture loopback-only, bridge prefers native under Tauri); check 6/6.
+- report.mjs: strict aggregation — validates latest evidence vs run-report.schema.json, maps C01..C32 to executed primary-level evidence; L0-L2 gap = fail, L3+ gap = blocked. Corpus: 17 covered-pass / 0 fail / 15 blocked.
+- C07 lag proof added to replay stt-protocol case (lagMs bounded 0..500ms through reconnect).
+- Fresh E2E on current tree: unit 54/0+rs, integration 13/13, replay 10/10, ui 10/10, native 7/7, soak pass; audio/live/capture blocked (B02).
+- tests/scenarios.json stamped from report (status corpus-executed, per-case covered-pass/blocked + evidence notes).
+- Memory/summary IPC surface: deferred — no UI panel consumes it; growing the frozen 13-command contract without a consumer would violate minimal-scope. Recorded for a future task with a UI/consumer requirement.

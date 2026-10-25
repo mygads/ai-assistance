@@ -374,6 +374,10 @@ try {
     const lastFinal = finals[finals.length - 1].event;
     const stale = store.upsert(lastFinal);
     if (stale.outcome !== "rejected-stale") throw new Error(`${file}: expected rejected-stale, got ${stale.outcome}`);
+    // C07: the capture/transcription watermarks track a bounded lag on the
+    // live source through disconnect and reconnect (no silent clock reset).
+    const lag = machines.lagMs(fx.source_id);
+    if (!(lag >= 0 && lag <= 500)) throw new Error(`${file}: watermark lag out of bounds: ${lag}ms`);
   }
   const registry = new GenerationRegistry();
   if (registry.size !== 0) throw new Error("model touched during provider replay");

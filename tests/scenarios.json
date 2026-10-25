@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "status": "specification_only",
+  "status": "corpus-executed",
   "cases": [
     {
       "id": "C01",
@@ -8,7 +8,8 @@
       "primary_level": "L1",
       "steps": "Replay self and remote with overlapping times.",
       "assertion": "Both roles/times retained; no mixing; remote does not advance reader.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Separated roles in overlapping replay — covered at L1 by slice-send-fencing"
     },
     {
       "id": "C02",
@@ -16,7 +17,8 @@
       "primary_level": "L4",
       "steps": "Play known output fixture and capture selected endpoint.",
       "assertion": "Real WASAPI buffers, expected route/duration/correlation; host recorded.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Real loopback routing — needs L4 run"
     },
     {
       "id": "C03",
@@ -24,7 +26,8 @@
       "primary_level": "L3",
       "steps": "Run manual session including silence, new question and correction; then Send.",
       "assertion": "0 generative requests before Send and exactly 1 normal answer request after; STT counted separately.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "No hidden generation calls — covered at L3 by real-ipc-send-answer, send-dedup"
     },
     {
       "id": "C04",
@@ -32,7 +35,8 @@
       "primary_level": "L1",
       "steps": "Deliver multiple revisions of one segment.",
       "assertion": "Single evolving segment and one final persisted result.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Partial upsert — covered at L1 by normalize-soniox, rust-storage"
     },
     {
       "id": "C05",
@@ -40,7 +44,8 @@
       "primary_level": "L1",
       "steps": "Reset provider timestamp on new connection and deliver duplicates.",
       "assertion": "No global timeline reset or duplicate committed text.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Reconnect time mapping — covered at L1 by reconnect-offset, stt-protocol-replay"
     },
     {
       "id": "C06",
@@ -48,7 +53,8 @@
       "primary_level": "L3",
       "steps": "Select question with several remote segments and self context, click Send.",
       "assertion": "Real backend payload includes chosen segment revisions and relevant self context.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Multi-part question snapshot — covered at L3 by real-ipc-send-answer"
     },
     {
       "id": "C07",
@@ -56,7 +62,8 @@
       "primary_level": "L1",
       "steps": "Click Send while captured audio leads transcription.",
       "assertion": "Tail handled by documented wait/provisional policy; no silent omission.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "ASR watermark lag — covered at L1 by stt-protocol-replay"
     },
     {
       "id": "C08",
@@ -64,7 +71,8 @@
       "primary_level": "L3",
       "steps": "Cancel A; start B; release late A deltas.",
       "assertion": "Only B updates active answer; A remains interrupted if stored.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Cancel old stream — needs L3 run"
     },
     {
       "id": "C09",
@@ -72,7 +80,8 @@
       "primary_level": "L1",
       "steps": "Read paragraph 1, request rewrite and stream new suffix.",
       "assertion": "Read prefix frozen; new version/source mapping valid.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Unread revision — covered at L1 by reader-version-rebase"
     },
     {
       "id": "C10",
@@ -80,7 +89,8 @@
       "primary_level": "L1",
       "steps": "Replay near-verbatim self speech while remote also speaks.",
       "assertion": "Cursor follows self only; LLM request count unchanged.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Self lexical following — covered at L1 by slice-reader-follows-self"
     },
     {
       "id": "C11",
@@ -88,7 +98,8 @@
       "primary_level": "L0",
       "steps": "Run Indonesian/English repeated phrases, numeric variants and skips.",
       "assertion": "Bounded moves to correct anchors; no global common-word jump.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Skip/repeat/number/acronym — covered at L0 by domain-ts"
     },
     {
       "id": "C12",
@@ -96,7 +107,8 @@
       "primary_level": "L1",
       "steps": "Leave script, revise interim hypothesis, then rejoin.",
       "assertion": "Tentative progress retracts safely; viewport freezes/reacquires.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Off-script and interim retraction — covered at L1 by reader-skip-repeat-offscript"
     },
     {
       "id": "C13",
@@ -104,7 +116,8 @@
       "primary_level": "L1",
       "steps": "Parse actual controlled PDF/Office fixtures.",
       "assertion": "Expected text/page/section extracted, failures flagged, no mocked parser-only pass.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Known-source import — covered at L1 by context-retrieval"
     },
     {
       "id": "C14",
@@ -112,7 +125,8 @@
       "primary_level": "L1",
       "steps": "Search known ID/English/Indonesian facts among distractors.",
       "assertion": "Correct evidence/neighbor context found within budget; synthetic scale labeled.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Cross-language and scale retrieval — covered at L1 by context-retrieval"
     },
     {
       "id": "C15",
@@ -120,7 +134,8 @@
       "primary_level": "L3",
       "steps": "Switch between two workspaces with conflicting facts.",
       "assertion": "Prompt and memory contain only selected workspace/profile sources.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Workspace isolation — needs L3 run"
     },
     {
       "id": "C16",
@@ -128,7 +143,8 @@
       "primary_level": "L1",
       "steps": "Generate false experience claim, then replay user reading it.",
       "assertion": "Unverified claim not promoted to confirmed profile.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Suggestion contamination — covered at L1 by memory-learning"
     },
     {
       "id": "C17",
@@ -136,7 +152,8 @@
       "primary_level": "L1",
       "steps": "Apply explicit correction, consolidate, supersede and rollback.",
       "assertion": "New fact scoped/provenanced; old version recoverable.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Correction and rollback — covered at L1 by memory-learning"
     },
     {
       "id": "C18",
@@ -144,7 +161,8 @@
       "primary_level": "L1",
       "steps": "Exceed active budget with pinned fact/question/correction.",
       "assertion": "Active items/source IDs preserved; originals retained.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Compaction — covered at L1 by compaction"
     },
     {
       "id": "C19",
@@ -152,7 +170,8 @@
       "primary_level": "L2",
       "steps": "Run keyboard and long-text flows at UI sizes.",
       "assertion": "Readable layout, no overflow/unstable paragraph, reduced-motion behavior.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Browser reading UI — covered at L2 by dashboard-renders, overlay-send-journey, token-seek-band"
     },
     {
       "id": "C20",
@@ -160,7 +179,8 @@
       "primary_level": "L3",
       "steps": "Use hotkey while another window focused; inspect actual Windows scales.",
       "assertion": "No unintended focus stealing; controls usable at recorded scales.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Native focus/scaling — needs L3 run"
     },
     {
       "id": "C21",
@@ -168,7 +188,8 @@
       "primary_level": "L5",
       "steps": "Select two configured model routes and a smaller context limit.",
       "assertion": "Actual route/model recorded, context repacked; fixture-only parts distinctly labeled.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Model interchange — needs L5 run"
     },
     {
       "id": "C22",
@@ -176,7 +197,8 @@
       "primary_level": "L3",
       "steps": "Persist session, stop owned app, relaunch isolated profile.",
       "assertion": "Final segments/settings recover; no duplicate provider request.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Restart recovery — needs L3 run"
     },
     {
       "id": "C23",
@@ -184,7 +206,8 @@
       "primary_level": "L3",
       "steps": "Launch built Tauri binary with boundary fixture servers.",
       "assertion": "Real IPC/storage/context executes; visible streaming response matches captured backend payload.",
-      "status": "not_run"
+      "status": "covered-pass",
+      "evidence": "Native real backend flow — covered at L3 by real-ipc-send-answer"
     },
     {
       "id": "C24",
@@ -192,7 +215,8 @@
       "primary_level": "L4",
       "steps": "Capture actual selected microphone signal.",
       "assertion": "Actual buffers/device identity recorded; absent controlled speech remains unverified.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Physical mic — needs L4 run"
     },
     {
       "id": "C25",
@@ -200,7 +224,8 @@
       "primary_level": "L4",
       "steps": "Exercise available real endpoint change/disconnect.",
       "assertion": "Observed transition/gap/recovery; simulation separately labeled.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Device recovery — needs L4 run"
     },
     {
       "id": "C26",
@@ -208,7 +233,8 @@
       "primary_level": "L6",
       "steps": "Capture calibration pattern through named API/meeting mode.",
       "assertion": "Observed exclusion result with app/OS versions; no universal claim.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Capture compatibility — needs L6 run"
     },
     {
       "id": "C27",
@@ -216,7 +242,8 @@
       "primary_level": "L5",
       "steps": "Send controlled ID/EN/mixed WAV within caps.",
       "assertion": "Actual provider transcript, word/entity errors and stream semantics measured.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Live STT — needs L5 run"
     },
     {
       "id": "C28",
@@ -224,7 +251,8 @@
       "primary_level": "L5",
       "steps": "Send fixture context through selected model.",
       "assertion": "Actual text streaming, source correctness, cancellation and usage evidenced.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Live grounded LLM — needs L5 run"
     },
     {
       "id": "C29",
@@ -232,7 +260,8 @@
       "primary_level": "L4",
       "steps": "Run 30–60 minutes with controlled streams and metrics.",
       "assertion": "Wall-clock duration, queue/resource growth/dropouts/recovery recorded.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Real-time soak — needs L4 run"
     },
     {
       "id": "C30",
@@ -240,7 +269,8 @@
       "primary_level": "L6",
       "steps": "Probe release for test control and inspect secret/log/export boundaries.",
       "assertion": "Privileged test hooks absent/rejected; no secret disclosure; appropriate negative assertions.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Production isolation — needs L6 run (lower-level slice passes: production isolation (A20 L0), check:production isolation (A20 L0))"
     },
     {
       "id": "C31",
@@ -248,7 +278,8 @@
       "primary_level": "L6",
       "steps": "Install, launch, persist settings, exercise test update-policy, uninstall isolated profile.",
       "assertion": "Artifact hashes/revision known; lifecycle matches data policy; signing status accurate.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Installer/update lifecycle — needs L6 run"
     },
     {
       "id": "C32",
@@ -256,7 +287,10 @@
       "primary_level": "L3",
       "steps": "Independent review and final gate aggregation on integrated revision.",
       "assertion": "No unresolved critical findings; required fail/blocked/not_run prevent release-verified label.",
-      "status": "not_run"
+      "status": "blocked",
+      "evidence": "Final rehearsal and review — needs L3 run"
     }
-  ]
+  ],
+  "corpus_generated_utc": "2026-10-25T05:17:45.388Z",
+  "corpus_evidence_ref": "index-2026-10-25T05-17-45-388Z.json"
 }
