@@ -380,10 +380,14 @@
         "A11",
         "A13"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        "check-2026-10-25T05-06-28-842Z.json",
+        "unit-2026-10-25T05-06-34-744Z.json",
+        "test-integration-2026-10-25T05-07-19-119Z.json"
+      ]
     },
     {
       "id": "T15",

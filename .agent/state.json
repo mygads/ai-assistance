@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 17,
+  "revision": 18,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -10,7 +10,7 @@
     "checkout": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack",
     "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5"
   },
-  "last_integrated_commit": "cdd189d",
+  "last_integrated_commit": "b162aa9",
   "completed_task_ids": [
     "T00",
     "T01",
@@ -25,10 +25,11 @@
     "T10",
     "T11",
     "T12",
-    "T13"
+    "T13",
+    "T14"
   ],
   "active_tasks": [
-    "T14"
+    "T15"
   ],
   "blockers": [
     {
@@ -137,10 +138,44 @@
       "status": "not_run",
       "evidence_refs": []
     },
-    "check-2026-10-25T04-55": "pass 5/5 (tsc, freeze, schemas, fmt, clippy)",
-    "unit-2026-10-25T04-55": "pass ts=47/0 rs=50/0",
-    "integration-2026-10-25T04-56": "pass 11/11 incl L1-memory-learning (6/6 Rust)",
-    "verify-2026-10-25T04-39": "carried from T12: 49 pass / 0 fail / 7 blocked (known prerequisites)"
+    "check-2026-10-25T04-55": {
+      "status": "pass",
+      "evidence_refs": [],
+      "note": "pass 5/5 (tsc, freeze, schemas, fmt, clippy)"
+    },
+    "unit-2026-10-25T04-55": {
+      "status": "pass",
+      "evidence_refs": [],
+      "note": "pass ts=47/0 rs=50/0"
+    },
+    "integration-2026-10-25T04-56": {
+      "status": "pass",
+      "evidence_refs": [],
+      "note": "pass 11/11 incl L1-memory-learning (6/6 Rust)"
+    },
+    "verify-2026-10-25T04-39": {
+      "status": "fail",
+      "evidence_refs": [],
+      "note": "carried from T12: 49 pass / 0 fail / 7 blocked (known prerequisites)"
+    },
+    "check-2026-10-25T05-06": {
+      "status": "pass",
+      "evidence_refs": [
+        "check-2026-10-25T05-06-28-842Z.json"
+      ]
+    },
+    "unit-2026-10-25T05-06": {
+      "status": "pass",
+      "evidence_refs": [
+        "unit-2026-10-25T05-06-34-744Z.json"
+      ]
+    },
+    "integration-2026-10-25T05-07": {
+      "status": "pass",
+      "evidence_refs": [
+        "test-integration-2026-10-25T05-07-19-119Z.json"
+      ]
+    }
   },
   "next_actions": [
     "SERIAL FALLBACK 2026-10-25: subagent worktree isolation unavailable (Agent tool: 'Cannot create agent worktree: not in a git repository and no WorktreeCreate hooks are configured'); per AGENTS.md/EXECUTION.md executing the P02 graph serially with lane-role discipline, one lane per commit. Wave-1 worktrees removed; no worker results invented.",
@@ -154,7 +189,7 @@
     "T12 (completed): model switch + retrieval-backed context + action-aware flow (A02/A04/A05 L1+L3, A13 L1 with L5 blocked on B02, A15 L3) — context.rs budgets + sanitized FTS query + greedy pack, snapshot carries profile/retrieval/packet, action-aware synthesis mirrored in TS, fence release on settle, L1-model-switch-repack + L1-context-assembly + L3-model-switch-next-request; check 5/5, unit ts 41/0 + rs 50/0, integration 10/10, replay 9/9, ui 10/10, native 7/7, verify 49/0/7 blocked (known prerequisites)",
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live",
-    "T14: session compaction + restart/refresh recovery (A16/A17); then T15 tools, T16 E2E UI+memory IPC surface"
+    "T15: recovery and adverse network behavior (A14/A16); then T16 E2E corpus + strict report aggregation"
   ],
   "max_parallel_workers": 3
 }

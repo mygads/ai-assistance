@@ -11,6 +11,6 @@ Status: P01 complete (T00–T04 integrated at b331d9b). P02 executing SERIALLY �
 
 7. T12 DONE (coordinator-implemented): model switch + retrieval-backed context + action-aware flow — L1-model-switch-repack, L1-context-assembly, L3-model-switch-next-request; check 5/5, unit ts 41/0 + rs 50/0, integration 10/10, replay 9/9, ui 10/10, native 7/7, verify 49/0/7 blocked. A13-L5 stays blocked on B02 keys.
 
-8. T13 DONE (rev17). Next: T14 session compaction + restart/refresh recovery (A16/A17). Then T15 tools, T16 E2E incl. memory IPC surface + full gates, T17+ native/audio/live/soak/visual.
+8. T13 DONE (rev17). Next: T14 DONE (rev18). Next: T15 recovery + adverse network (A14/A16), then T16 E2E + report aggregation.
 
 Blockers carried forward: B01 resolved. B02 remains (no provider keys → test:live blocked, owner: user). Physical-audio capture and meeting-capture calibration remain blocked on hardware/session prerequisites, not passes.

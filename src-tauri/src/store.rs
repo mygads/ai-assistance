@@ -162,6 +162,14 @@ CREATE TABLE IF NOT EXISTS memory_items(
   kind TEXT NOT NULL, content TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'draft',
   evidence_json TEXT NOT NULL DEFAULT '[]', version INTEGER NOT NULL DEFAULT 1,
   supersedes_id TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL);
+-- T14: provenance-preserving compaction (A11). Summaries are per revision
+-- coverage range and cite original evidence; raw transcript and memory rows
+-- are NEVER deleted by compaction (no DELETE exists on this path).
+CREATE TABLE IF NOT EXISTS session_summaries(
+  id TEXT PRIMARY KEY, session_id TEXT NOT NULL, workspace_id TEXT NOT NULL,
+  coverage_start_rev INTEGER NOT NULL, coverage_end_rev INTEGER NOT NULL,
+  summary TEXT NOT NULL, refs_json TEXT NOT NULL DEFAULT '[]',
+  created_at TEXT NOT NULL);
 ";
 
 /// Best-effort migration for dev databases created before a column existed.
@@ -715,6 +723,146 @@ pub fn recall_memory(
         .map_err(|e| CommandError::Storage(e.to_string()))?;
     let rows = stmt
         .query_map(params![workspace_id, profile_id], read_memory_row)
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| CommandError::Storage(e.to_string()))
+}
+
+/// A persisted structured summary over a revision coverage range (T14/A11).
+#[derive(Debug, Clone)]
+pub struct SessionSummary {
+    pub id: String,
+    pub session_id: String,
+    pub workspace_id: String,
+    pub coverage_start_rev: i64,
+    pub coverage_end_rev: i64,
+    pub summary: String,
+    pub refs_json: String,
+    pub created_at: String,
+}
+
+/// Parameters for a new session summary.
+pub struct NewSessionSummary<'a> {
+    pub id: &'a str,
+    pub session_id: &'a str,
+    pub workspace_id: &'a str,
+    pub coverage_start_rev: i64,
+    pub coverage_end_rev: i64,
+    pub summary: &'a str,
+    pub refs_json: &'a str,
+}
+
+fn read_summary_row(row: &rusqlite::Row) -> rusqlite::Result<SessionSummary> {
+    Ok(SessionSummary {
+        id: row.get(0)?,
+        session_id: row.get(1)?,
+        workspace_id: row.get(2)?,
+        coverage_start_rev: row.get(3)?,
+        coverage_end_rev: row.get(4)?,
+        summary: row.get(5)?,
+        refs_json: row.get(6)?,
+        created_at: row.get(7)?,
+    })
+}
+
+const SUMMARY_COLS: &str = "id, session_id, workspace_id, coverage_start_rev, coverage_end_rev, summary, refs_json, created_at";
+
+/// Record a compaction summary. Enforces the A11/C18 rules: non-empty coverage
+/// range, grounding in original evidence (never a summary-of-summary chain),
+/// and forward-moving coverage so background summarization cannot overwrite
+/// newer corrections. Raw transcript/memory rows are untouched by this path.
+pub fn record_session_summary(
+    conn: &Connection,
+    m: &NewSessionSummary,
+) -> Result<SessionSummary, CommandError> {
+    if m.id.trim().is_empty() || m.session_id.trim().is_empty() || m.workspace_id.trim().is_empty()
+    {
+        return Err(CommandError::InvalidInput(
+            "summary/session/workspace ids must not be empty".to_string(),
+        ));
+    }
+    if m.coverage_end_rev <= m.coverage_start_rev {
+        return Err(CommandError::InvalidInput(
+            "coverage must be a non-empty revision range".to_string(),
+        ));
+    }
+    if m.summary.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "summary must not be empty".to_string(),
+        ));
+    }
+    let refs: Vec<serde_json::Value> = serde_json::from_str(m.refs_json)
+        .map_err(|e| CommandError::InvalidInput(format!("refs_json must be a JSON array: {e}")))?;
+    if refs.is_empty()
+        || refs
+            .iter()
+            .any(|r| r.as_str().is_none_or(|s| s.trim().is_empty()))
+    {
+        return Err(CommandError::InvalidInput(
+            "refs must be a non-empty array of evidence ids".to_string(),
+        ));
+    }
+    if !refs
+        .iter()
+        .any(|r| r.as_str().is_none_or(|s| !s.starts_with("sum-")))
+    {
+        return Err(CommandError::InvalidInput(
+            "summary must cite original evidence, not only older summaries".to_string(),
+        ));
+    }
+    let max_end: Option<i64> = conn
+        .query_row(
+            "SELECT MAX(coverage_end_rev) FROM session_summaries WHERE session_id=?1",
+            params![m.session_id],
+            |row| row.get(0),
+        )
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    if max_end.is_some_and(|end| m.coverage_end_rev < end) {
+        return Err(CommandError::InvalidInput(
+            "coverage moves backward over newer corrections".to_string(),
+        ));
+    }
+    let created_at = Utc::now().to_rfc3339();
+    conn.execute(
+        "INSERT INTO session_summaries(id,session_id,workspace_id,coverage_start_rev,coverage_end_rev,summary,refs_json,created_at) \
+         VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",
+        params![m.id, m.session_id, m.workspace_id, m.coverage_start_rev, m.coverage_end_rev, m.summary, m.refs_json, created_at],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    load_session_summary(conn, m.id)?
+        .ok_or_else(|| CommandError::Storage(format!("summary {} vanished after insert", m.id)))
+}
+
+pub fn load_session_summary(
+    conn: &Connection,
+    id: &str,
+) -> Result<Option<SessionSummary>, CommandError> {
+    let mut stmt = conn
+        .prepare(&format!(
+            "SELECT {SUMMARY_COLS} FROM session_summaries WHERE id=?1"
+        ))
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let mut rows = stmt
+        .query_map(params![id], read_summary_row)
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    match rows.next() {
+        None => Ok(None),
+        Some(row) => Ok(Some(row.map_err(|e| CommandError::Storage(e.to_string()))?)),
+    }
+}
+
+/// Summaries for a session, oldest coverage first.
+pub fn load_session_summaries(
+    conn: &Connection,
+    session_id: &str,
+) -> Result<Vec<SessionSummary>, CommandError> {
+    let mut stmt = conn
+        .prepare(&format!(
+            "SELECT {SUMMARY_COLS} FROM session_summaries WHERE session_id=?1 ORDER BY coverage_end_rev ASC"
+        ))
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let rows = stmt
+        .query_map(params![session_id], read_summary_row)
         .map_err(|e| CommandError::Storage(e.to_string()))?;
     rows.collect::<Result<Vec<_>, _>>()
         .map_err(|e| CommandError::Storage(e.to_string()))

@@ -23,3 +23,10 @@ Initial entry: implementation handoff prepared on 2026-10-24. No application sou
 - NewMemory params struct + draft() ctor (clippy too_many_arguments on 8-arg fn fixed properly, not silenced).
 - L1-memory-learning 6/6 Rust; TS memory.test.ts 6 tests vs restored MemoryStore (clobber of T01 scaffold detected via unit failure and recovered from git, then merged).
 - Gates: check 5/5, unit ts=47/0 rs=50/0, integration 11/11. No contract/schema changes (frozen 13 commands untouched); memory IPC surface deferred to T16 E2E.
+
+## 2026-10-25T05-07Z rev18 T14 completed (A11 + A13 compaction slice)
+- store.rs: session_summaries table + record/load_session_summary(ies); A11/C18 rules: non-empty coverage range, grounded refs (never summary-only), forward-moving coverage; compaction has no DELETE path.
+- src/domain/compaction.ts: isGrounded/validateCoverage/selectRetention/repackWithSummaries; summaries (prio 50, sum- ids) outrank raw history so hemat keeps summary, drops raw; detail recovers raw.
+- L1-compaction 3/3 Rust (incl. parallel-db isolation fix: distinct temp names per test); TS compaction.test.ts 7 tests.
+- Gates: check 5/5, unit ts=54/0 rs=50/0, integration 12/12. Also fixed T13 checkpoint schema violation (gates must be {status, evidence_refs} objects per state.schema.json).
+- No contract/schema changes; summary IPC surface deferred to T16.
