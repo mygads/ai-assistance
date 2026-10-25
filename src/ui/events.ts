@@ -9,7 +9,7 @@
 // streaming; the event names and shapes stay stable.
 
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import { bridgeMode } from "./bridge.ts";
+import { bridgeMode, isFixtureCancelled } from "./bridge.ts";
 
 export interface SuggestionDelta {
   request_id: string;
@@ -63,6 +63,9 @@ export function emitFixtureSuggestion(
   const chunks = chunkSuggestion(text);
   chunks.forEach((text_delta, index) => {
     setTimeout(() => {
+      // A fixture cancel stops the visible stream exactly like the native
+      // worker stopping after a cancelled generation row: no late deltas.
+      if (isFixtureCancelled(requestId)) return;
       for (const h of fixtureDeltaHandlers) h({ request_id: requestId, generation_id: generationId, index, text_delta, fixture: true });
       if (index === chunks.length - 1) {
         const done: SuggestionDone = { request_id: requestId, generation_id: generationId, suggestion_version: version, status: "done", fixture: true };

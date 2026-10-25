@@ -179,10 +179,10 @@
       "acceptance_ids": [
         "A12"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/check-2026-10-25T03-10-31-843Z.json", ".agent/evidence/unit-2026-10-25T03-10-32-948Z.json", ".agent/evidence/test-integration-2026-10-25T03-11-12-174Z.json", ".agent/evidence/test-replay-2026-10-25T03-11-13-618Z.json", ".agent/evidence/test-ui-2026-10-25T03-11-38-812Z.json", ".agent/evidence/test-native-2026-10-25T03-12-24-692Z.json", ".agent/evidence/verify-2026-10-25T03-10-22-771Z.json"]
     },
     {
       "id": "T08",
@@ -200,7 +200,7 @@
         "A06",
         "A07"
       ],
-      "status": "pending",
+      "status": "in_progress",
       "worktree": null,
       "baseline_commit": null,
       "evidence_refs": []

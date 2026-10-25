@@ -2,7 +2,7 @@
 // The native bridge is REPLACED by the labeled fixture bridge in the browser;
 // this proves browser-visible interactions only, never native IPC (TESTING §5).
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { finish, root } from "./lib/harness.mjs";
 
@@ -25,11 +25,19 @@ if (chromiumPath && !existsSync(chromiumPath)) {
   finish({ script: "test:ui", level: "L2", cases, startedUtc });
 }
 
-// Serve the production UI build (vite build output) over loopback.
+// Serve the production UI build (vite build output) over loopback. dist/ must
+// exist AND be newer than every src/ui file: a stale bundle would test
+// yesterday's frontend (the same staleness class test-native guards for the
+// embedded binary).
 const distDir = path.join(rootDir, "dist");
-if (!existsSync(path.join(distDir, "index.html"))) {
+const distIndex = path.join(distDir, "index.html");
+const uiDir = path.join(rootDir, "src", "ui");
+const newestUi = readdirSync(uiDir).map((f) => statSync(path.join(uiDir, f)).mtimeMs).reduce((a, b) => Math.max(a, b), 0);
+if (!existsSync(distIndex) || statSync(distIndex).mtimeMs < newestUi) {
   const build = await new Promise((resolve) => {
-    const p = spawn(process.platform === "win32" ? "npx.cmd" : "npx", ["vite", "build"], { cwd: rootDir, shell: false });
+    // .cmd shims cannot be spawn-ed directly on Windows (EINVAL); route
+    // through the shell as one literal-only command (same rule as test-native).
+    const p = spawn("npx vite build", { cwd: rootDir, shell: true });
     let err = "";
     p.stderr.on("data", (c) => { err += c; });
     p.on("close", (code) => resolve({ code, err }));
@@ -104,6 +112,64 @@ try {
   if (!/committed=0/.test(readerState ?? "")) throw new Error(`reader jumped on unrelated naskah: ${readerState}`);
   await page.screenshot({ path: path.join(artDir, "overlay.png") });
   push("L2-overlay-send-journey", "pass", [NATIVE_BRIDGE_REPLACED], `script_chars=${scriptText.length} meta=${(meta ?? "").trim()} reader=${(readerState ?? "").trim()}`);
+  // Fokus tidak boleh pindah selama streaming: tombol Kirim yang diklik
+  // harus tetap memegang fokus setelah done (regresi = node di-remount).
+  const focused = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+  if (focused !== "send-answer") throw new Error(`focus moved during streaming: ${focused}`);
+  push("L2-focus-preserved-during-stream", "pass", [NATIVE_BRIDGE_REPLACED], `activeElement=${focused}`);
+  // Aksi Perbarui/Lanjutkan/Lebih singkat = send berbeda: versi naik ke v2.
+  await page.getByTestId("action-shorten").click();
+  await page.waitForFunction(() => (document.querySelector('[data-testid="answer-meta"]')?.textContent ?? "").includes("v2"), undefined, { timeout: 10000 });
+  push("L2-send-action-shorten", "pass", [NATIVE_BRIDGE_REPLACED], "second send streamed as v2");
+  // Drawer: buka, isi terlihat, tutup mengembalikan fokus ke pemicunya.
+  await page.getByTestId("drawer-toggle").click();
+  await page.getByTestId("transcript-drawer").waitFor({ timeout: 5000 });
+  const drawerItems = await page.getByTestId("transcript-drawer").locator("li").count();
+  if (drawerItems < 2) throw new Error(`drawer transcript missing rows: ${drawerItems}`);
+  await page.getByTestId("instruction-input").fill("gunakan bahasa sederhana");
+  await page.getByTestId("drawer-toggle").click();
+  const focusAfterDrawer = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
+  if (focusAfterDrawer !== "drawer-toggle") throw new Error(`drawer close did not return focus: ${focusAfterDrawer}`);
+  push("L2-drawer-focus-return", "pass", [NATIVE_BRIDGE_REPLACED], `rows=${drawerItems} focus=${focusAfterDrawer}`);
+  // Seek manual: klik token indeks 5 → committed=5, band menampilkan katanya.
+  // Saran v2 ternormalisasi: draf(0) jawaban(1) v2(2) fixture(3) mengapa(4) …
+  await page.getByTestId("token-5").click();
+  await page.waitForFunction(() => (document.querySelector('[data-testid="reader-state"]')?.textContent ?? "").includes("committed=5"), undefined, { timeout: 5000 });
+  const band = await page.getByTestId("reading-band").textContent();
+  if (!/mengapa/.test(band ?? "")) throw new Error(`reading band missing committed words: ${band}`);
+  push("L2-token-seek-band", "pass", [NATIVE_BRIDGE_REPLACED], `band=${(band ?? "").trim().slice(0, 60)}`);
+  await page.screenshot({ path: path.join(artDir, "overlay.png") });
+  // Mode ringkas: dua label sumber + status terpisah + Kirim + Pause.
+  await page.getByTestId("mode-toggle-compact").click();
+  await page.getByTestId("overlay-mode-compact").waitFor({ timeout: 5000 });
+  for (const [tid, want] of [["compact-source-self", "Mikrofon"], ["compact-source-remote", "Loopback"]]) {
+    const t = await page.getByTestId(tid).textContent();
+    if (!t?.includes(want)) throw new Error(`${tid} missing label: ${t}`);
+  }
+  for (const tid of ["transcription-status", "generation-status", "send-answer-compact", "pause-compact"]) {
+    await page.getByTestId(tid).waitFor({ timeout: 5000 });
+  }
+  push("L2-overlay-compact-mode", "pass", [NATIVE_BRIDGE_REPLACED], "compact labels + separate statuses present");
+  await page.getByTestId("mode-toggle-reading").click();
+  await page.getByTestId("overlay-mode-reading").waitFor({ timeout: 5000 });
+  // Kembali ke dashboard kesiapan: label sumber, profil, bahasa, materi, jeda.
+  await page.getByRole("button", { name: "Dashboard" }).click();
+  const selfLabel = await page.getByTestId("source-label-self").textContent();
+  const remoteLabel = await page.getByTestId("source-label-remote").textContent();
+  if (!selfLabel?.includes("self") || !remoteLabel?.includes("remote")) throw new Error(`source labels wrong: ${selfLabel} | ${remoteLabel}`);
+  await page.getByTestId("model-profile").selectOption("profil-hemat");
+  await page.waitForFunction(() => (document.querySelector('[data-testid="model-profile-saved"]')?.textContent ?? "").includes("profil-hemat"), undefined, { timeout: 5000 });
+  await page.getByTestId("language-lock").selectOption("en");
+  await page.getByTestId("doc-import-name").fill("materi.txt");
+  await page.getByTestId("doc-import-text").fill("halo dunia");
+  await page.getByTestId("doc-import-submit").click();
+  await page.waitForFunction(() => (document.querySelector('[data-testid="doc-count"]')?.textContent ?? "").includes("1 dokumen"), undefined, { timeout: 5000 });
+  await page.getByTestId("pause-session").click();
+  await page.waitForFunction(() => (document.querySelector('[data-testid="capture-status"]')?.textContent ?? "").includes("dijeda"), undefined, { timeout: 5000 });
+  await page.getByTestId("resume-session").click();
+  await page.waitForFunction(() => (document.querySelector('[data-testid="capture-status"]')?.textContent ?? "").includes("berjalan"), undefined, { timeout: 5000 });
+  push("L2-dashboard-readiness", "pass", [NATIVE_BRIDGE_REPLACED], "sources + profile + language + docs + pause/resume");
+  await page.screenshot({ path: path.join(artDir, "dashboard.png") });
   if (errors.length > 0) throw new Error(`page errors: ${errors.join(" | ")}`);
 } catch (e) {
   const msg = String(e?.message ?? e);
