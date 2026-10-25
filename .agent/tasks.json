@@ -462,10 +462,18 @@
       "acceptance_ids": [
         "A15"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T05-40-16-687Z.json",
+        ".agent/evidence/unit-2026-10-25T05-41-09-668Z.json",
+        ".agent/evidence/test-integration-2026-10-25T05-41-52-986Z.json",
+        ".agent/evidence/test-replay-2026-10-25T05-41-59-486Z.json",
+        ".agent/evidence/test-ui-2026-10-25T05-42-04-415Z.json",
+        ".agent/evidence/test-native-2026-10-25T05-40-57-828Z.json",
+        ".agent/evidence/verify-2026-10-25T05-42-09-252Z.json"
+      ]
     },
     {
       "id": "T18",

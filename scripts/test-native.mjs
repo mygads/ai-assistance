@@ -82,6 +82,28 @@ try {
 const artDir = path.join(rootDir, "artifacts", `test-native-${startedUtc.replace(/[:.]/g, "-")}`);
 mkdirSync(artDir, { recursive: true });
 
+// Fresh-boot clicks can land before React hydration attaches listeners: the
+// button exists in the DOM but the click does nothing. Retry the click until
+// the session id observably appears (bounded, state-based — never a fixed
+// sleep), then return its text.
+async function startSessionFromDashboard(bd) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < 60000) {
+    const btn = await bd.$('[data-testid="start-session"]');
+    if (await btn.isExisting()) {
+      try { await btn.click(); } catch { /* re-render raced the click; retry */ }
+    }
+    try {
+      const el = await bd.$('[data-testid="session-id"]');
+      await el.waitForExist({ timeout: 4000 });
+      const text = await el.getText();
+      if (/Sesi session-/.test(text)) return text;
+    } catch { /* not yet; click again */ }
+  }
+  const bodyText = await bd.execute(() => document.body.innerText ?? "").catch(() => "?");
+  throw new Error(`session-id never appeared. window text: ${String(bodyText).slice(0, 800)}`);
+}
+
 let driverProc = null;
 let browser = null;
 try {
@@ -114,20 +136,7 @@ try {
   if (!title) throw new Error("no window title returned; WebView2 window did not appear");
   push("L3-window-launches", "pass", [], `title=${title.slice(0, 80)}`);
   // Drive the real IPC surface through the actual window: start a session.
-  const startBtn = await browser.$('[data-testid="start-session"]');
-  await startBtn.waitForExist({ timeout: 15000 });
-  await startBtn.click();
-  const sessionEl = await browser.$('[data-testid="session-id"]');
-  const sessionText = await (async () => {
-    try {
-      await sessionEl.waitForExist({ timeout: 15000 });
-      return await sessionEl.getText();
-    } catch {
-      const bodyText = await browser.execute(() => document.body.innerText ?? "").catch(() => "?");
-      throw new Error(`session-id never appeared. window text: ${String(bodyText).slice(0, 400)}`);
-    }
-  })();
-  if (!/Sesi session-/.test(sessionText)) throw new Error(`real start_session did not return a session id: ${sessionText}`);
+  const sessionText = await startSessionFromDashboard(browser);
   push("L3-real-ipc-start-session", "pass", ["external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"], sessionText.slice(0, 120));
   // Persisted-transcript read-back through real IPC: the dashboard count must
   // reflect the two ingested finals stored in SQLite, not the UI-local store.
@@ -183,6 +192,150 @@ try {
   const shortScript = await browser.$('[data-testid="script"]').getText();
   if (!shortScript.includes("ringkas")) throw new Error(`shorten send did not stream action-specific synthesis: ${shortScript.slice(0, 200)}`);
   push("L3-model-switch-next-request", "pass", ["external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"], "profil-hemat saved; shorten streamed as v2 with ringkas marker");
+  // T17: focus must still sit on the clicked action after the stream settles
+  // over real IPC (aria-disabled, never remounted mid-stream). Mirrors the L2
+  // focus proof against the real WebView2 window.
+  const focusedAfterStream = await browser.execute(() => document.activeElement?.getAttribute("data-testid"));
+  if (focusedAfterStream !== "action-shorten") throw new Error(`focus moved during native streaming: ${focusedAfterStream}`);
+  push("L3-focus-preserved-after-stream", "pass", [], `activeElement=${focusedAfterStream}`);
+  // T17: cancel-after-done over real IPC. The stream already settled, so
+  // cancel_answer returns false (terminal row) while the app must stay
+  // consistent: status flips to cancelled, the settled script is untouched,
+  // and no error alert appears. This is the first native exercise of
+  // cancel_answer (previously only the fixture bridge called it).
+  const cancelBtn = await browser.$('[data-testid="cancel-send"]');
+  await cancelBtn.waitForExist({ timeout: 10000 });
+  await cancelBtn.click();
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="generation-status"]').getText()) ?? "").includes("cancelled"), { timeout: 10000 });
+  const scriptAfterCancel = await browser.$('[data-testid="script"]').getText();
+  if (!scriptAfterCancel.includes("ringkas")) throw new Error(`cancel-after-done disturbed the settled script: ${scriptAfterCancel.slice(0, 200)}`);
+  if (await browser.$('[role="alert"]').isExisting().catch(() => false)) {
+    throw new Error(`cancel-after-done raised an alert: ${await browser.$('[role="alert"]').getText().catch(() => "?")}`);
+  }
+  push("L3-cancel-after-done-settles", "pass", [], "cancel_answer(false) over real IPC; settled script untouched, no alert");
+  // T17: pause/resume over real IPC. A fresh native session rests in
+  // "connecting" (nothing has claimed live capture in this build), so the
+  // dashboard offers resume first: connecting -> live -> paused -> live.
+  // Each capture-status line proves the pause_session/resume_session
+  // roundtrip against Rust + SQLite.
+  const dashBtn2 = await browser.$("button=Dashboard");
+  if (await dashBtn2.isExisting()) await dashBtn2.click();
+  // T17: source labels over real IPC. Dashboard list_sources (a bare-scalar
+  // command broken by the same camelCase bug) must resolve the two labeled
+  // roles, never mixed.
+  const selfLabel = await browser.$('[data-testid="source-label-self"]');
+  await selfLabel.waitForExist({ timeout: 10000 });
+  if (!(await selfLabel.getText()).includes("self")) throw new Error(`self source label wrong: ${await selfLabel.getText()}`);
+  const remoteLabel = await browser.$('[data-testid="source-label-remote"]');
+  await remoteLabel.waitForExist({ timeout: 10000 });
+  if (!(await remoteLabel.getText()).includes("remote")) throw new Error(`remote source label wrong: ${await remoteLabel.getText()}`);
+  push("L3-source-labels-native", "pass", [], "list_sources over real IPC: self + remote labels");
+  // Click a capture-transition button until the expected status observably
+  // appears: a single click can race a re-render/re-mount and get swallowed.
+  // Short 3s polls per click attempt; the full diagnosis (alert + window text)
+  // is produced once, only if the 45s budget expires.
+  async function clickCaptureButton(btnTid, substr, step) {
+    const t0 = Date.now();
+    while (Date.now() - t0 < 45000) {
+      const btn = await browser.$(`[data-testid="${btnTid}"]`).catch(() => null);
+      if (btn && await btn.isExisting().catch(() => false)) {
+        try { await btn.click(); } catch { /* element swapped mid-click; retry */ }
+      }
+      try {
+        await browser.waitUntil(
+          async () => ((await browser.$('[data-testid="capture-status"]').getText()) ?? "").includes(substr),
+          { timeout: 3000 },
+        );
+        return;
+      } catch { /* not yet; click again */ }
+    }
+    const hasStatus = await browser.$('[data-testid="capture-status"]').isExisting().catch(() => false);
+    const statusText = hasStatus ? await browser.$('[data-testid="capture-status"]').getText().catch(() => "?") : "<no capture-status element>";
+    const hasAlert = await browser.$('[role="alert"]').isExisting().catch(() => false);
+    const alertText = hasAlert ? await browser.$('[role="alert"]').getText().catch(() => "?") : "<no alert>";
+    const bodyText = await browser.execute(() => document.body.innerText ?? "").catch(() => "?");
+    throw new Error(`${step}: status never showed "${substr}". capture-status=[${statusText}]. alert=[${alertText}]. window: ${String(bodyText).slice(0, 1200)}`);
+  }
+  await clickCaptureButton("resume-session", "berjalan", "resume-connecting-to-live");
+  await clickCaptureButton("pause-session", "dijeda", "pause-live-to-paused");
+  await clickCaptureButton("resume-session", "berjalan", "resume-paused-to-live");
+  push("L3-pause-resume-session", "pass", [], "resume/pause/resume roundtrip over real IPC (connecting -> live -> paused -> live)");
+  // T17: stop_session over real IPC. Ending capture must return the dashboard
+  // to its pre-session state (start button back, no alert); the restart block
+  // below then proves a fresh session starts cleanly on the same database.
+  {
+    const t0 = Date.now();
+    for (;;) {
+      const stop = await browser.$('[data-testid="stop-session"]').catch(() => null);
+      if (stop && await stop.isExisting().catch(() => false)) {
+        try { await stop.click(); } catch { /* re-render raced; retry */ }
+      }
+      if (await browser.$('[data-testid="start-session"]').isExisting().catch(() => false)) break;
+      if (Date.now() - t0 > 30000) throw new Error("stop-session never ended capture: start button did not return");
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  if (await browser.$('[role="alert"]').isExisting().catch(() => false)) {
+    throw new Error(`stop-session raised an alert: ${await browser.$('[role="alert"]').getText().catch(() => "?")}`);
+  }
+  push("L3-stop-session-ends-capture", "pass", [], "stop_session over real IPC; dashboard back to pre-session state");
+  // T17: restart on the used database (C22 slice). Close the window + driver,
+  // relaunch the same exe against the same app-data dir, and prove the same
+  // DB file serves a fresh session: boot, start_session, and a 2-final
+  // persisted read-back. Crash-interrupt settlement is proven at L1
+  // (restart_recovery closes/reopens the real file); this proves the real
+  // binary reopens that file cleanly with migrations applied.
+  const dbPath = path.join(process.env.APPDATA ?? "", "app.conversation.assistant", "conversation-assistant.db");
+  const beforeBytes = existsSync(dbPath) ? statSync(dbPath).size : -1;
+  if (beforeBytes < 0) throw new Error(`native DB missing before restart: ${dbPath}`);
+  try { await browser.deleteSession(); } catch { /* already gone */ }
+  browser = null;
+  try { driverProc?.kill(); } catch { /* ignore */ }
+  driverProc = null;
+  // Wait for the old driver port to go down: observable condition, no fixed sleep.
+  {
+    const t0 = Date.now();
+    let down = false;
+    while (Date.now() - t0 < 30000) {
+      try {
+        await fetch("http://127.0.0.1:4444/status");
+      } catch {
+        down = true;
+        break;
+      }
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    if (!down) throw new Error("old tauri-driver did not release 127.0.0.1:4444");
+  }
+  driverProc = spawn(driverCmd, ["--port", "4444", "--native-driver", nativeDriver], { stdio: "ignore" });
+  const driverReady2 = await (async () => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < 60000) {
+      try {
+        const res = await fetch("http://127.0.0.1:4444/status").then((r) => r.json());
+        if (res && res.value !== undefined) return true;
+      } catch { /* not up yet */ }
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+    return false;
+  })();
+  if (!driverReady2) throw new Error("tauri-driver did not come back on 127.0.0.1:4444 within 60s");
+  browser = await webdriverio.remote({
+    hostname: "127.0.0.1",
+    port: 4444,
+    logLevel: "error",
+    capabilities: { "tauri:options": { application: exe, args: [] } },
+  });
+  const title2 = await browser.getTitle().catch(() => "");
+  if (!title2) throw new Error("no window title returned after restart; WebView2 window did not reappear");
+  const sessionText2 = await startSessionFromDashboard(browser);
+  const persistedEl2 = await browser.$('[data-testid="persisted-count"]');
+  await persistedEl2.waitForExist({ timeout: 10000 });
+  const persistedText2 = await persistedEl2.getText();
+  if (!/Tersimpan 2 segmen/.test(persistedText2)) throw new Error(`persisted read-back failed after restart: ${persistedText2}`);
+  if (!existsSync(dbPath)) throw new Error(`native DB missing after restart: ${dbPath}`);
+  const afterBytes = statSync(dbPath).size;
+  push("L3-restart-reopens-clean", "pass", [], `same db reused bytes=${beforeBytes}->${afterBytes}; ${sessionText2.slice(0, 60)}`);
   await browser.saveScreenshot(path.join(artDir, "native-dashboard.png"));
 } catch (e) {
   push("L3-native-session", /no window title|did not appear|connect ECONNREFUSED/i.test(String(e)) ? "blocked" : "fail",

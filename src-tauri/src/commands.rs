@@ -2,6 +2,12 @@
 // typed input, returns a typed Result, and has command-level integration tests
 // (tests/native in P01/P03). These handlers own validation + store writes;
 // provider streaming and audio capture are separate P02/P03 modules.
+//
+// Argument-key rule: bare-scalar commands MUST carry
+// `rename_all = "snake_case"`. The command macro defaults top-level arg keys
+// to camelCase, so `session_id: String` would arrive as `sessionId` and fail
+// against the frozen snake_case contract (T17 caught pause/resume this way).
+// Struct inputs are unaffected: serde matches their snake_case fields exactly.
 
 use crate::providers::LlmAdapter;
 use crate::store::{
@@ -172,7 +178,7 @@ fn send_fingerprint(input: &SendAnswerInput) -> String {
     .to_string()
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub fn list_sources(
     session_id: String,
     state: tauri::State<'_, AppState>,
@@ -255,7 +261,7 @@ pub fn start_session(
     Ok(record)
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub fn pause_session(
     session_id: String,
     state: tauri::State<'_, AppState>,
@@ -263,7 +269,7 @@ pub fn pause_session(
     transition_capture(&session_id, "paused", &state)
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub fn resume_session(
     session_id: String,
     state: tauri::State<'_, AppState>,
@@ -271,7 +277,7 @@ pub fn resume_session(
     transition_capture(&session_id, "live", &state)
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub fn stop_session(
     session_id: String,
     state: tauri::State<'_, AppState>,
@@ -638,7 +644,7 @@ pub fn send_answer(
     Ok(output)
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub fn cancel_answer(request_id: String, state: tauri::State<'_, AppState>) -> CommandResult<bool> {
     require_non_empty(&request_id, "request_id")?;
     let conn = state.open_conn()?;

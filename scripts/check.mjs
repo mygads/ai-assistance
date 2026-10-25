@@ -58,6 +58,21 @@ section("contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)", () => 
     hashes[f] = createHash("sha256").update(readFileSync(path.join(rootDir, ".agent", "schemas", f))).digest("hex").slice(0, 16);
   }
   console.log(`  freeze hashes: ${JSON.stringify(hashes)}`);
+  // Bare-scalar commands must opt into snake_case arg keys: the Tauri command
+  // macro defaults top-level arg keys to camelCase, so `session_id: String`
+  // would arrive as `sessionId` and fail at runtime (T17 caught
+  // pause/resume/stop/list_sources/cancel_answer this way). Struct inputs are
+  // matched by serde exactly and need no attribute.
+  const scalarCmdRe = /#\[tauri::command([^\]]*)\]\s*pub fn (\w+)\s*\(([^)]*)\)/g;
+  const scalarMissing = [];
+  for (const m of rs.matchAll(scalarCmdRe)) {
+    const [, attr, name, params] = m;
+    const firstType = (params.split(",")[0] ?? "").split(":")[1] ?? "";
+    if (/\b(String|u32|u64|i32|i64|bool|f64)\b/.test(firstType) && !/rename_all\s*=\s*"snake_case"/.test(attr)) {
+      scalarMissing.push(name);
+    }
+  }
+  if (scalarMissing.length > 0) throw new Error(`bare-scalar commands missing rename_all snake_case: ${scalarMissing.join(", ")}`);
 });section("schemas (ajv draft 2020-12)", () => {
   // strictRequired disabled: it rejects spec-valid if/then/required patterns
   // used by the pack's generation-event schema. Spec validity is the gate.

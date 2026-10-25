@@ -1,0 +1,96 @@
+{
+  "kind": "app_test",
+  "run_id": "test-native-2026-10-25T05-32-34-463Z",
+  "level": "L3",
+  "command": "npm run test:native",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T05:32:19.032Z",
+  "cases": [
+    {
+      "id": "L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "L3-window-launches",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "title=Conversation Assistant"
+    },
+    {
+      "id": "L3-real-ipc-start-session",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"
+      ],
+      "note": "Sesi session-627a25efa9094ca08d5bf0015e97d6f8 · tangkapan connecting"
+    },
+    {
+      "id": "L3-real-ipc-persisted-read",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Tersimpan 2 segmen final"
+    },
+    {
+      "id": "L3-real-ipc-send-answer",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"
+      ],
+      "note": "meta=Saran v1 · req-33054b1b5 script_chars=54"
+    },
+    {
+      "id": "L3-send-dedup",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "identical resend returned Saran v1 · req-33054b1b5"
+    },
+    {
+      "id": "L3-model-switch-next-request",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"
+      ],
+      "note": "profil-hemat saved; shorten streamed as v2 with ringkas marker"
+    },
+    {
+      "id": "L3-focus-preserved-after-stream",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "activeElement=action-shorten"
+    },
+    {
+      "id": "L3-native-session",
+      "level": "L3",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "native session: element (\"[data-testid=\"pause-session\"]\") still not existing after 10000ms"
+    }
+  ],
+  "counts": {
+    "pass": 8,
+    "fail": 1,
+    "blocked": 0,
+    "total": 9
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-native-2026-10-25T05-32-34-463Z.json"
+  ]
+}

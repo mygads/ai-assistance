@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 20,
+  "revision": 21,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -28,10 +28,10 @@
     "T13",
     "T14",
     "T15",
-    "T16"
+    "T16",
+    "T17"
   ],
   "active_tasks": [
-    "T17",
     "T18"
   ],
   "blockers": [
@@ -245,6 +245,55 @@
         "verify-2026-10-25T05-15-15-604Z.json"
       ],
       "note": "7 scripts pass, 0 fail; audio/live/capture blocked on hardware/keys (B02)"
+    },
+    "check-2026-10-25T05-40": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T05-40-16-687Z.json"
+      ],
+      "note": "pass 6/6 incl new bare-scalar rename_all enforcement"
+    },
+    "unit-2026-10-25T05-41": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/unit-2026-10-25T05-41-09-668Z.json"
+      ],
+      "note": "pass ts=54/0 rs=50/0"
+    },
+    "integration-2026-10-25T05-41": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/test-integration-2026-10-25T05-41-52-986Z.json"
+      ],
+      "note": "pass 13/13"
+    },
+    "replay-2026-10-25T05-41": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/test-replay-2026-10-25T05-41-59-486Z.json"
+      ],
+      "note": "pass 10/10"
+    },
+    "ui-2026-10-25T05-42": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/test-ui-2026-10-25T05-42-04-415Z.json"
+      ],
+      "note": "pass 10/10"
+    },
+    "native-2026-10-25T05-40": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/test-native-2026-10-25T05-40-57-828Z.json"
+      ],
+      "note": "pass 13/13 incl focus/cancel-after-done/source-labels/pause-resume/stop/restart-reopens-clean"
+    },
+    "verify-2026-10-25T05-42": {
+      "status": "blocked",
+      "evidence_refs": [
+        ".agent/evidence/verify-2026-10-25T05-42-09-252Z.json"
+      ],
+      "note": "7 scripts pass, 0 fail; audio/live/capture blocked on hardware/keys (B02)"
     }
   },
   "next_actions": [
@@ -259,7 +308,8 @@
     "T12 (completed): model switch + retrieval-backed context + action-aware flow (A02/A04/A05 L1+L3, A13 L1 with L5 blocked on B02, A15 L3) — context.rs budgets + sanitized FTS query + greedy pack, snapshot carries profile/retrieval/packet, action-aware synthesis mirrored in TS, fence release on settle, L1-model-switch-repack + L1-context-assembly + L3-model-switch-next-request; check 5/5, unit ts 41/0 + rs 50/0, integration 10/10, replay 9/9, ui 10/10, native 7/7, verify 49/0/7 blocked (known prerequisites)",
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live",
-    "P05 native/audio: T17 native IPC verification (A15) incl. L3 cancel/isolation slices; T18 physical audio (A01/A16) needs hardware lease"
+    "P05 native/audio: T17 native IPC verification (A15) incl. L3 cancel/isolation slices; T18 physical audio (A01/A16) needs hardware lease",
+    "T17 DONE (rev21): native L3 A15 — 13/13 incl new coverage of all five bare-scalar commands; corpus 19 covered-pass / 0 fail / 13 blocked. Then T18 physical audio (needs hardware lease) + P06 packaging/review/delivery."
   ],
   "max_parallel_workers": 3
 }

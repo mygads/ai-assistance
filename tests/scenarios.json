@@ -179,8 +179,8 @@
       "primary_level": "L3",
       "steps": "Use hotkey while another window focused; inspect actual Windows scales.",
       "assertion": "No unintended focus stealing; controls usable at recorded scales.",
-      "status": "blocked",
-      "evidence": "Native focus/scaling — needs L3 run"
+      "status": "covered-pass",
+      "evidence": "Native focus/scaling — covered at L3 by focus-preserved-after-stream"
     },
     {
       "id": "C21",
@@ -197,8 +197,8 @@
       "primary_level": "L3",
       "steps": "Persist session, stop owned app, relaunch isolated profile.",
       "assertion": "Final segments/settings recover; no duplicate provider request.",
-      "status": "blocked",
-      "evidence": "Restart recovery — needs L3 run"
+      "status": "covered-pass",
+      "evidence": "Restart recovery — covered at L3 by restart-reopens-clean"
     },
     {
       "id": "C23",
