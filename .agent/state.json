@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 4,
+  "revision": 5,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -10,14 +10,15 @@
     "checkout": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack",
     "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5"
   },
-  "last_integrated_commit": "d31425c54d4e6ed6363b5ef6233a93ecfa4120bd",
+  "last_integrated_commit": "b7aa9d9",
   "completed_task_ids": [
     "T00",
     "T01",
-    "T02"
+    "T02",
+    "T03"
   ],
   "active_tasks": [
-    "T03"
+    "T04"
   ],
   "blockers": [
     {
@@ -82,8 +83,8 @@
     }
   },
   "next_actions": [
-    "T03 (active): replay-to-Send-to-reader vertical slice acceptance A01/A02/A03/A05/A06",
-    "T04 (after T03): smallest native real-IPC slice acceptance A15",
+    "T04 (active): smallest native real-IPC slice acceptance A15 — test:native already 5/5 incl. streamed snapshot + dedup; record the task-level slice proof",
+    "After T04: fan out P02 lanes (audio/providers, UI/prompter, context/data) with isolated worktrees; max 3 workers",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
   ],
   "max_parallel_workers": 3

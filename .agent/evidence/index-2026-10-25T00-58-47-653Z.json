@@ -1,0 +1,1113 @@
+{
+  "kind": "evidence_index",
+  "generated_utc": "2026-10-25T00:58:47.653Z",
+  "runs": [
+    {
+      "file": "check-2026-10-25T00-25-59-284Z.json",
+      "run_id": "check-2026-10-25T00-25-59-284Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-26-04-497Z.json",
+      "run_id": "check-2026-10-25T00-26-04-497Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-41-36-301Z.json",
+      "run_id": "check-2026-10-25T00-41-36-301Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 4,
+        "fail": 1,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-41-48-990Z.json",
+      "run_id": "check-2026-10-25T00-41-48-990Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-45-58-723Z.json",
+      "run_id": "check-2026-10-25T00-45-58-723Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 4,
+        "fail": 1,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-46-19-667Z.json",
+      "run_id": "check-2026-10-25T00-46-19-667Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-55-19-281Z.json",
+      "run_id": "check-2026-10-25T00-55-19-281Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "check-2026-10-25T00-56-17-284Z.json",
+      "run_id": "check-2026-10-25T00-56-17-284Z",
+      "command": "npm run check",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "report-2026-10-25T00-25-22-615Z.json",
+      "run_id": "report-2026-10-25T00-25-22-615Z",
+      "command": "npm run report",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "total": 1
+      }
+    },
+    {
+      "file": "report-2026-10-25T00-29-14-415Z.json",
+      "run_id": "report-2026-10-25T00-29-14-415Z",
+      "command": "npm run report",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 0,
+        "total": 1
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-04-42-498Z.json",
+      "run_id": "test-audio-2026-10-25T00-04-42-498Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 1,
+        "fail": 1,
+        "blocked": 3,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-05-23-917Z.json",
+      "run_id": "test-audio-2026-10-25T00-05-23-917Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 1,
+        "fail": 1,
+        "blocked": 3,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-06-02-700Z.json",
+      "run_id": "test-audio-2026-10-25T00-06-02-700Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 1,
+        "fail": 1,
+        "blocked": 3,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-07-00-472Z.json",
+      "run_id": "test-audio-2026-10-25T00-07-00-472Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 1,
+        "fail": 1,
+        "blocked": 3,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-07-21-904Z.json",
+      "run_id": "test-audio-2026-10-25T00-07-21-904Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 4,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-24-07-661Z.json",
+      "run_id": "test-audio-2026-10-25T00-24-07-661Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 4,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-27-57-868Z.json",
+      "run_id": "test-audio-2026-10-25T00-27-57-868Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 4,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-audio-2026-10-25T00-57-15-223Z.json",
+      "run_id": "test-audio-2026-10-25T00-57-15-223Z",
+      "command": "npm run test:audio",
+      "level": "L4",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 4,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-capture-2026-10-25T00-04-47-102Z.json",
+      "run_id": "test-capture-2026-10-25T00-04-47-102Z",
+      "command": "npm run test:capture",
+      "level": "L6",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 2,
+        "fail": 0,
+        "blocked": 2,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-capture-2026-10-25T00-25-14-616Z.json",
+      "run_id": "test-capture-2026-10-25T00-25-14-616Z",
+      "command": "npm run test:capture",
+      "level": "L6",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 2,
+        "fail": 0,
+        "blocked": 2,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-capture-2026-10-25T00-29-04-582Z.json",
+      "run_id": "test-capture-2026-10-25T00-29-04-582Z",
+      "command": "npm run test:capture",
+      "level": "L6",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 2,
+        "fail": 0,
+        "blocked": 2,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-capture-2026-10-25T00-58-20-375Z.json",
+      "run_id": "test-capture-2026-10-25T00-58-20-375Z",
+      "command": "npm run test:capture",
+      "level": "L6",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 2,
+        "fail": 0,
+        "blocked": 2,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-integration-2026-10-25T00-03-21-865Z.json",
+      "run_id": "test-integration-2026-10-25T00-03-21-865Z",
+      "command": "npm run test:integration",
+      "level": "L1",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 3,
+        "fail": 2,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-integration-2026-10-25T00-04-26-450Z.json",
+      "run_id": "test-integration-2026-10-25T00-04-26-450Z",
+      "command": "npm run test:integration",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-integration-2026-10-25T00-22-16-333Z.json",
+      "run_id": "test-integration-2026-10-25T00-22-16-333Z",
+      "command": "npm run test:integration",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-integration-2026-10-25T00-26-22-593Z.json",
+      "run_id": "test-integration-2026-10-25T00-26-22-593Z",
+      "command": "npm run test:integration",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-integration-2026-10-25T00-56-33-796Z.json",
+      "run_id": "test-integration-2026-10-25T00-56-33-796Z",
+      "command": "npm run test:integration",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-live-2026-10-25T00-04-36-513Z.json",
+      "run_id": "test-live-2026-10-25T00-04-36-513Z",
+      "command": "npm run test:live",
+      "level": "L5",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 0,
+        "fail": 0,
+        "blocked": 1,
+        "total": 1
+      }
+    },
+    {
+      "file": "test-live-2026-10-25T00-24-08-795Z.json",
+      "run_id": "test-live-2026-10-25T00-24-08-795Z",
+      "command": "npm run test:live",
+      "level": "L5",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 0,
+        "fail": 0,
+        "blocked": 1,
+        "total": 1
+      }
+    },
+    {
+      "file": "test-live-2026-10-25T00-27-59-484Z.json",
+      "run_id": "test-live-2026-10-25T00-27-59-484Z",
+      "command": "npm run test:live",
+      "level": "L5",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 0,
+        "fail": 0,
+        "blocked": 1,
+        "total": 1
+      }
+    },
+    {
+      "file": "test-live-2026-10-25T00-57-16-373Z.json",
+      "run_id": "test-live-2026-10-25T00-57-16-373Z",
+      "command": "npm run test:live",
+      "level": "L5",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 0,
+        "fail": 0,
+        "blocked": 1,
+        "total": 1
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-11-59-144Z.json",
+      "run_id": "test-native-2026-10-25T00-11-59-144Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 1,
+        "fail": 1,
+        "blocked": 0,
+        "total": 2
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-12-55-124Z.json",
+      "run_id": "test-native-2026-10-25T00-12-55-124Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 1,
+        "fail": 1,
+        "blocked": 0,
+        "total": 2
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-13-33-852Z.json",
+      "run_id": "test-native-2026-10-25T00-13-33-852Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 2,
+        "fail": 1,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-16-21-845Z.json",
+      "run_id": "test-native-2026-10-25T00-16-21-845Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 2,
+        "fail": 1,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-17-04-091Z.json",
+      "run_id": "test-native-2026-10-25T00-17-04-091Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 2,
+        "fail": 1,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-21-02-218Z.json",
+      "run_id": "test-native-2026-10-25T00-21-02-218Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-24-04-397Z.json",
+      "run_id": "test-native-2026-10-25T00-24-04-397Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-27-49-949Z.json",
+      "run_id": "test-native-2026-10-25T00-27-49-949Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-52-43-779Z.json",
+      "run_id": "test-native-2026-10-25T00-52-43-779Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 2,
+        "fail": 1,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-54-19-868Z.json",
+      "run_id": "test-native-2026-10-25T00-54-19-868Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 2,
+        "fail": 1,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-55-58-200Z.json",
+      "run_id": "test-native-2026-10-25T00-55-58-200Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-native-2026-10-25T00-57-12-665Z.json",
+      "run_id": "test-native-2026-10-25T00-57-12-665Z",
+      "command": "npm run test:native",
+      "level": "L3",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-03-23-261Z.json",
+      "run_id": "test-replay-2026-10-25T00-03-23-261Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 0,
+        "fail": 3,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-04-27-964Z.json",
+      "run_id": "test-replay-2026-10-25T00-04-27-964Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-22-17-939Z.json",
+      "run_id": "test-replay-2026-10-25T00-22-17-939Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-26-24-241Z.json",
+      "run_id": "test-replay-2026-10-25T00-26-24-241Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-46-03-558Z.json",
+      "run_id": "test-replay-2026-10-25T00-46-03-558Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-50-47-388Z.json",
+      "run_id": "test-replay-2026-10-25T00-50-47-388Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-replay-2026-10-25T00-56-35-082Z.json",
+      "run_id": "test-replay-2026-10-25T00-56-35-082Z",
+      "command": "npm run test:replay",
+      "level": "L1",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "file": "test-soak-2026-10-25T00-08-23-088Z.json",
+      "run_id": "test-soak-2026-10-25T00-08-23-088Z",
+      "command": "npm run test:soak",
+      "level": "L2",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 1,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-soak-2026-10-25T00-25-10-224Z.json",
+      "run_id": "test-soak-2026-10-25T00-25-10-224Z",
+      "command": "npm run test:soak",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-soak-2026-10-25T00-29-00-962Z.json",
+      "run_id": "test-soak-2026-10-25T00-29-00-962Z",
+      "command": "npm run test:soak",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-soak-2026-10-25T00-58-17-620Z.json",
+      "run_id": "test-soak-2026-10-25T00-58-17-620Z",
+      "command": "npm run test:soak",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-11-46-714Z.json",
+      "run_id": "test-ui-2026-10-25T00-11-46-714Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-15-38-212Z.json",
+      "run_id": "test-ui-2026-10-25T00-15-38-212Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-22-55-505Z.json",
+      "run_id": "test-ui-2026-10-25T00-22-55-505Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-27-00-042Z.json",
+      "run_id": "test-ui-2026-10-25T00-27-00-042Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-47-03-541Z.json",
+      "run_id": "test-ui-2026-10-25T00-47-03-541Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 3,
+        "fail": 1,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-48-11-214Z.json",
+      "run_id": "test-ui-2026-10-25T00-48-11-214Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 3,
+        "fail": 1,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-50-50-673Z.json",
+      "run_id": "test-ui-2026-10-25T00-50-50-673Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 3,
+        "fail": 1,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-51-30-833Z.json",
+      "run_id": "test-ui-2026-10-25T00-51-30-833Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "test-ui-2026-10-25T00-56-41-376Z.json",
+      "run_id": "test-ui-2026-10-25T00-56-41-376Z",
+      "command": "npm run test:ui",
+      "level": "L2",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "file": "unit-2026-10-24T23-30-39-243Z.json",
+      "run_id": "unit-2026-10-24T23-30-39-243Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "fail",
+      "exit_code": 1,
+      "counts": {
+        "pass": 12,
+        "fail": 1
+      }
+    },
+    {
+      "file": "unit-2026-10-24T23-31-04-310Z.json",
+      "run_id": "unit-2026-10-24T23-31-04-310Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 23,
+        "fail": 0
+      }
+    },
+    {
+      "file": "unit-2026-10-24T23-35-16-549Z.json",
+      "run_id": "unit-2026-10-24T23-35-16-549Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 23,
+        "fail": 0
+      }
+    },
+    {
+      "file": "unit-2026-10-24T23-44-23-558Z.json",
+      "run_id": "unit-2026-10-24T23-44-23-558Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "unit-2026-10-24T23-45-45-938Z.json",
+      "run_id": "unit-2026-10-24T23-45-45-938Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "unit-2026-10-25T00-01-02-243Z.json",
+      "run_id": "unit-2026-10-25T00-01-02-243Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "unit-2026-10-25T00-21-58-222Z.json",
+      "run_id": "unit-2026-10-25T00-21-58-222Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "unit-2026-10-25T00-26-05-566Z.json",
+      "run_id": "unit-2026-10-25T00-26-05-566Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "unit-2026-10-25T00-45-59-662Z.json",
+      "run_id": "unit-2026-10-25T00-45-59-662Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "unit-2026-10-25T00-56-18-298Z.json",
+      "run_id": "unit-2026-10-25T00-56-18-298Z",
+      "command": "npm run test:unit",
+      "level": "L0",
+      "status": "pass",
+      "exit_code": 0,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "file": "verify-2026-10-25T00-21-36-811Z.json",
+      "run_id": "verify-2026-10-25T00-21-36-811Z",
+      "command": "npm run verify",
+      "level": "L0",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 24,
+        "fail": 1,
+        "blocked": 7,
+        "total": 32
+      }
+    },
+    {
+      "file": "verify-2026-10-25T00-26-00-388Z.json",
+      "run_id": "verify-2026-10-25T00-26-00-388Z",
+      "command": "npm run verify",
+      "level": "L0",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 29,
+        "fail": 0,
+        "blocked": 7,
+        "total": 36
+      }
+    },
+    {
+      "file": "verify-2026-10-25T00-56-09-055Z.json",
+      "run_id": "verify-2026-10-25T00-56-09-055Z",
+      "command": "npm run verify",
+      "level": "L0",
+      "status": "blocked",
+      "exit_code": 2,
+      "counts": {
+        "pass": 32,
+        "fail": 0,
+        "blocked": 7,
+        "total": 39
+      }
+    }
+  ]
+}

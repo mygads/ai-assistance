@@ -25,19 +25,33 @@ export interface AnswerResult {
 }
 
 // Deterministic fixture answers for browser-only development.
-const FIXTURE_SCRIPT =
-  "Berikut ringkasan jawaban yang bisa diucapkan. Sesuaikan nada bicara dengan konteks percakapan.";
+const FIXTURE_SESSION = "fixture-session-01";
+const FIXTURE_FINALS: string[] = [];
+
+/** Texts ingested through the fixture bridge, in order. Backs the fixture
+ *  suggestion synthesis so the browser path mirrors the native snapshot rule. */
+export function fixtureRemoteFinals(): string[] {
+  return [...FIXTURE_FINALS];
+}
 
 async function fixtureInvoke<T>(cmd: string, args?: unknown): Promise<T> {
+  // Generated wrappers always send either { session_id } or { input: {...} }.
+  const input = (args as { input?: unknown } | undefined)?.input ?? args;
   switch (cmd) {
     case "start_session":
+      FIXTURE_FINALS.length = 0;
       return {
-        id: "fixture-session-01",
-        workspace_id: (args as { workspace_id: string }).workspace_id,
+        id: FIXTURE_SESSION,
+        workspace_id: (input as { workspace_id: string }).workspace_id,
         capture: "live",
         generation: "idle",
         active_revision: 0,
       } as T;
+    case "ingest_transcript_event": {
+      const e = input as { role: string; status: string; text: string };
+      if (e.role === "remote" && e.status === "final") FIXTURE_FINALS.push(e.text);
+      return { outcome: "inserted", stored: true } as T;
+    }
     case "list_sources":
       return [
         { id: "fixture:self", session_id: "fixture-session-01", device_id: "fixture-mic", role: "self", enabled: true },
@@ -60,4 +74,3 @@ export async function bridgeInvoke<T>(cmd: string, args?: Record<string, unknown
   return { mode, data: await fixtureInvoke<T>(cmd, args) };
 }
 
-export { FIXTURE_SCRIPT };

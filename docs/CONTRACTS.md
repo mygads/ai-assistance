@@ -20,7 +20,7 @@ Use transcript-event.schema.json. segment_id is stable within a provider connect
 Partial replaces a prior hypothesis; final commits it. If a provider later amends its final result, represent that as an explicit correction event/version, not an unexplained duplicate. confidence and word timings may be absent; do not fabricate them.
 
 ## Native command surface
-Target names: list_sources, start_session, pause_session, resume_session, stop_session, select_transcript_range, send_answer, cancel_answer, seek_reader, save_correction, import_document, select_model_profile.
+Target names: list_sources, ingest_transcript_event (added T03 via ADR-014), start_session, pause_session, resume_session, stop_session, select_transcript_range, send_answer, cancel_answer, seek_reader, save_correction, import_document, select_model_profile.
 Each command accepts typed input, returns a typed Result/error with stable code and sanitized message, and has real command-level integration tests. Adapt names once during P00, then freeze generated bindings and update all references.
 
 Test-only fixture commands are compiled behind a test-harness feature, bound to test app-data roots and loopback endpoints. Production must reject or omit them. Normal commands must not acquire arbitrary filesystem/network authority from document contents.
@@ -33,6 +33,13 @@ Snapshot construction handles capture/STT watermark mismatch explicitly. Ongoing
 Generation events carry request_id, suggestion_version, sequence and event kind. Only the active generation may update the visible pending suggestion. Cancellation ignores late deltas while preserving already shown text as an interrupted version. Never concatenate outputs from fallback providers into one answer.
 
 Model configuration declares capabilities and limits; changing provider causes token repacking and adapter selection. Prompt instructions, actual speech, source documents, memory, and previous AI suggestions remain distinct blocks.
+
+### Streaming suggestion events (P01 fixture; stable names)
+`send_answer` returns immediately with `{ request_id, generation_id, suggestion_version }` and streams window events:
+- `suggestion-delta { request_id, generation_id, index, text_delta, fixture }`
+- `suggestion-done { request_id, generation_id, suggestion_version, status, fixture }` where status is `done` or `cancelled`.
+
+Rules: deltas belong to exactly one request_id; late deltas after done/cancel are never emitted. A repeated identical Send dedups to the existing generation and re-emits its done event instead of a new stream. In P01 `fixture` is always true: the text is a deterministic synthesis of the snapshot's committed remote finals (`src/ui/events.ts` mirrors Rust `synthesize_suggestion` chunk-for-chunk; the UI fixture bridge emits the same shape on timers). No event in this flow is a model call — the no-model-before-Send gate asserts zero generations exist until Send, and P03 replaces the synthesizer with provider streaming under these names.
 
 ## Reader
 Script tokens have stable IDs; offsets used by React are UTF-16 code-unit indices, or mapping stays entirely in the same JS module. Rust must not send byte offsets and label them as JS character indices.

@@ -3,9 +3,12 @@
 // (tests/native in P01/P03). These handlers own validation + store writes;
 // provider streaming and audio capture are separate P02/P03 modules.
 
-use crate::store::{AppState, AudioSource, CommandError, CommandResult, SessionRecord};
+use crate::store::{
+    AppState, AudioSource, CommandError, CommandResult, FinalSegment, SessionRecord,
+};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
+use tauri::{AppHandle, Emitter, Manager};
 use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
@@ -20,6 +23,101 @@ pub struct TranscriptRangeInput {
     pub source_id: Option<String>,
     pub from_ms: Option<u64>,
     pub to_ms: Option<u64>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct IngestTranscriptInput {
+    pub session_id: String,
+    pub source_id: String,
+    pub role: String,
+    pub segment_id: String,
+    pub revision: u32,
+    pub start_ms: u64,
+    pub end_ms: u64,
+    pub status: String,
+    pub text: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct IngestTranscriptOutput {
+    pub outcome: String,
+    pub stored: bool,
+}
+
+/// Loads a session from memory, falling back to the database (restart
+/// persistence), and warms the in-memory cache on a DB hit.
+fn load_session_cached(
+    session_id: &str,
+    state: &tauri::State<'_, AppState>,
+) -> CommandResult<SessionRecord> {
+    {
+        let sessions = state
+            .sessions
+            .lock()
+            .map_err(|e| CommandError::Storage(e.to_string()))?;
+        if let Some(rec) = sessions.get(session_id) {
+            return Ok(rec.clone());
+        }
+    }
+    let conn = state.open_conn()?;
+    let rec = crate::store::load_session(&conn, session_id)?
+        .ok_or_else(|| CommandError::NotFound(format!("session {session_id}")))?;
+    state
+        .sessions
+        .lock()
+        .map_err(|e| CommandError::Storage(e.to_string()))?
+        .insert(session_id.to_string(), rec.clone());
+    Ok(rec)
+}
+
+fn persist_session_cached(
+    rec: &SessionRecord,
+    state: &tauri::State<'_, AppState>,
+) -> CommandResult<()> {
+    state
+        .sessions
+        .lock()
+        .map_err(|e| CommandError::Storage(e.to_string()))?
+        .insert(rec.id.clone(), rec.clone());
+    let conn = state.open_conn()?;
+    crate::store::persist_session(&conn, rec)?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn ingest_transcript_event(
+    input: IngestTranscriptInput,
+    state: tauri::State<'_, AppState>,
+) -> CommandResult<IngestTranscriptOutput> {
+    require_non_empty(&input.session_id, "session_id")?;
+    require_non_empty(&input.source_id, "source_id")?;
+    require_non_empty(&input.segment_id, "segment_id")?;
+    require_non_empty(&input.text, "text")?;
+    require_max_len(&input.text, 20000, "text")?;
+    if input.end_ms < input.start_ms {
+        return Err(CommandError::InvalidInput(
+            "require start_ms <= end_ms".to_string(),
+        ));
+    }
+    // The session must exist: stray segments for unknown sessions are rejected.
+    load_session_cached(&input.session_id, &state)?;
+    let seg = crate::store::TranscriptSegment {
+        id: input.segment_id,
+        session_id: input.session_id,
+        source_id: input.source_id,
+        revision: input.revision,
+        start_ms: input.start_ms,
+        end_ms: input.end_ms,
+        status: input.status,
+        text: input.text,
+    };
+    let conn = state.open_conn()?;
+    let outcome = crate::store::ingest_segment(&conn, &seg, &input.role)?;
+    let stored = outcome != crate::store::IngestOutcome::StaleIgnored;
+    Ok(IngestTranscriptOutput {
+        outcome: outcome.as_str().to_string(),
+        stored,
+    })
 }
 
 #[derive(Debug, Deserialize)]
@@ -131,11 +229,28 @@ pub fn start_session(
         prompter: "inactive".to_string(),
         settings_snapshot,
     };
-    state
-        .sessions
-        .lock()
-        .map_err(|e| CommandError::Storage(e.to_string()))?
-        .insert(id, record.clone());
+    // Seed the two session-bound sources so role attribution exists before the
+    // first ingest; roles are fixed here and enforced by ingest_segment.
+    // persist_session_cached runs first: audio_sources references sessions(id).
+    persist_session_cached(&record, &state)?;
+    {
+        let conn = state.open_conn()?;
+        for (suffix, device, role) in [
+            ("self", "default-microphone", "self"),
+            ("remote", "default-loopback", "remote"),
+        ] {
+            conn.execute(
+                "INSERT OR IGNORE INTO audio_sources(id,session_id,device_id,role) VALUES(?1,?2,?3,?4)",
+                rusqlite::params![
+                    format!("{id}:{suffix}"),
+                    id,
+                    device,
+                    role
+                ],
+            )
+            .map_err(|e| CommandError::Storage(e.to_string()))?;
+        }
+    }
     Ok(record)
 }
 
@@ -168,16 +283,11 @@ fn transition_capture(
     next: &str,
     state: &tauri::State<'_, AppState>,
 ) -> CommandResult<SessionRecord> {
-    let mut sessions = state
-        .sessions
-        .lock()
-        .map_err(|e| CommandError::Storage(e.to_string()))?;
-    let rec = sessions
-        .get_mut(session_id)
-        .ok_or_else(|| CommandError::NotFound(format!("session {session_id}")))?;
+    let mut rec = load_session_cached(session_id, state)?;
     rec.capture = next.to_string();
     rec.active_revision += 1;
-    Ok(rec.clone())
+    persist_session_cached(&rec, state)?;
+    Ok(rec)
 }
 
 #[tauri::command]
@@ -196,24 +306,65 @@ pub fn select_transcript_range(
             ));
         }
     }
-    let sessions = state
-        .sessions
-        .lock()
-        .map_err(|e| CommandError::Storage(e.to_string()))?;
-    if !sessions.contains_key(&input.session_id) {
-        return Err(CommandError::NotFound(format!(
-            "session {}",
-            input.session_id
-        )));
-    }
-    // Segment resolution runs against SQLite in P01 (test:replay proves the flow).
-    Ok(vec![])
+    // Committed finals only: partials/hypotheses never enter a snapshot.
+    load_session_cached(&input.session_id, &state)?;
+    let conn = state.open_conn()?;
+    let finals = crate::store::final_segments(
+        &conn,
+        &input.session_id,
+        input.source_id.as_deref(),
+        input.from_ms,
+        input.to_ms,
+    )?;
+    Ok(finals.into_iter().map(|f| f.text).collect())
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SuggestionDelta {
+    pub request_id: String,
+    pub generation_id: String,
+    pub index: u32,
+    pub text_delta: String,
+    /// P01 streams a deterministic fixture synthesis, never a model call.
+    /// The flag travels in every payload so no consumer can mistake it.
+    pub fixture: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SuggestionDone {
+    pub request_id: String,
+    pub generation_id: String,
+    pub suggestion_version: u32,
+    pub status: String,
+    pub fixture: bool,
+}
+
+/// Deterministic P01 suggestion synthesis. It formats the snapshot's committed
+/// remote finals — the question being answered — into speakable lines. The
+/// same rule is mirrored by the UI fixture bridge (src/ui/events.ts); P03
+/// replaces both with real provider streaming.
+fn synthesize_suggestion(finals: &[FinalSegment], version: u32) -> String {
+    let joined = finals
+        .iter()
+        .filter(|f| f.role == "remote")
+        .map(|f| f.text.trim())
+        .filter(|t| !t.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ");
+    let words: Vec<&str> = joined.split_whitespace().take(40).collect();
+    let body = if words.is_empty() {
+        "belum ada pertanyaan final yang terekam.".to_string()
+    } else {
+        words.join(" ")
+    };
+    format!("Draf jawaban v{version} (fixture): «{body}»")
 }
 
 #[tauri::command]
 pub fn send_answer(
     input: SendAnswerInput,
     state: tauri::State<'_, AppState>,
+    app: AppHandle,
 ) -> CommandResult<SendAnswerOutput> {
     require_non_empty(&input.session_id, "session_id")?;
     const ACTIONS: &[&str] = &[
@@ -249,40 +400,174 @@ pub fn send_answer(
             .lock()
             .map_err(|e| CommandError::Storage(e.to_string()))?;
         if let Some(existing) = answered.get(&fingerprint) {
+            // Identical double-click: no new generation, no new snapshot. The
+            // UI already subscribed to events, so re-emit done for the settled
+            // generation instead of leaving the sender waiting on a stream
+            // that will never come.
+            let _ = app.emit(
+                "suggestion-done",
+                &SuggestionDone {
+                    request_id: existing.request_id.clone(),
+                    generation_id: existing.generation_id.clone(),
+                    suggestion_version: existing.suggestion_version,
+                    status: "done".to_string(),
+                    fixture: true,
+                },
+            );
             return Ok(existing.clone());
         }
     }
-    let mut sessions = state
-        .sessions
-        .lock()
-        .map_err(|e| CommandError::Storage(e.to_string()))?;
-    let rec = sessions
-        .get_mut(&input.session_id)
-        .ok_or_else(|| CommandError::NotFound(format!("session {}", input.session_id)))?;
+    let mut rec = load_session_cached(&input.session_id, &state)?;
     if rec.generation == "streaming" || rec.generation == "preparing_context" {
         return Err(CommandError::Conflict(
             "a generation is already active".to_string(),
         ));
     }
+    // Freeze the snapshot from committed finals: later transcripts or edits
+    // can never mutate this in-flight prompt.
+    let conn = state.open_conn()?;
+    let finals = crate::store::final_segments(&conn, &input.session_id, None, None, None)?;
+    let targets: Vec<&FinalSegment> = if input.target_segment_ids.is_empty() {
+        finals.iter().collect()
+    } else {
+        finals
+            .iter()
+            .filter(|f| input.target_segment_ids.contains(&f.segment_id))
+            .collect()
+    };
+    let snapshot = serde_json::json!({
+        "session_id": input.session_id,
+        "action": input.action,
+        "snapshot_revision": rec.active_revision,
+        "target_segment_ids": targets.iter().map(|f| &f.segment_id).collect::<Vec<_>>(),
+        "target_revisions": targets.iter().map(|f| (&f.segment_id, f.revision)).collect::<std::collections::HashMap<_, _>>(),
+        "target_texts": targets.iter().map(|f| &f.text).collect::<Vec<_>>(),
+        "model_profile_id": "fixture-p01",
+        "output_language": input.output_language.clone().unwrap_or_else(|| "id".to_string()),
+    });
+    let suggestion_version = crate::store::next_suggestion_version(&conn, &input.session_id)?;
+    let request_id = format!("req-{}", Uuid::new_v4().as_simple());
+    let generation_id = format!("gen-{}", Uuid::new_v4().as_simple());
+    crate::store::insert_generation(
+        &conn,
+        &request_id,
+        &input.session_id,
+        &generation_id,
+        &snapshot.to_string(),
+        &input.action,
+        suggestion_version,
+    )?;
     rec.generation = "preparing_context".to_string();
     rec.active_revision += 1;
+    persist_session_cached(&rec, &state)?;
     let output = SendAnswerOutput {
-        request_id: format!("req-{}", Uuid::new_v4().as_simple()),
-        generation_id: format!("gen-{}", Uuid::new_v4().as_simple()),
-        suggestion_version: 1,
+        request_id: request_id.clone(),
+        generation_id: generation_id.clone(),
+        suggestion_version,
     };
     state
         .answered
         .lock()
         .map_err(|e| CommandError::Storage(e.to_string()))?
         .insert(fingerprint, output.clone());
+    // Stream deterministic fixture deltas on a worker thread. Each chunk
+    // re-reads the generation row: a cancel flips it to cancelled and the
+    // stream stops, emitting a cancelled done-event instead of more text.
+    // Late deltas after done/cancel are never emitted, never merged.
+    let worker_session = input.session_id.clone();
+    std::thread::spawn(move || {
+        let finals: Vec<FinalSegment> = app
+            .state::<AppState>()
+            .open_conn()
+            .ok()
+            .and_then(|c| crate::store::final_segments(&c, &worker_session, None, None, None).ok())
+            .unwrap_or_default();
+        let text = synthesize_suggestion(&finals, suggestion_version);
+        let chunks: Vec<String> = text
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .chunks(6)
+            .map(|c| c.join(" "))
+            .collect();
+        let mut emitted = 0usize;
+        for (i, chunk) in chunks.iter().enumerate() {
+            let cancelled = app
+                .state::<AppState>()
+                .open_conn()
+                .ok()
+                .and_then(|c| crate::store::generation_status(&c, &request_id).ok())
+                .map(|s| s.map(|(_, st)| st == "cancelled").unwrap_or(true))
+                .unwrap_or(true);
+            if cancelled {
+                break;
+            }
+            if i > 0 {
+                std::thread::sleep(std::time::Duration::from_millis(40));
+            }
+            let tail = if i + 1 < chunks.len() { " " } else { "" };
+            if app
+                .emit(
+                    "suggestion-delta",
+                    &SuggestionDelta {
+                        request_id: request_id.clone(),
+                        generation_id: generation_id.clone(),
+                        index: i as u32,
+                        text_delta: format!("{chunk}{tail}"),
+                        fixture: true,
+                    },
+                )
+                .is_err()
+            {
+                break;
+            }
+            emitted += 1;
+        }
+        let status = if emitted == chunks.len() && !chunks.is_empty() {
+            "done"
+        } else {
+            "cancelled"
+        };
+        if let Ok(c) = app.state::<AppState>().open_conn() {
+            let _ = crate::store::set_generation_status(&c, &request_id, status);
+        }
+        let _ = app.emit(
+            "suggestion-done",
+            &SuggestionDone {
+                request_id: request_id.clone(),
+                generation_id: generation_id.clone(),
+                suggestion_version,
+                status: status.to_string(),
+                fixture: true,
+            },
+        );
+    });
+    rec.generation = "streaming".to_string();
+    let _ = persist_session_cached(&rec, &state);
     Ok(output)
 }
 
 #[tauri::command]
-pub fn cancel_answer(request_id: String) -> CommandResult<bool> {
+pub fn cancel_answer(request_id: String, state: tauri::State<'_, AppState>) -> CommandResult<bool> {
     require_non_empty(&request_id, "request_id")?;
-    // Generation registry with delta fencing lands in P01; scaffold validates input.
+    let conn = state.open_conn()?;
+    let row = crate::store::generation_status(&conn, &request_id)?;
+    let (session_id, status) =
+        row.ok_or_else(|| CommandError::NotFound(format!("generation {request_id}")))?;
+    if status == "done" || status == "failed" {
+        return Ok(false);
+    }
+    if status == "cancelled" {
+        return Ok(false);
+    }
+    crate::store::set_generation_status(&conn, &request_id, "cancelled")?;
+    // Release the single-generation fence so a corrected Send can start once
+    // the worker thread observes the cancelled row and stops emitting.
+    if let Ok(mut rec) = load_session_cached(&session_id, &state) {
+        if rec.generation == "streaming" || rec.generation == "preparing_context" {
+            rec.generation = "idle".to_string();
+            let _ = persist_session_cached(&rec, &state);
+        }
+    }
     Ok(true)
 }
 
@@ -293,8 +578,14 @@ pub struct SeekReaderInput {
 }
 
 #[tauri::command]
-pub fn seek_reader(input: SeekReaderInput) -> CommandResult<u32> {
+pub fn seek_reader(
+    input: SeekReaderInput,
+    state: tauri::State<'_, AppState>,
+) -> CommandResult<u32> {
     require_non_empty(&input.session_id, "session_id")?;
+    // The cursor itself stays UI-local (P02 prompter lane); the command proves
+    // the session exists and echoes the validated position.
+    load_session_cached(&input.session_id, &state)?;
     Ok(input.token_index)
 }
 
@@ -306,11 +597,28 @@ pub struct SaveCorrectionInput {
 }
 
 #[tauri::command]
-pub fn save_correction(input: SaveCorrectionInput) -> CommandResult<bool> {
+pub fn save_correction(
+    input: SaveCorrectionInput,
+    state: tauri::State<'_, AppState>,
+) -> CommandResult<bool> {
     require_non_empty(&input.session_id, "session_id")?;
     require_non_empty(&input.segment_id, "segment_id")?;
     require_non_empty(&input.corrected_text, "corrected_text")?;
     require_max_len(&input.corrected_text, 20000, "corrected_text")?;
+    load_session_cached(&input.session_id, &state)?;
+    let conn = state.open_conn()?;
+    let updated = crate::store::apply_correction(
+        &conn,
+        &input.session_id,
+        &input.segment_id,
+        &input.corrected_text,
+    )?;
+    if !updated {
+        return Err(CommandError::NotFound(format!(
+            "segment {} in session {}",
+            input.segment_id, input.session_id
+        )));
+    }
     Ok(true)
 }
 
@@ -347,18 +655,19 @@ pub fn select_model_profile(
 ) -> CommandResult<SessionRecord> {
     require_non_empty(&input.session_id, "session_id")?;
     require_non_empty(&input.model_profile_id, "model_profile_id")?;
-    let mut sessions = state
-        .sessions
-        .lock()
-        .map_err(|e| CommandError::Storage(e.to_string()))?;
-    let rec = sessions
-        .get_mut(&input.session_id)
-        .ok_or_else(|| CommandError::NotFound(format!("session {}", input.session_id)))?;
+    let mut rec = load_session_cached(&input.session_id, &state)?;
     if rec.generation == "streaming" {
         return Err(CommandError::Conflict(
             "model switch applies to the next request while streaming".to_string(),
         ));
     }
+    // The profile choice is durable session settings, not a bare echo: it is
+    // written into settings_snapshot and therefore survives restarts.
+    let mut settings: serde_json::Value =
+        serde_json::from_str(&rec.settings_snapshot).unwrap_or(serde_json::json!({}));
+    settings["model_profile_id"] = serde_json::Value::String(input.model_profile_id);
+    rec.settings_snapshot = settings.to_string();
     rec.active_revision += 1;
-    Ok(rec.clone())
+    persist_session_cached(&rec, &state)?;
+    Ok(rec)
 }

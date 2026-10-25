@@ -3,8 +3,8 @@
 // docs/CONTRACTS.md. Audio capture (WASAPI) and provider adapters land in
 // P02 lanes; this scaffold owns storage, commands, and the generation registry.
 
-mod commands;
-mod store;
+pub mod commands;
+pub mod store;
 
 use store::AppState;
 
@@ -15,6 +15,7 @@ pub fn run() {
         .manage(AppState::new())
         .invoke_handler(tauri::generate_handler![
             commands::list_sources,
+            commands::ingest_transcript_event,
             commands::start_session,
             commands::pause_session,
             commands::resume_session,

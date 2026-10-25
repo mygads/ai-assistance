@@ -115,6 +115,11 @@ export class GenerationRegistry {
     return rec;
   }
 
+  /** Number of recorded generations. Test hook for the no-model-before-Send gate. */
+  get size(): number {
+    return this.records.size;
+  }
+
   get(request_id: string): GenerationRecord | undefined {
     return this.records.get(request_id);
   }

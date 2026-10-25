@@ -46,10 +46,13 @@ if (!existsSync(distIndex) || statSync(distIndex).mtimeMs < newestSrc) {
 
 // Debug binary without bundling (fast path; packaging is test:installer).
 // Tauri embeds dist/ at COMPILE time, so an exe older than dist/src carries a
-// stale frontend — rebuild it instead of reusing a stale binary.
+// stale frontend — rebuild it instead of reusing a stale binary. Rust sources
+// count too: an exe older than src-tauri/src lacks new commands entirely.
 const exe = path.join(rootDir, "src-tauri", "target", "debug", "conversation-assistant.exe");
+const rsDir = path.join(rootDir, "src-tauri", "src");
+const newestRs = readdirSync(rsDir).map((f) => statSync(path.join(rsDir, f)).mtimeMs).reduce((a, b) => Math.max(a, b), 0);
 const newestDist = existsSync(distIndex) ? statSync(distIndex).mtimeMs : 0;
-if (!existsSync(exe) || statSync(exe).mtimeMs < Math.max(newestSrc, newestDist)) {
+if (!existsSync(exe) || statSync(exe).mtimeMs < Math.max(newestSrc, newestDist, newestRs)) {
   const b = await run(tauriBin, ["build", "--debug", "--no-bundle"], { cwd: path.join(rootDir, "src-tauri"), env: cargoEnv() });
   if (!existsSync(exe)) {
     const blocked = /linker|link\.exe|MSVC|Visual Studio/i.test(b.out);
@@ -132,8 +135,26 @@ try {
   if (await overlayBtn.isExisting()) await overlayBtn.click();
   await sendBtn.waitForExist({ timeout: 10000 });
   await sendBtn.click();
-  await browser.waitUntil(async () => ((await browser.$('[data-testid="script"]').getText()) ?? "").length > 20, { timeout: 15000 });
-  push("L3-real-ipc-send-answer", "pass", ["external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"], "suggestion rendered from real IPC start_session + send_answer");
+  // The suggestion must arrive as Rust-emitted stream events built from the
+  // DB snapshot (ingested finals), not a UI constant: the fixture bridge is
+  // absent in the native binary, so "draf jawaban … arsitektur" (reader-
+  // normalized tokens: lowercase, no punctuation) proves the real
+  // snapshot -> stream path.
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="script"]').getText()) ?? "").includes("draf jawaban"), { timeout: 15000 });
+  // Wait for the done signal before asserting content: chunks stream in.
+  const metaEl = await browser.$('[data-testid="answer-meta"]');
+  await metaEl.waitForExist({ timeout: 10000 });
+  const metaText = await metaEl.getText();
+  if (!/v1/.test(metaText)) throw new Error(`answer meta missing v1: ${metaText}`);
+  const scriptText = await browser.$('[data-testid="script"]').getText();
+  if (!scriptText.includes("arsitektur")) throw new Error(`streamed suggestion is not built from ingested finals: ${scriptText.slice(0, 200)}`);
+  push("L3-real-ipc-send-answer", "pass", ["external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"], `meta=${metaText.slice(0, 60)} script_chars=${scriptText.length}`);
+  // Identical double-click dedups: same request id, no second generation.
+  await sendBtn.click();
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="answer-meta"]').getText()) ?? "") !== "", { timeout: 15000 });
+  const metaText2 = await browser.$('[data-testid="answer-meta"]').getText();
+  if (metaText2.trim() !== metaText.trim()) throw new Error(`resend did not dedup: ${metaText} vs ${metaText2}`);
+  push("L3-send-dedup", "pass", [], `identical resend returned ${metaText2.trim()}`);
   await browser.saveScreenshot(path.join(artDir, "native-dashboard.png"));
 } catch (e) {
   push("L3-native-session", /no window title|did not appear|connect ECONNREFUSED/i.test(String(e)) ? "blocked" : "fail",

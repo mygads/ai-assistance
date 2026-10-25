@@ -1,7 +1,7 @@
 {
   "contract_version": "0.3",
   "frozen_at": "2026-10-25",
-  "note": "Coordinator-owned. Command names frozen per docs/CONTRACTS.md (adapt-once rule consumed in P00). Any rename requires a T-task, ADR, and regeneration of src/ui/ipc.ts. Payload shapes mirror src-tauri/src/commands.rs + store.rs exactly.",
+  "note": "Coordinator-owned. 13 commands; the P00 freeze grew 12 -> 13 once via ADR-014 (ingest_transcript_event, T03). Further renames/additions require a T-task, ADR, and regeneration of src/ui/ipc.ts. Payload shapes mirror src-tauri/src/commands.rs + store.rs exactly.",
   "error_envelope": "{ code: 'NotFound|InvalidInput|Conflict|Storage', message: sanitized }",
   "commands": [
     {
@@ -10,6 +10,15 @@
       "returns": "AudioSource[]",
       "types": {
         "AudioSource": "{ id: string; session_id: string; device_id: string; role: string; enabled: boolean }"
+      }
+    },
+    {
+      "name": "ingest_transcript_event",
+      "args": { "input": "IngestTranscriptInput" },
+      "returns": "IngestTranscriptOutput",
+      "types": {
+        "IngestTranscriptInput": "{ session_id: string; source_id: string; role: \"self\" | \"remote\"; segment_id: string; revision: number; start_ms: number; end_ms: number; status: \"partial\" | \"final\"; text: string }",
+        "IngestTranscriptOutput": "{ outcome: \"inserted\" | \"replaced-hypothesis\" | \"committed\" | \"stale-ignored\"; stored: boolean }"
       }
     },
     {

@@ -3,6 +3,8 @@
 import { bridgeInvoke, type BridgeMode } from "./bridge.ts";
 
 export interface AudioSource { id: string; session_id: string; device_id: string; role: string; enabled: boolean };
+export interface IngestTranscriptInput { session_id: string; source_id: string; role: "self" | "remote"; segment_id: string; revision: number; start_ms: number; end_ms: number; status: "partial" | "final"; text: string };
+export interface IngestTranscriptOutput { outcome: "inserted" | "replaced-hypothesis" | "committed" | "stale-ignored"; stored: boolean };
 export interface StartSessionInput { workspace_id: string; profile_id?: string };
 export interface SessionRecord { id: string; workspace_id: string; started_at: string; active_revision: number; capture: string; generation: string; prompter: string; settings_snapshot: string };
 export interface TranscriptRangeInput { session_id: string; source_id?: string; from_ms?: number; to_ms?: number };
@@ -15,6 +17,10 @@ export interface SelectModelProfileInput { session_id: string; model_profile_id:
 
 export function list_sources(session_id: string): Promise<{ mode: BridgeMode; data: AudioSource[] }> {
   return bridgeInvoke<AudioSource[]>("list_sources", { session_id } as Record<string, unknown>);
+}
+
+export function ingest_transcript_event(input: IngestTranscriptInput): Promise<{ mode: BridgeMode; data: IngestTranscriptOutput }> {
+  return bridgeInvoke<IngestTranscriptOutput>("ingest_transcript_event", { input } as Record<string, unknown>);
 }
 
 export function start_session(input: StartSessionInput): Promise<{ mode: BridgeMode; data: SessionRecord }> {

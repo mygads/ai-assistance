@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
-import { bridgeMode, FIXTURE_SCRIPT } from "./bridge.ts";
-import { send_answer, start_session, type SessionRecord } from "./ipc.ts";
+import { useMemo, useRef, useState } from "react";
+import { bridgeMode, fixtureRemoteFinals } from "./bridge.ts";
+import { ingest_transcript_event, send_answer, start_session, type SessionRecord } from "./ipc.ts";
+import { emitFixtureSuggestion, onSuggestionDelta, onSuggestionDone } from "./events.ts";
 import { TranscriptStore, type TranscriptEvent } from "../domain/transcript.ts";
 import { buildScript, ReaderCursor } from "../domain/reader.ts";
 
@@ -15,8 +16,8 @@ function seedEvents(sessionId: string): TranscriptEvent[] {
     connection_id: "conn-1",
   } as const;
   return [
-    { ...base, source_id: "loop", role: "remote", segment_id: "remote-01", revision: 1, start_ms: 0, end_ms: 900, status: "final", text: "Mengapa memilih arsitektur ini?" },
-    { ...base, source_id: "mic", role: "self", segment_id: "self-01", revision: 0, start_ms: 950, end_ms: 1400, status: "final", text: "Fokus saya adalah respons cepat." },
+    { ...base, source_id: `${sessionId}:remote`, role: "remote", segment_id: "remote-01", revision: 1, start_ms: 0, end_ms: 900, status: "final", text: "Mengapa memilih arsitektur ini?" },
+    { ...base, source_id: `${sessionId}:self`, role: "self", segment_id: "self-01", revision: 0, start_ms: 950, end_ms: 1400, status: "final", text: "Fokus saya adalah respons cepat." },
   ];
 }
 
@@ -25,8 +26,12 @@ export default function App() {
   const [view, setView] = useState<"dashboard" | "overlay">("dashboard");
   const [session, setSession] = useState<SessionRecord | null>(null);
   const [answer, setAnswer] = useState<string>("");
+  const [answerMeta, setAnswerMeta] = useState<string>("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string>("");
+  const sessionRef = useRef<SessionRecord | null>(null);
+  sessionRef.current = session;
+  const pendingRequest = useRef<string>("");
 
   const store = useMemo(() => new TranscriptStore(), []);
   if (session) {
@@ -45,30 +50,79 @@ export default function App() {
     setError("");
     try {
       const r = await start_session({ workspace_id: "default" });
-      setSession(r.data);
+      const s = r.data;
+      // Persist the seed transcript through the real ingest path so the
+      // snapshot below is built from stored finals, not local constants.
+      for (const e of seedEvents(s.id)) {
+        await ingest_transcript_event({
+          session_id: s.id,
+          source_id: e.source_id,
+          role: e.role,
+          segment_id: e.segment_id,
+          revision: e.revision,
+          start_ms: e.start_ms,
+          end_ms: e.end_ms,
+          status: e.status,
+          text: e.text,
+        });
+      }
+      setSession(s);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(e instanceof Error ? e.message : JSON.stringify(e));
     }
   }
 
   async function send() {
-    if (!session || sending) return;
+    const s = sessionRef.current;
+    if (!s || sending) return;
     setSending(true);
     setError("");
+    setAnswer("");
+    setAnswerMeta("");
+    pendingRequest.current = "";
+    // Subscribe before invoking: deltas stream from Rust window events in
+    // native mode, from the fixture emitter in browser mode.
+    let settled = false;
+    const unsubs: Array<() => void> = [];
     try {
+      unsubs.push(await onSuggestionDelta((d) => {
+        // Sends are serialized by the sending flag, so the first delta of a
+        // fresh send adopts its request id even if the invoke response that
+        // assigns it has not arrived yet.
+        if (pendingRequest.current === "") pendingRequest.current = d.request_id;
+        if (d.request_id !== pendingRequest.current) return;
+        setAnswer((prev) => prev + d.text_delta);
+      }));
+      unsubs.push(await onSuggestionDone((d) => {
+        if (pendingRequest.current === "") pendingRequest.current = d.request_id;
+        if (d.request_id !== pendingRequest.current || settled) return;
+        settled = true;
+        setAnswerMeta(`v${d.suggestion_version} · ${d.request_id.slice(0, 13)}`);
+        setSending(false);
+        for (const u of unsubs) u();
+      }));
       const r = await send_answer({
-        session_id: session.id,
+        session_id: s.id,
         action: "answer",
         target_segment_ids: finals.filter((f) => f.event.role === "remote").map((f) => f.event.segment_id),
       });
-      void r;
-      // Fixture/non-streaming path shows the deterministic script; the real
-      // streaming adapter (P03) replaces this with text_delta events.
-      setAnswer((prev) => (prev === "" ? FIXTURE_SCRIPT : prev));
+      pendingRequest.current = r.data.request_id;
+      if (mode === "fixture") {
+        // Browser only: mirror the Rust synthesis rule over ingested texts.
+        emitFixtureSuggestion(r.data.request_id, r.data.generation_id, r.data.suggestion_version, fixtureRemoteFinals());
+      }
+      // Safety: never leave the button stuck if the stream dies silently.
+      setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          setSending(false);
+          for (const u of unsubs) u();
+        }
+      }, 10000);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
+      setError(e instanceof Error ? e.message : JSON.stringify(e));
       setSending(false);
+      for (const u of unsubs) u();
     }
   }
 
@@ -122,10 +176,11 @@ export default function App() {
               </span>
             ))}
           </div>
-          <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+          <div style={{ marginTop: 16, display: "flex", gap: 8, alignItems: "center" }}>
             <button data-testid="send-answer" onClick={send} disabled={!session || sending}>
               {sending ? "Mengirim…" : "Kirim"}
             </button>
+            {answerMeta !== "" && <span data-testid="answer-meta">Saran {answerMeta}</span>}
           </div>
           {mode === "fixture" && <p style={{ fontSize: 12 }}>Mode fixture: browser saja, bukan bukti IPC native.</p>}
         </section>

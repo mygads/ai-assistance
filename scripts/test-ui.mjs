@@ -81,11 +81,27 @@ try {
   await page.screenshot({ path: path.join(artDir, "dashboard.png") });
   await page.getByRole("button", { name: "Overlay" }).click();
   await page.getByTestId("send-answer").click();
-  await page.waitForFunction(() => document.querySelector('[data-testid="script"]')?.textContent?.includes("Jawab") ?? false, { timeout: 10000 }).catch(() => {});
+  // The suggestion must arrive as streamed deltas (fixture emitter), not as a
+  // constant stamped into the UI: assert the synthesis marker + remote words.
+  // NOTE: the overlay renders reader-normalized tokens (lowercase, no
+  // punctuation), so assertions use the normalized form. waitForFunction takes
+  // (fn, arg, options): the arg slot must be filled to pass options.
+  await page.waitForFunction(() => document.querySelector('[data-testid="script"]')?.textContent?.includes("draf jawaban") ?? false, undefined, { timeout: 10000 });
+  // Wait for the done signal before asserting content: chunks stream in.
+  await page.getByTestId("answer-meta").waitFor({ timeout: 10000 });
+  const meta = await page.getByTestId("answer-meta").textContent().catch(() => "");
+  if (!/v1/.test(meta ?? "")) throw new Error(`answer meta missing v1: ${meta}`);
   const scriptText = await page.getByTestId("script").textContent();
   if (!scriptText || scriptText.length < 20) throw new Error("suggestion script did not render");
+  if (!scriptText.includes("arsitektur")) throw new Error("streamed suggestion is not built from ingested finals");
+  // Reader follows self speech only: the streamed naskah answers the remote
+  // question, so the seeded self words legitimately match nothing — assert
+  // the cursor does not hallucinate a jump (real advancement is proven at L1
+  // with a coherent script; see test:replay slice-reader-follows-self).
+  const readerState = await page.getByTestId("reader-state").textContent();
+  if (!/committed=0/.test(readerState ?? "")) throw new Error(`reader jumped on unrelated naskah: ${readerState}`);
   await page.screenshot({ path: path.join(artDir, "overlay.png") });
-  push("L2-overlay-send-journey", "pass", [NATIVE_BRIDGE_REPLACED], `script_chars=${scriptText.length}`);
+  push("L2-overlay-send-journey", "pass", [NATIVE_BRIDGE_REPLACED], `script_chars=${scriptText.length} meta=${(meta ?? "").trim()} reader=${(readerState ?? "").trim()}`);
   if (errors.length > 0) throw new Error(`page errors: ${errors.join(" | ")}`);
 } catch (e) {
   const msg = String(e?.message ?? e);

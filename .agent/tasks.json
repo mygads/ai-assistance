@@ -90,10 +90,18 @@
         "A05",
         "A06"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        ".agent/evidence/check-2026-10-25T00-56-17-284Z.json",
+        ".agent/evidence/unit-2026-10-25T00-56-18-298Z.json",
+        ".agent/evidence/test-integration-2026-10-25T00-56-33-796Z.json",
+        ".agent/evidence/test-replay-2026-10-25T00-56-35-082Z.json",
+        ".agent/evidence/test-ui-2026-10-25T00-56-41-376Z.json",
+        ".agent/evidence/test-native-2026-10-25T00-57-12-665Z.json",
+        ".agent/evidence/verify-2026-10-25T00-56-09-055Z.json"
+      ]
     },
     {
       "id": "T04",
@@ -109,7 +117,7 @@
       "acceptance_ids": [
         "A15"
       ],
-      "status": "pending",
+      "status": "in_progress",
       "worktree": null,
       "baseline_commit": null,
       "evidence_refs": []

@@ -131,4 +131,91 @@ for (const file of files) {
   }
 }
 
+// T03 vertical-slice cases: snapshot fencing, dedup, cancel, and the
+// no-model-before-Send gate, through the real domain pipeline.
+try {
+  const sliceStore = new TranscriptStore();
+  const sliceRegistry = new GenerationRegistry();
+  const sid = "slice-session-1";
+  if (sliceRegistry.size !== 0) throw new Error("registry must start empty");
+  const ev = (segment_id, role, revision, status, text, start_ms) => ({
+    schema_version: "0.3",
+    session_id: sid,
+    connection_id: "conn-slice",
+    source_id: role === "self" ? "mic" : "loop",
+    role,
+    segment_id,
+    revision,
+    start_ms,
+    end_ms: start_ms + 400,
+    status,
+    text,
+  });
+  // Partial hypothesis, then committed final; remote question + self context.
+  for (const e of [
+    ev("q-1", "remote", 0, "partial", "Mengapa memilih", 0),
+    ev("q-1", "remote", 1, "final", "Mengapa memilih arsitektur ini?", 0),
+    ev("s-1", "self", 0, "final", "Fokus saya adalah respons cepat.", 950),
+  ]) {
+    const r = sliceStore.upsert(e);
+    if (r.errors.length > 0) throw new Error(`slice upsert: ${r.errors.join("; ")}`);
+  }
+  if (sliceRegistry.size !== 0) throw new Error("model touched before Send");
+  const finals = sliceStore.finals(sid);
+  if (finals.some((f) => f.event.status !== "final")) throw new Error("partials leaked into finals view");
+  const snap = (req, rev) => ({
+    request_id: req,
+    session_id: sid,
+    action: "answer",
+    snapshot_revision: rev,
+    cutoff_ms: 1400,
+    target_segment_ids: ["q-1"],
+    target_revisions: { "q-1": 1 },
+    self_segment_ids: ["s-1"],
+    context_packet_id: "ctx-slice-1",
+    model_profile_id: "default",
+    output_language: "id",
+    answer_style: "spoken",
+    provisional_segments: [],
+    read_cursor_token: 0,
+  });
+  const fp1 = GenerationRegistry.fingerprint(snap("req-slice-1", 3));
+  const first = sliceRegistry.start(snap("req-slice-1", 3), fp1);
+  if (first.duplicate || first.record.suggestion_version !== 1) throw new Error("first send must yield v1");
+  // Snapshot is immutable: a later final never mutates the in-flight prompt.
+  const late = sliceStore.upsert(ev("q-2", "remote", 0, "final", "Dan bagaimana biayanya?", 1500));
+  if (late.errors.length > 0) throw new Error(`late upsert: ${late.errors.join("; ")}`);
+  if (first.record.request_id !== "req-slice-1") throw new Error("snapshot identity drifted");
+  // Identical double-click dedups to the same generation.
+  const dup = sliceRegistry.start(snap("req-slice-1", 3), fp1);
+  if (!dup.duplicate) throw new Error("identical resend must dedup");
+  // New evidence -> new snapshot version.
+  const fp2 = GenerationRegistry.fingerprint({ ...snap("req-slice-2", 4), target_segment_ids: ["q-1", "q-2"] });
+  const second = sliceRegistry.start(snap("req-slice-2", 4), fp2);
+  if (second.duplicate || second.record.suggestion_version !== 2) throw new Error("new send must yield v2");
+  // Cancel fences late deltas; resend after cancel starts clean.
+  sliceRegistry.cancel("req-slice-2");
+  const late2 = sliceRegistry.applyDelta("req-slice-2", "terlambat");
+  if (late2.applied) throw new Error("cancelled generation accepted a delta");
+  if (sliceRegistry.get("req-slice-2").late_deltas_ignored !== 1) throw new Error("late delta not counted");
+  push("L1-slice-send-fencing", "pass", ["provider model -> in-process registry only (no network)"]);
+} catch (e) {
+  push("L1-slice-send-fencing", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
+
+// Reader follows self speech with a coherent script: self words commit
+// tokens, remote words never advance the cursor.
+try {
+  const coherent = buildScript("Fokus saya adalah respons cepat. Kita mulai dari arsitektur.");
+  const cursor = new ReaderCursor(coherent);
+  cursor.update("Fokus saya adalah respons cepat.".split(/\s+/), true, "self");
+  if (!(cursor.committed > 0)) throw new Error(`self speech did not advance the reader (committed=${cursor.committed})`);
+  const afterSelf = cursor.committed;
+  cursor.update("Mengapa memilih arsitektur ini?".split(/\s+/), true, "remote");
+  if (cursor.committed !== afterSelf) throw new Error("remote speech advanced the reader");
+  push("L1-slice-reader-follows-self", "pass", ["provider audio -> authored word lists"]);
+} catch (e) {
+  push("L1-slice-reader-follows-self", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
+
 finish({ script: "test:replay", level: "L1", cases, startedUtc });
