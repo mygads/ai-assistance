@@ -631,7 +631,10 @@ pub struct ImportDocumentInput {
 }
 
 #[tauri::command]
-pub fn import_document(input: ImportDocumentInput) -> CommandResult<String> {
+pub fn import_document(
+    input: ImportDocumentInput,
+    state: tauri::State<'_, AppState>,
+) -> CommandResult<String> {
     require_non_empty(&input.workspace_id, "workspace_id")?;
     require_non_empty(&input.file_name, "file_name")?;
     require_max_len(&input.file_name, 512, "file_name")?;
@@ -639,7 +642,18 @@ pub fn import_document(input: ImportDocumentInput) -> CommandResult<String> {
         require_non_empty(text, "content_text")?;
         require_max_len(text, 10_000_000, "content_text")?;
     }
-    Ok(format!("doc-{}", Uuid::new_v4().as_simple()))
+    // T09: a real persisted document, not an echo. The row carries workspace
+    // scope + provenance; retrieval only cites rows from the same workspace.
+    let id = format!("doc-{}", Uuid::new_v4().as_simple());
+    let conn = state.open_conn()?;
+    let doc = crate::store::import_document_row(
+        &conn,
+        &id,
+        &input.workspace_id,
+        &input.file_name,
+        input.content_text.as_deref().unwrap_or(""),
+    )?;
+    Ok(doc.id)
 }
 
 #[derive(Debug, Deserialize)]

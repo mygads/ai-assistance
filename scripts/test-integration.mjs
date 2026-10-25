@@ -118,8 +118,11 @@ try {
 // Case 6: Rust audio-routing integration (real router/rings/links/fixture
 // capture, no hardware). The target name varies per case; keep the runner
 // generic so lane tests plug in without rewriting discovery.
-for (const target of ["audio_routing", "stt_adapters"]) {
-  const caseId = target === "audio_routing" ? "L1-audio-routing" : "L1-stt-adapters";
+for (const [target, caseId, boundary] of [
+  ["audio_routing", "L1-audio-routing", "WASAPI hardware -> deterministic fixture capture"],
+  ["stt_adapters", "L1-stt-adapters", "provider network -> deterministic wire scripts"],
+  ["context_retrieval", "L1-context-retrieval", "corpus network -> workspace-scoped SQLite FTS5"],
+]) {
   try {
     const r = spawnSync(`cargo test --test ${target}`, {
       cwd: path.join(rootDir, "src-tauri"), encoding: "utf8", timeout: 600000, shell: true, env: cargoEnv(),
@@ -127,7 +130,7 @@ for (const target of ["audio_routing", "stt_adapters"]) {
     const out = (r.stdout ?? "") + (r.stderr ?? "");
     const m = out.match(/test result: ok\. (\d+) passed; (\d+) failed/);
     if (r.status === 0 && m && Number(m[1]) > 0 && Number(m[2]) === 0) {
-      push(caseId, "pass", [target === "audio_routing" ? "WASAPI hardware -> deterministic fixture capture" : "provider network -> deterministic wire scripts"]);
+      push(caseId, "pass", [boundary]);
     } else {
       throw new Error((out.split("\n").filter((l) => /error|FAILED|panicked/i.test(l)).join(" | ") || `cargo exit ${r.status}`).slice(0, 400));
     }

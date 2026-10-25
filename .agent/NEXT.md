@@ -5,6 +5,6 @@ Status: P01 complete (T00–T04 integrated at b331d9b). P02 executing SERIALLY �
 2. T06 DONE: STT adapter seam (src-tauri/src/providers/**) + tests/provider/** fixtures + L1-stt-adapters integration + L1-slice-stt-protocol-replay; unit rs 36/0, integration 7/7, replay 6/6, check 5/5. ADR-016: fixtures mirror the repo fixture contract, not claimed live wire (T11 job).
 3. T07 DONE: dashboard + reading overlay (src/ui/dashboard.tsx + overlay.tsx); test:ui 10/10, native 6/6, verify fail=0 blocked=3. Stale-dist rebuild guard added to test-ui.mjs; action buttons use aria-disabled (focus preservation).
 4. T08 DONE: stable voice-follow (ReaderSession + src/domain/reader.test.ts 12/12); unit ts 35/0, replay 8/8, ui 10/10, check 5/5.
-5. T09 ACTIVE (coordinator-implemented): import/provenance/retrieval (A08/A09). Required check: test:integration. Then T10 integration barrier.
+5. T09 DONE (coordinator-implemented): import/provenance/retrieval (A08/A09). L1-context-retrieval 5/5, validateSourceRefs 6/6; check 5/5, unit ts 41/0 + rs 36/0, integration 8/8, replay 8/8, ui 10/10. Then T10 integration barrier.
 
 Blockers carried forward: B01 resolved. B02 remains (no provider keys → test:live blocked, owner: user). Physical-audio capture and meeting-capture calibration remain blocked on hardware/session prerequisites, not passes.

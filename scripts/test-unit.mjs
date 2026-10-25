@@ -17,7 +17,7 @@ function cargoEnv() {
 }
 
 // Part 1: TypeScript domain tests (node:test, type-stripped, no build step).
-const ts = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "src/domain/transcript.test.ts", "src/domain/session.test.ts", "src/domain/core.test.ts", "src/domain/reader.test.ts"], {
+const ts = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "src/domain/transcript.test.ts", "src/domain/session.test.ts", "src/domain/core.test.ts", "src/domain/reader.test.ts", "src/domain/context.test.ts"], {
   cwd: rootDir,
   encoding: "utf8",
   timeout: 180000,

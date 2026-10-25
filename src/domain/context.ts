@@ -82,3 +82,38 @@ export function repackForModel(packet: ContextPacket, allItems: ContextItem[], p
   const sources = [...packet.items, ...packet.dropped_item_ids.map((id) => byId.get(id)).filter((i) => i !== undefined)];
   return buildContextPacket(`${packet.id}-repacked-${profile.id}`, profile, sources);
 }
+
+/** Kinds whose source_refs must resolve to imported workspace documents. */
+const DOCUMENT_KINDS = new Set(["document_full", "retrieved_section"]);
+
+export interface SourceRefValidation {
+  ok: boolean;
+  /** Refs naming documents that were never imported into the workspace. */
+  dangling: string[];
+  /** Document-kind item ids carried with no source at all. */
+  missingSource: string[];
+}
+
+/**
+ * T09: every citation in a context packet must resolve to an actually-imported
+ * document. `knownDocIds` is the workspace's imported document id set (e.g.
+ * from the accumulated import_document results). Non-document kinds (history,
+ * pinned briefs/facts, corrections) carry segment or memory refs, not
+ * document refs, so their source_refs are out of scope here.
+ */
+export function validateSourceRefs(items: ContextItem[], knownDocIds: Iterable<string>): SourceRefValidation {
+  const known = new Set(knownDocIds);
+  const dangling: string[] = [];
+  const missingSource: string[] = [];
+  for (const item of items) {
+    if (!DOCUMENT_KINDS.has(item.kind)) continue;
+    if (item.source_refs.length === 0) {
+      missingSource.push(item.id);
+      continue;
+    }
+    for (const ref of item.source_refs) {
+      if (!known.has(ref) && !dangling.includes(ref)) dangling.push(ref);
+    }
+  }
+  return { ok: dangling.length === 0 && missingSource.length === 0, dangling, missingSource };
+}

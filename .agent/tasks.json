@@ -220,10 +220,10 @@
         "A08",
         "A09"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/check-2026-10-25T03-25-50-038Z.json", ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json", ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json", ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json", ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json"]
     },
     {
       "id": "T10",

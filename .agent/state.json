@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 12,
+  "revision": 13,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -20,10 +20,11 @@
     "T05",
     "T06",
     "T07",
-    "T08"
+    "T08",
+    "T09"
   ],
   "active_tasks": [
-    "T09"
+    "T10"
   ],
   "blockers": [
     {
@@ -44,15 +45,15 @@
   "gates": {
     "static_unit": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json", ".agent/evidence/check-2026-10-25T01-06-15-894Z.json", ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json"]
+      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json", ".agent/evidence/check-2026-10-25T01-06-15-894Z.json", ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json", ".agent/evidence/check-2026-10-25T03-25-50-038Z.json", ".agent/evidence/unit-2026-10-25T03-25-56-275Z.json"]
     },
     "replay": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json", ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json", ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json"]
+      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json", ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json", ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json", ".agent/evidence/test-integration-2026-10-25T03-26-33-083Z.json", ".agent/evidence/test-replay-2026-10-25T03-26-39-742Z.json"]
     },
     "browser": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json"]
+      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json", ".agent/evidence/test-ui-2026-10-25T03-27-05-447Z.json"]
     },
     "native": {
       "status": "pass",
@@ -93,7 +94,8 @@
     "T06 (completed): STT adapter seam + protocol fixtures — src-tauri/src/providers/** + tests/provider/** + L1-stt-adapters + L1-slice-stt-protocol-replay; unit rs 36/0, integration 7/7, replay 6/6, check 5/5",
     "T07 (completed): dashboard + reading overlay — src/ui/{dashboard,overlay}.tsx; test:ui 10/10 (focus-preserved, drawer focus-return, token seek, compact mode, readiness); verify fail=0 blocked=3",
     "T08 (completed): stable voice-follow — ReaderSession versioning + rescript in reader.ts, src/domain/reader.test.ts 12/12, replay L1-reader-version-rebase + L1-reader-skip-repeat-offscript, overlay wired to session; unit ts 35/0, replay 8/8, ui 10/10",
-    "T09 (active, coordinator-implemented): import/provenance/retrieval (A08/A09), required check test:integration",
+    "T09 (completed): import/provenance/retrieval (A08/A09) — documents + documents_fts (unicode61) in store.rs, import_document persists via open_conn, retrieve_sections with InvalidInput mapping, L1-context-retrieval 5/5, validateSourceRefs + context.test.ts 6/6; check 5/5, unit ts 41/0 + rs 36/0, integration 8/8, replay 8/8, ui 10/10",
+    "T10 (active, coordinator-implemented): integration barrier — regenerate contracts, required checks check + test:replay + test:integration",
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
   ],

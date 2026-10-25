@@ -143,6 +143,15 @@ CREATE TABLE IF NOT EXISTS generation_requests(
   model_profile TEXT NOT NULL, action TEXT NOT NULL, status TEXT NOT NULL,
   generation_id TEXT NOT NULL DEFAULT '', snapshot_json TEXT NOT NULL DEFAULT '{}',
   suggestion_version INTEGER NOT NULL DEFAULT 1);
+-- T09: workspace-scoped imported documents + FTS5 index for retrieval.
+-- Documents are immutable once imported (corrections arrive as new documents);
+-- the FTS table mirrors the content column inside the same transaction.
+CREATE TABLE IF NOT EXISTS documents(
+  id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+  file_name TEXT NOT NULL, content_text TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL);
+CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5(
+  doc_id UNINDEXED, file_name, content_text, workspace_id UNINDEXED, tokenize='unicode61');
 ";
 
 /// Best-effort migration for dev databases created before a column existed.
@@ -294,6 +303,132 @@ pub fn insert_segment(conn: &Connection, seg: &TranscriptSegment) -> Result<(), 
     )
     .map_err(|e| CommandError::Storage(e.to_string()))?;
     Ok(())
+}
+
+/// Workspace-scoped document import with provenance (T09/A08/A09).
+/// Every stored document carries its workspace scope; retrieval below only
+/// ever returns rows from the caller's workspace, so source references in
+/// context packets always resolve to actually-imported documents.
+#[derive(Debug, Clone)]
+pub struct ImportedDocument {
+    pub id: String,
+    pub workspace_id: String,
+    pub file_name: String,
+    pub created_at: String,
+}
+
+pub fn import_document_row(
+    conn: &Connection,
+    id: &str,
+    workspace_id: &str,
+    file_name: &str,
+    content_text: &str,
+) -> Result<ImportedDocument, CommandError> {
+    if id.trim().is_empty() || workspace_id.trim().is_empty() || file_name.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "document/workspace/file ids must not be empty".to_string(),
+        ));
+    }
+    conn.execute(
+        "INSERT OR IGNORE INTO workspaces(id,title) VALUES(?1,?2)",
+        params![workspace_id, workspace_id],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let created_at = Utc::now().to_rfc3339();
+    conn.execute(
+        "INSERT INTO documents(id,workspace_id,file_name,content_text,created_at) VALUES(?1,?2,?3,?4,?5)",
+        params![id, workspace_id, file_name, content_text, created_at],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    conn.execute(
+        "INSERT INTO documents_fts(doc_id,file_name,content_text,workspace_id) VALUES(?1,?2,?3,?4)",
+        params![id, file_name, content_text, workspace_id],
+    )
+    .map_err(|e| CommandError::Storage(e.to_string()))?;
+    Ok(ImportedDocument {
+        id: id.to_string(),
+        workspace_id: workspace_id.to_string(),
+        file_name: file_name.to_string(),
+        created_at,
+    })
+}
+
+/// One retrieved excerpt with full provenance: workspace scope plus the
+/// document reference the excerpt came from. Callers attach these as
+/// `retrieved_section` items (with source_refs=[doc_id]) so context packets
+/// never cite documents that were not imported into the workspace.
+#[derive(Debug, Clone)]
+pub struct RetrievedSection {
+    pub doc_id: String,
+    pub workspace_id: String,
+    pub file_name: String,
+    pub excerpt: String,
+    pub rank: f64,
+}
+
+pub fn retrieve_sections(
+    conn: &Connection,
+    workspace_id: &str,
+    query: &str,
+    limit: u32,
+) -> Result<Vec<RetrievedSection>, CommandError> {
+    if workspace_id.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "workspace_id must not be empty".to_string(),
+        ));
+    }
+    if query.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "query must not be empty".to_string(),
+        ));
+    }
+    if limit == 0 || limit > 50 {
+        return Err(CommandError::InvalidInput(
+            "limit must be within 1..=50".to_string(),
+        ));
+    }
+    let mut stmt = conn
+        .prepare(
+            "SELECT doc_id, workspace_id, file_name, \
+             snippet(documents_fts, 2, '<mark>', '</mark>', ' … ', 10) AS excerpt, \
+             bm25(documents_fts) AS score \
+             FROM documents_fts WHERE documents_fts MATCH ?1 AND workspace_id = ?2 \
+             ORDER BY score LIMIT ?3",
+        )
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    let rows = stmt
+        .query_map(params![query.trim(), workspace_id, limit as i64], |row| {
+            Ok(RetrievedSection {
+                doc_id: row.get(0)?,
+                workspace_id: row.get(1)?,
+                file_name: row.get(2)?,
+                excerpt: row.get(3)?,
+                rank: row.get(4)?,
+            })
+        })
+        .map_err(|e| map_fts_error(e.to_string()))?;
+    let mut out = Vec::new();
+    for row in rows {
+        out.push(row.map_err(|e| map_fts_error(e.to_string()))?);
+    }
+    Ok(out)
+}
+
+/// FTS5 query-parse failures are caller bugs (InvalidInput), never storage
+/// faults. rusqlite surfaces them either at prepare (`syntax error ...`) or at
+/// row iteration (`unterminated string`, ...), so both call sites map here.
+fn map_fts_error(msg: String) -> CommandError {
+    let lower = msg.to_lowercase();
+    if lower.contains("syntax error")
+        || lower.contains("unterminated")
+        || lower.contains("unrecognized")
+        || lower.contains("malformed")
+        || lower.contains("no such token")
+    {
+        CommandError::InvalidInput(format!("unparseable retrieval query: {msg}"))
+    } else {
+        CommandError::Storage(msg)
+    }
 }
 
 /// Ingest outcome, mirroring the TypeScript TranscriptStore discipline:
