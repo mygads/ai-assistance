@@ -3,6 +3,7 @@
 // docs/CONTRACTS.md. Audio capture (WASAPI) and provider adapters land in
 // P02 lanes; this scaffold owns storage, commands, and the generation registry.
 
+pub mod audio;
 pub mod commands;
 pub mod store;
 

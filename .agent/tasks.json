@@ -138,10 +138,10 @@
         "A01",
         "A16"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/unit-2026-10-25T01-18-36-652Z.json", ".agent/evidence/test-integration-2026-10-25T01-19-05-380Z.json", ".agent/evidence/check-2026-10-25T01-19-24-104Z.json"]
     },
     {
       "id": "T06",
@@ -160,7 +160,7 @@
         "A04",
         "A18"
       ],
-      "status": "pending",
+      "status": "in_progress",
       "worktree": null,
       "baseline_commit": null,
       "evidence_refs": []

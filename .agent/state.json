@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 8,
+  "revision": 9,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -16,10 +16,11 @@
     "T01",
     "T02",
     "T03",
-    "T04"
+    "T04",
+    "T05"
   ],
   "active_tasks": [
-    "T05"
+    "T06"
   ],
   "blockers": [
     {
