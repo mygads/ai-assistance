@@ -7,7 +7,7 @@ import Ajv2020 from "ajv/dist/2020.js";
 import { buildContextPacket } from "../src/domain/context.ts";
 import { normalizeSttEvent } from "../src/domain/adapters.ts";
 import { GenerationRegistry } from "../src/domain/generation.ts";
-import { buildScript, ReaderCursor } from "../src/domain/reader.ts";
+import { buildScript, ReaderCursor, ReaderSession } from "../src/domain/reader.ts";
 import { SessionMachines } from "../src/domain/session.ts";
 import { TranscriptStore } from "../src/domain/transcript.ts";
 import { finish, root } from "./lib/harness.mjs";
@@ -219,7 +219,49 @@ try {
   push("L1-slice-reader-follows-self", "fail", [], String(e?.message ?? e).slice(0, 300));
 }
 
-// T06 provider-protocol replay: scripted provider wire (tests/provider/)
+// T08 stable voice-follow: the committed prefix is frozen across chunked
+// streaming and suggestion versions; skips commit forward, repeats move
+// nothing visible, off-script rejoins on anchor. Replaced boundary: provider
+// audio -> authored word lists.
+try {
+  const V1 = "Kita mulai dari arsitektur. Terima kasih banyak.";
+  const s = new ReaderSession();
+  s.ingestScript(buildScript("Kita mulai dari arsitektur."), 1);
+  s.update(["kita", "mulai", "dari"], true, "self");
+  s.ingestScript(buildScript(V1), 1);
+  if (s.state.committed !== 3) throw new Error(`chunked streaming wiped committed (=${s.state.committed})`);
+  s.update(["arsitektur", "terima", "kasih"], true, "self");
+  s.ingestScript(buildScript(V1 + " Sampai jumpa lagi."), 2);
+  if (s.state.committed !== 6) throw new Error(`new version dropped frozen prefix (=${s.state.committed})`);
+  if (s.scriptVersion !== 2) throw new Error(`version not tracked (=${s.scriptVersion})`);
+  s.ingestScript(buildScript("Cuaca hari ini cerah."), 3);
+  if (s.state.committed !== 0 || s.state.confidence !== "uncertain") {
+    throw new Error(`new answer did not restart reading: ${JSON.stringify(s.state)}`);
+  }
+  push("L1-reader-version-rebase", "pass", ["provider audio -> authored word lists"]);
+} catch (e) {
+  push("L1-reader-version-rebase", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
+
+try {
+  const s = new ReaderSession();
+  s.ingestScript(buildScript("satu dua tiga. empat lima enam. tujuh delapan sembilan."), 1);
+  if (s.update(["tujuh", "delapan", "sembilan"], true, "self").committed !== 9) {
+    throw new Error("skipped sentence did not commit forward on anchor");
+  }
+  const rep = s.update(["satu", "dua", "tiga"], true, "self");
+  if (rep.committed !== 9 || rep.tentative !== 9) throw new Error(`repeat moved the display: ${JSON.stringify(rep)}`);
+  const off = new ReaderSession();
+  off.ingestScript(buildScript("Kita mulai dari arsitektur. Terima kasih banyak."), 1);
+  off.update(["kita", "mulai", "dari"], true, "self");
+  for (let i = 0; i < 3; i++) off.update(["membahas", "cuaca", "liburan"], true, "self");
+  if (off.state.confidence !== "off_script") throw new Error("unrelated speech did not go off-script");
+  const back = off.update(["terima", "kasih", "banyak"], true, "self");
+  if (back.committed !== 7 || back.confidence !== "tracking") throw new Error(`no anchor rejoin: ${JSON.stringify(back)}`);
+  push("L1-reader-skip-repeat-offscript", "pass", ["provider audio -> authored word lists"]);
+} catch (e) {
+  push("L1-reader-skip-repeat-offscript", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
 // through the real TS normalization + store + machines. Mirrors the Rust
 // stt_adapters integration: partial→final discipline, dropped empty frames,
 // typed error frames, recoverable disconnect, reconnect with fresh offset.

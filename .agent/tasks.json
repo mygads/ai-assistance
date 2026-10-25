@@ -200,10 +200,10 @@
         "A06",
         "A07"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/check-2026-10-25T03-17-52-775Z.json", ".agent/evidence/unit-2026-10-25T03-18-02-352Z.json", ".agent/evidence/test-replay-2026-10-25T03-18-12-584Z.json", ".agent/evidence/test-ui-2026-10-25T03-18-27-389Z.json"]
     },
     {
       "id": "T09",
@@ -220,7 +220,7 @@
         "A08",
         "A09"
       ],
-      "status": "pending",
+      "status": "in_progress",
       "worktree": null,
       "baseline_commit": null,
       "evidence_refs": []

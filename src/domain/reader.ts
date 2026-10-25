@@ -67,7 +67,7 @@ export class ReaderCursor {
   confidence: ReaderConfidence = "tracking";
   private stableRuns = 0;
   private unmatchedRuns = 0;
-  private readonly script: ScriptToken[];
+  private script: ScriptToken[];
 
   constructor(script: ScriptToken[]) {
     this.script = script;
@@ -75,6 +75,22 @@ export class ReaderCursor {
 
   get state(): CursorState {
     return { committed: this.committed, tentative: this.tentative, confidence: this.confidence };
+  }
+
+  /** Current script (read-only view for versioning decisions). */
+  get tokens(): ScriptToken[] {
+    return this.script;
+  }
+
+  /**
+   * Swap in a rebuilt script (streaming growth or a new suggestion version)
+   * without inventing movement: positions are clamped, never remapped.
+   * Committed never moves here — only update()/seek() move it.
+   */
+  rescript(tokens: ScriptToken[]): void {
+    this.script = tokens;
+    this.committed = Math.min(this.committed, tokens.length);
+    this.tentative = Math.min(this.tentative, tokens.length);
   }
 
   /**
@@ -138,5 +154,63 @@ export class ReaderCursor {
     this.stableRuns = 0;
     this.unmatchedRuns = 0;
     return this.state;
+  }
+}
+
+/**
+ * Versioned reading session (T08): one stable cursor across script rebuilds.
+ *
+ * Streaming chunks and suggestion versions rebuild the token array, but the
+ * already-read (committed) text is frozen: a new script keeps the cursor
+ * only when the committed prefix survives verbatim, otherwise reading
+ * restarts at zero. Same-version growth (streaming chunks) swaps the array
+ * via rescript, so committed progress is never wiped mid-stream. Committed
+ * still never moves backward except through an explicit seek.
+ */
+export class ReaderSession {
+  private cursor: ReaderCursor | null = null;
+  private version = 0;
+
+  get state(): CursorState {
+    return this.cursor?.state ?? { committed: 0, tentative: 0, confidence: "tracking" };
+  }
+
+  get scriptVersion(): number {
+    return this.version;
+  }
+
+  ingestScript(tokens: ScriptToken[], version: number): void {
+    if (this.cursor === null) {
+      this.cursor = new ReaderCursor(tokens);
+      this.version = version;
+      return;
+    }
+    if (version === this.version) {
+      this.cursor.rescript(tokens);
+      return;
+    }
+    const old = this.cursor.tokens;
+    const n = this.cursor.committed;
+    const prefixKept =
+      n <= tokens.length &&
+      old.slice(0, n).every((t, i) => tokens[i]?.word === t.word && tokens[i]?.paragraph === t.paragraph);
+    this.version = version;
+    if (prefixKept) {
+      this.cursor.rescript(tokens);
+    } else {
+      // A wholly new answer is a new reading: restart, visibly uncertain.
+      this.cursor = new ReaderCursor(tokens);
+      this.cursor.confidence = "uncertain";
+    }
+  }
+
+  update(selfWords: string[], isFinal: boolean, role: "self" | "remote"): CursorState {
+    if (this.cursor === null) return this.state;
+    return this.cursor.update(selfWords, isFinal, role);
+  }
+
+  seek(tokenIndex: number): CursorState {
+    if (this.cursor === null) return this.state;
+    return this.cursor.seek(tokenIndex);
   }
 }

@@ -21,7 +21,7 @@ import {
   type SendAnswerInput,
   type SessionRecord,
 } from "./ipc.ts";
-import { buildScript, ReaderCursor, type ScriptToken } from "../domain/reader.ts";
+import { buildScript, ReaderSession, type ScriptToken } from "../domain/reader.ts";
 import type { StoredSegment } from "../domain/transcript.ts";
 import type { OutputLanguage } from "./dashboard.ts";
 
@@ -59,6 +59,11 @@ export default function Overlay(props: OverlayProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [instruction, setInstruction] = useState("");
   const [, setCursorTick] = useState(0);
+  // Satu sesi baca stabil untuk seluruh overlay (T08): chunk streaming dan
+  // versi saran baru membangun ulang array token, tetapi committed yang
+  // sudah dibaca dipertahankan selama prefiksnya bertahan. Versi naik
+  // setiap Send; chunk dalam satu stream berbagi versi yang sama.
+  const scriptVersionRef = useRef(0);
   const pendingRequest = useRef("");
   const activeRequest = useRef("");
   const drawerToggleRef = useRef<HTMLButtonElement>(null);
@@ -86,15 +91,17 @@ export default function Overlay(props: OverlayProps) {
   }, [session?.id]);
 
   // Naskah yang dibaca = jawaban streaming terakhir, atau materi baku.
-  // Cursor diikat ke identitas naskah: tiap versi saran baru memulai cursor
-  // baru (stabilisasi penuh antar-stream adalah pekerjaan T08).
+  // Versi saran dilacak scriptVersionRef: chunk dalam satu stream berbagi
+  // versi yang sama sehingga committed tidak terhapus antar-chunk (T08).
   const scriptSource = answer === "" ? props.answerScript : answer;
   const script: ScriptToken[] = useMemo(() => buildScript(scriptSource), [scriptSource]);
-  const cursorBox = useRef<{ script: ScriptToken[]; cursor: ReaderCursor } | null>(null);
-  if (!cursorBox.current || cursorBox.current.script !== script) {
-    cursorBox.current = { script, cursor: new ReaderCursor(script) };
-  }
-  const cursor = cursorBox.current.cursor;
+  // Satu sesi baca stabil untuk seluruh overlay (T08): chunk streaming dan
+  // versi saran baru membangun ulang array token, tetapi committed yang
+  // sudah dibaca dipertahankan selama prefiksnya bertahan.
+  const readerBox = useRef<ReaderSession | null>(null);
+  if (!readerBox.current) readerBox.current = new ReaderSession();
+  const reader = readerBox.current;
+  reader.ingestScript(script, scriptVersionRef.current);
   const selfWords = useMemo(
     () =>
       props.finals
@@ -106,9 +113,9 @@ export default function Overlay(props: OverlayProps) {
   const lastSelfKey = useRef("");
   if (selfKey !== lastSelfKey.current) {
     lastSelfKey.current = selfKey;
-    if (selfWords.length > 0) cursor.update(selfWords, true, "self");
+    if (selfWords.length > 0) reader.update(selfWords, true, "self");
   }
-  const readerState = cursor.state;
+  const readerState = reader.state;
 
   // Follow: gulir band ke tampilan saat committed maju; hormati reduced motion.
   useEffect(() => {
@@ -120,6 +127,9 @@ export default function Overlay(props: OverlayProps) {
   async function send(action: SendAction) {
     const s = sessionRef.current;
     if (!s || sending) return;
+    // Versi saran baru: naskah hasil stream berikutnya di-rebase, prefiks
+    // yang sudah dibaca dipertahankan bila bertahan verbatim (T08).
+    scriptVersionRef.current += 1;
     setSending(true);
     props.onError("");
     // Lanjutkan = sambung naskah; aksi lain = saran versi baru dari kosong.
@@ -209,7 +219,7 @@ export default function Overlay(props: OverlayProps) {
     const s = sessionRef.current;
     // Klik token = seek manual: follow mati, cursor pindah, bertahan.
     setFollow(false);
-    cursor.seek(index);
+    reader.seek(index);
     setCursorTick((t) => t + 1);
     if (!s) return;
     try {
