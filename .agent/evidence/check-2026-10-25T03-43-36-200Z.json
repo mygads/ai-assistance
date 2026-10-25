@@ -1,0 +1,57 @@
+{
+  "kind": "app_test",
+  "run_id": "check-2026-10-25T03-43-36-200Z",
+  "level": "L0",
+  "command": "npm run check",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T03:43:31.815Z",
+  "cases": [
+    {
+      "id": "tsc --noEmit",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "schemas (ajv draft 2020-12)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo fmt --check",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo clippy",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    }
+  ],
+  "counts": {
+    "pass": 5,
+    "fail": 0,
+    "blocked": 0,
+    "total": 5
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\check-2026-10-25T03-43-36-200Z.json"
+  ]
+}

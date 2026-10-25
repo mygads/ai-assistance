@@ -344,7 +344,10 @@ pub struct SuggestionDone {
 /// remote finals — the question being answered — into speakable lines. The
 /// same rule is mirrored by the UI fixture bridge (src/ui/events.ts); P03
 /// replaces both with real provider streaming.
-fn synthesize_suggestion(finals: &[FinalSegment], version: u32) -> String {
+/// T12: the action only changes the label word and (for shorten) the word cap:
+/// `answer` output is byte-stable so existing L2/L3 assertions keep proving
+/// the snapshot path, while shorten/expand/continue/revise are visibly distinct.
+fn synthesize_suggestion(finals: &[FinalSegment], version: u32, action: &str) -> String {
     let joined = finals
         .iter()
         .filter(|f| f.role == "remote")
@@ -352,13 +355,20 @@ fn synthesize_suggestion(finals: &[FinalSegment], version: u32) -> String {
         .filter(|t| !t.is_empty())
         .collect::<Vec<_>>()
         .join(" ");
-    let words: Vec<&str> = joined.split_whitespace().take(40).collect();
+    let (label, cap) = match action {
+        "shorten" => ("ringkas", 12),
+        "expand" => ("lengkap", 40),
+        "continue_unread" => ("lanjutan", 40),
+        "revise_unread" => ("revisi", 40),
+        _ => ("jawaban", 40),
+    };
+    let words: Vec<&str> = joined.split_whitespace().take(cap).collect();
     let body = if words.is_empty() {
         "belum ada pertanyaan final yang terekam.".to_string()
     } else {
         words.join(" ")
     };
-    format!("Draf jawaban v{version} (fixture): «{body}»")
+    format!("Draf {label} v{version} (fixture): «{body}»")
 }
 
 #[tauri::command]
@@ -436,16 +446,64 @@ pub fn send_answer(
             .filter(|f| input.target_segment_ids.contains(&f.segment_id))
             .collect()
     };
-    let snapshot = serde_json::json!({
-        "session_id": input.session_id,
-        "action": input.action,
-        "snapshot_revision": rec.active_revision,
-        "target_segment_ids": targets.iter().map(|f| &f.segment_id).collect::<Vec<_>>(),
-        "target_revisions": targets.iter().map(|f| (&f.segment_id, f.revision)).collect::<std::collections::HashMap<_, _>>(),
-        "target_texts": targets.iter().map(|f| &f.text).collect::<Vec<_>>(),
-        "model_profile_id": "fixture-p01",
-        "output_language": input.output_language.clone().unwrap_or_else(|| "id".to_string()),
-    });
+    let snapshot = {
+        // T12: the snapshot carries the session's selected profile (durable in
+        // settings_snapshot), never a hardcoded fixture id. Unknown ids fall
+        // back to the balanced budget inside context::profile_budget.
+        let settings: serde_json::Value =
+            serde_json::from_str(&rec.settings_snapshot).unwrap_or(serde_json::json!({}));
+        let profile_id = settings
+            .get("model_profile_id")
+            .and_then(|v| v.as_str())
+            .unwrap_or("profil-seimbang")
+            .to_string();
+        let target_pairs: Vec<(&str, &str)> = targets
+            .iter()
+            .map(|f| (f.segment_id.as_str(), f.text.as_str()))
+            .collect();
+        let self_pairs: Vec<(&str, &str)> = finals
+            .iter()
+            .filter(|f| f.role == "self")
+            .map(|f| (f.segment_id.as_str(), f.text.as_str()))
+            .collect();
+        // Retrieval-backed context (A08/A09 at Send time): user speech is
+        // query data, sanitized by build_retrieval_query — never raw FTS
+        // syntax. A query that still fails maps to InvalidInput inside
+        // retrieve_sections, so Send falls back to no excerpts instead of
+        // failing the request.
+        let retrieval_query = crate::context::build_retrieval_query(
+            &target_pairs.iter().map(|(_, t)| *t).collect::<Vec<_>>(),
+        );
+        let retrieved = if retrieval_query.is_empty() {
+            Vec::new()
+        } else {
+            crate::store::retrieve_sections(&conn, &rec.workspace_id, &retrieval_query, 3)
+                .unwrap_or_default()
+        };
+        let packet = crate::context::assemble_send_context(
+            &profile_id,
+            &target_pairs,
+            &self_pairs,
+            &retrieved,
+            &retrieval_query,
+        );
+        serde_json::json!({
+            "session_id": input.session_id,
+            "action": input.action,
+            "snapshot_revision": rec.active_revision,
+            "target_segment_ids": targets.iter().map(|f| &f.segment_id).collect::<Vec<_>>(),
+            "target_revisions": targets.iter().map(|f| (&f.segment_id, f.revision)).collect::<std::collections::HashMap<_, _>>(),
+            "target_texts": targets.iter().map(|f| &f.text).collect::<Vec<_>>(),
+            "instruction": input.instruction.clone().unwrap_or_default(),
+            "model_profile_id": profile_id,
+            "retrieval_query": retrieval_query,
+            "retrieved": retrieved.iter().map(|s| serde_json::json!({
+                "doc_id": s.doc_id, "file_name": s.file_name, "excerpt": s.excerpt,
+            })).collect::<Vec<_>>(),
+            "context_packet": packet,
+            "output_language": input.output_language.clone().unwrap_or_else(|| "id".to_string()),
+        })
+    };
     let suggestion_version = crate::store::next_suggestion_version(&conn, &input.session_id)?;
     let request_id = format!("req-{}", Uuid::new_v4().as_simple());
     let generation_id = format!("gen-{}", Uuid::new_v4().as_simple());
@@ -477,6 +535,7 @@ pub fn send_answer(
     // cancel propagation, single-provider enforcement, retry policy, and
     // usage. Late deltas after done/cancel are never emitted, never merged.
     let worker_session = input.session_id.clone();
+    let worker_action = input.action.clone();
     std::thread::spawn(move || {
         let finals: Vec<FinalSegment> = app
             .state::<AppState>()
@@ -484,7 +543,7 @@ pub fn send_answer(
             .ok()
             .and_then(|c| crate::store::final_segments(&c, &worker_session, None, None, None).ok())
             .unwrap_or_default();
-        let text = synthesize_suggestion(&finals, suggestion_version);
+        let text = synthesize_suggestion(&finals, suggestion_version, &worker_action);
         let prompt_chars = app
             .state::<AppState>()
             .open_conn()
@@ -535,6 +594,33 @@ pub fn send_answer(
                 outcome.usage.prompt_tokens,
                 outcome.usage.completion_tokens,
             );
+        }
+        // Release the single-generation fence: the row is settled and the
+        // snapshot was frozen at Send, so the next distinct Send may start. A
+        // newer generation (restart-after-cancel) is never overwritten here:
+        // versions are dense per session, so settling only applies when this
+        // request is still the latest row.
+        {
+            let st = app.state::<AppState>();
+            let still_latest = st
+                .open_conn()
+                .ok()
+                .and_then(|c| crate::store::next_suggestion_version(&c, &worker_session).ok())
+                .map(|next| suggestion_version + 1 == next)
+                .unwrap_or(false);
+            if still_latest {
+                if let Ok(mut rec) = load_session_cached(&worker_session, &st) {
+                    if rec.generation == "streaming" || rec.generation == "preparing_context" {
+                        rec.generation = match outcome.status {
+                            "done" => "completed",
+                            "cancelled" => "cancelled",
+                            _ => "failed",
+                        }
+                        .to_string();
+                        let _ = persist_session_cached(&rec, &st);
+                    }
+                }
+            }
         }
         let _ = app.emit(
             "suggestion-done",
@@ -676,11 +762,9 @@ pub fn select_model_profile(
     require_non_empty(&input.session_id, "session_id")?;
     require_non_empty(&input.model_profile_id, "model_profile_id")?;
     let mut rec = load_session_cached(&input.session_id, &state)?;
-    if rec.generation == "streaming" {
-        return Err(CommandError::Conflict(
-            "model switch applies to the next request while streaming".to_string(),
-        ));
-    }
+    // ARCHITECTURE §8: a switch while a generation is active is accepted and
+    // applies to the NEXT request — the in-flight stream keeps its frozen
+    // snapshot. The explicit restart path is cancel + resend (cancel_answer).
     // The profile choice is durable session settings, not a bare echo: it is
     // written into settings_snapshot and therefore survives restarts.
     let mut settings: serde_json::Value =

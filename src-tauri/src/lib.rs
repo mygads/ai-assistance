@@ -5,6 +5,7 @@
 
 pub mod audio;
 pub mod commands;
+pub mod context;
 pub mod providers;
 pub mod store;
 

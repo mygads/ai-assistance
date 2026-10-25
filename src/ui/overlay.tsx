@@ -170,7 +170,7 @@ export default function Overlay(props: OverlayProps) {
       pendingRequest.current = r.data.request_id;
       activeRequest.current = r.data.request_id;
       if (mode === "fixture") {
-        emitFixtureSuggestion(r.data.request_id, r.data.generation_id, r.data.suggestion_version, fixtureRemoteFinals());
+        emitFixtureSuggestion(r.data.request_id, r.data.generation_id, r.data.suggestion_version, fixtureRemoteFinals(), action);
       }
       setTimeout(() => {
         if (!settled) {

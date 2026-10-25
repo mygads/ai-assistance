@@ -1,0 +1,94 @@
+{
+  "kind": "app_test",
+  "run_id": "test-replay-2026-10-25T03-29-56-430Z",
+  "level": "L1",
+  "command": "npm run test:replay",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T03:29:56.313Z",
+  "cases": [
+    {
+      "id": "L1-replay-correction-overlap",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "L1-replay-partial-and-overlap",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "L1-replay-reconnect-reset",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "L1-slice-send-fencing",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider model -> in-process registry only (no network)"
+      ]
+    },
+    {
+      "id": "L1-slice-reader-follows-self",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider audio -> authored word lists"
+      ]
+    },
+    {
+      "id": "L1-reader-version-rebase",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider audio -> authored word lists"
+      ]
+    },
+    {
+      "id": "L1-reader-skip-repeat-offscript",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider audio -> authored word lists"
+      ]
+    },
+    {
+      "id": "L1-slice-stt-protocol-replay",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> authored wire-message JSON"
+      ]
+    }
+  ],
+  "counts": {
+    "pass": 8,
+    "fail": 0,
+    "blocked": 0,
+    "total": 8
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-replay-2026-10-25T03-29-56-430Z.json"
+  ]
+}

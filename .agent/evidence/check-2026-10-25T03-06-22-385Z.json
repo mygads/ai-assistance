@@ -1,0 +1,58 @@
+{
+  "kind": "app_test",
+  "run_id": "check-2026-10-25T03-06-22-385Z",
+  "level": "L0",
+  "command": "npm run check",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T03:06:19.087Z",
+  "cases": [
+    {
+      "id": "contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "schemas (ajv draft 2020-12)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo fmt --check",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo clippy",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "tsc --noEmit",
+      "level": "L0",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "tsc --noEmit: src/ui/overlay.tsx(11,47): error TS2724: '\"./bridge.ts\"' has no exported member named 'emitFixtureSuggestion'. Did you mean 'cancelFixtureSuggestion'?\n"
+    }
+  ],
+  "counts": {
+    "pass": 4,
+    "fail": 1,
+    "blocked": 0,
+    "total": 5
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\check-2026-10-25T03-06-22-385Z.json"
+  ]
+}

@@ -9,6 +9,8 @@ Status: P01 complete (T00–T04 integrated at b331d9b). P02 executing SERIALLY �
 
 6. T11 DONE (coordinator-implemented): LLM streaming seam (A05/A18 L0/L1). drive_stream + FixtureLlmAdapter + AnswerAssembler; worker routed, usage persisted; L1-llm-adapters 5/5; check 5/5, unit ts 41/0 + rs 45/0, integration 9/9, native 6/6, verify fail=0 blocked=3.
 
-7. T12 ACTIVE: model switch + context + full user flow (A02/A04/A05/A13/A15) — repack on profile switch, retrieval-backed answers, continue/revise actions; required checks test:replay + test:native.
+7. T12 DONE (coordinator-implemented): model switch + retrieval-backed context + action-aware flow — L1-model-switch-repack, L1-context-assembly, L3-model-switch-next-request; check 5/5, unit ts 41/0 + rs 50/0, integration 10/10, replay 9/9, ui 10/10, native 7/7, verify 49/0/7 blocked. A13-L5 stays blocked on B02 keys.
+
+8. T13 ACTIVE: scoped memory and feedback learning (A09/A10) — structured notes, corrections, provenance, draft/confirmed states; required checks test:integration.
 
 Blockers carried forward: B01 resolved. B02 remains (no provider keys → test:live blocked, owner: user). Physical-audio capture and meeting-capture calibration remain blocked on hardware/session prerequisites, not passes.

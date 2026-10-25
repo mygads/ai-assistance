@@ -162,6 +162,27 @@ try {
   const metaText2 = await browser.$('[data-testid="answer-meta"]').getText();
   if (metaText2.trim() !== metaText.trim()) throw new Error(`resend did not dedup: ${metaText} vs ${metaText2}`);
   push("L3-send-dedup", "pass", [], `identical resend returned ${metaText2.trim()}`);
+  // T12: model switch applies to the next request (ARCHITECTURE §8, A13-L3):
+  // switch profiles on the dashboard, then send a shorten action and prove
+  // the new generation streams action-specific synthesis over real IPC.
+  const dashBtn = await browser.$("button=Dashboard");
+  if (await dashBtn.isExisting()) await dashBtn.click();
+  const profileSel = await browser.$('[data-testid="model-profile"]');
+  await profileSel.waitForExist({ timeout: 10000 });
+  await profileSel.selectByAttribute("value", "profil-hemat");
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="model-profile-saved"]').getText()) ?? "").includes("profil-hemat"), { timeout: 10000 });
+  const overlayBtn2 = await browser.$("button=Overlay");
+  if (await overlayBtn2.isExisting()) await overlayBtn2.click();
+  const shortenBtn = await browser.$('[data-testid="action-shorten"]');
+  await shortenBtn.waitForExist({ timeout: 10000 });
+  await shortenBtn.click();
+  // The remounted overlay renders answer-meta only after the stream settles.
+  const shortMetaEl = await browser.$('[data-testid="answer-meta"]');
+  await shortMetaEl.waitForExist({ timeout: 15000 });
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="answer-meta"]').getText()) ?? "").includes("v2"), { timeout: 15000 });
+  const shortScript = await browser.$('[data-testid="script"]').getText();
+  if (!shortScript.includes("ringkas")) throw new Error(`shorten send did not stream action-specific synthesis: ${shortScript.slice(0, 200)}`);
+  push("L3-model-switch-next-request", "pass", ["external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"], "profil-hemat saved; shorten streamed as v2 with ringkas marker");
   await browser.saveScreenshot(path.join(artDir, "native-dashboard.png"));
 } catch (e) {
   push("L3-native-session", /no window title|did not appear|connect ECONNREFUSED/i.test(String(e)) ? "blocked" : "fail",

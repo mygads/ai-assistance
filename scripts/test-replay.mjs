@@ -4,7 +4,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
-import { buildContextPacket } from "../src/domain/context.ts";
+import { buildContextPacket, repackForModel, validateSourceRefs } from "../src/domain/context.ts";
 import { normalizeSttEvent } from "../src/domain/adapters.ts";
 import { GenerationRegistry } from "../src/domain/generation.ts";
 import { buildScript, ReaderCursor, ReaderSession } from "../src/domain/reader.ts";
@@ -335,6 +335,40 @@ try {
   push("L1-slice-stt-protocol-replay", "pass", ["provider network -> authored wire-message JSON"]);
 } catch (e) {
   push("L1-slice-stt-protocol-replay", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
+
+// T12 model switch + budget repack (A13 L1) with zero model calls (A02 L1):
+// the same source items packed for profil-hemat drop the big retrieved
+// excerpt, then repack cleanly for profil-detail; every citation resolves to
+// an imported document. Replaced boundary: provider model/caps -> fixture
+// profile budgets + in-process registry (no network).
+try {
+  const hemat = { id: "profil-hemat", provider: "fixture", model: "fixture-hemat", context_limit: 2000, input_limit: 2000, output_limit: 500, streaming: true };
+  const detail = { id: "profil-detail", provider: "fixture", model: "fixture-detail", context_limit: 16000, input_limit: 12000, output_limit: 4000, streaming: true };
+  const items = [
+    { id: "brief", kind: "pinned_brief", text: "Jawab singkat.", source_refs: [], priority: 100 },
+    { id: "q-1", kind: "history", text: "Mengapa memilih arsitektur ini?", source_refs: ["remote-01"], priority: 60 },
+    { id: "sec-arch", kind: "retrieved_section", text: `arsitektur.txt: ${"panduan arsitektur sistem ".repeat(200)}`, source_refs: ["doc-arch"], priority: 50 },
+    { id: "s-1", kind: "history", text: "Fokus saya adalah respons cepat.", source_refs: ["self-01"], priority: 10 },
+  ];
+  const before = buildContextPacket("ctx-t12", hemat, items);
+  if (!before.dropped_item_ids.includes("sec-arch")) throw new Error("hemat must drop the oversized excerpt");
+  if (!before.items.some((i) => i.id === "q-1") || !before.items.some((i) => i.id === "brief")) {
+    throw new Error("hemat must keep the question and pinned brief");
+  }
+  const after = repackForModel(before, items, detail);
+  if (after.model_profile_id !== "profil-detail") throw new Error("repack did not record the new profile");
+  if (after.dropped_item_ids.length !== 0) throw new Error(`detail must keep everything, dropped ${after.dropped_item_ids}`);
+  if (!(after.estimated_input_tokens > before.estimated_input_tokens)) throw new Error("repack did not grow the packed context");
+  const refs = validateSourceRefs(after.items, ["doc-arch"]);
+  if (!refs.ok) throw new Error(`citations must resolve: ${JSON.stringify(refs)}`);
+  const refsEmpty = validateSourceRefs(after.items, []);
+  if (refsEmpty.ok || !refsEmpty.dangling.includes("doc-arch")) throw new Error("unknown workspace must flag dangling refs");
+  const noModel = new GenerationRegistry();
+  if (noModel.size !== 0) throw new Error("repack touched the generation registry");
+  push("L1-model-switch-repack", "pass", ["provider model/caps -> fixture profile budgets + in-process registry (no network)"]);
+} catch (e) {
+  push("L1-model-switch-repack", "fail", [], String(e?.message ?? e).slice(0, 300));
 }
 
 finish({ script: "test:replay", level: "L1", cases, startedUtc });

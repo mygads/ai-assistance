@@ -1,0 +1,58 @@
+{
+  "kind": "app_test",
+  "run_id": "check-2026-10-25T03-40-45-394Z",
+  "level": "L0",
+  "command": "npm run check",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T03:40:39.385Z",
+  "cases": [
+    {
+      "id": "tsc --noEmit",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "schemas (ajv draft 2020-12)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo fmt --check",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo clippy",
+      "level": "L0",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "cargo clippy:     Checking conversation-assistant v0.0.0 (C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri)\nerror: variable does not need to be mutable\n   --> tests\\llm_streaming.rs:130:9\n    |\n130 |     let mut make = || -> Box<dyn LlmAdapter> {\n    |         ----^^^^\n    |  "
+    }
+  ],
+  "counts": {
+    "pass": 4,
+    "fail": 1,
+    "blocked": 0,
+    "total": 5
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\check-2026-10-25T03-40-45-394Z.json"
+  ]
+}

@@ -27,12 +27,25 @@ export interface SuggestionDone {
   fixture: boolean;
 }
 
-/** Mirrors Rust synthesize_suggestion + 6-word chunking exactly. */
-export function synthesizeSuggestion(remoteFinalTexts: string[], version: number): string {
+/** Mirrors Rust synthesize_suggestion + 6-word chunking exactly.
+ *  The action only changes the label word and (for shorten) the word cap:
+ *  `answer` output is byte-stable. Keep both sides in lockstep. */
+export function synthesizeSuggestion(
+  remoteFinalTexts: string[],
+  version: number,
+  action = "answer",
+): string {
   const joined = remoteFinalTexts.map((t) => t.trim()).filter((t) => t.length > 0).join(" ");
-  const body = joined.split(/\s+/).filter((w) => w.length > 0).slice(0, 40).join(" ");
+  const label =
+    action === "shorten" ? "ringkas"
+    : action === "expand" ? "lengkap"
+    : action === "continue_unread" ? "lanjutan"
+    : action === "revise_unread" ? "revisi"
+    : "jawaban";
+  const cap = action === "shorten" ? 12 : 40;
+  const body = joined.split(/\s+/).filter((w) => w.length > 0).slice(0, cap).join(" ");
   const inner = body === "" ? "belum ada pertanyaan final yang terekam." : body;
-  return `Draf jawaban v${version} (fixture): «${inner}»`;
+  return `Draf ${label} v${version} (fixture): «${inner}»`;
 }
 
 export function chunkSuggestion(text: string, wordsPerChunk = 6): string[] {
@@ -58,8 +71,9 @@ export function emitFixtureSuggestion(
   generationId: string,
   version: number,
   remoteFinalTexts: string[],
+  action = "answer",
 ): void {
-  const text = synthesizeSuggestion(remoteFinalTexts, version);
+  const text = synthesizeSuggestion(remoteFinalTexts, version, action);
   const chunks = chunkSuggestion(text);
   chunks.forEach((text_delta, index) => {
     setTimeout(() => {
