@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 5,
+  "revision": 6,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -10,16 +10,15 @@
     "checkout": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack",
     "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5"
   },
-  "last_integrated_commit": "b7aa9d9",
+  "last_integrated_commit": "5c2bb40",
   "completed_task_ids": [
     "T00",
     "T01",
     "T02",
-    "T03"
-  ],
-  "active_tasks": [
+    "T03",
     "T04"
   ],
+  "active_tasks": [],
   "blockers": [
     {
       "id": "B01",
@@ -39,19 +38,19 @@
   "gates": {
     "static_unit": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json"]
+      "evidence_refs": [".agent/evidence/check-2026-10-25T00-26-04-497Z.json", ".agent/evidence/unit-2026-10-25T00-26-05-566Z.json", ".agent/evidence/check-2026-10-25T01-06-15-894Z.json", ".agent/evidence/unit-2026-10-25T01-06-16-857Z.json"]
     },
     "replay": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json"]
+      "evidence_refs": [".agent/evidence/test-integration-2026-10-25T00-26-22-593Z.json", ".agent/evidence/test-replay-2026-10-25T00-26-24-241Z.json", ".agent/evidence/test-integration-2026-10-25T01-06-30-340Z.json", ".agent/evidence/test-replay-2026-10-25T01-06-31-692Z.json"]
     },
     "browser": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json"]
+      "evidence_refs": [".agent/evidence/test-ui-2026-10-25T00-27-00-042Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json"]
     },
     "native": {
       "status": "pass",
-      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json"]
+      "evidence_refs": [".agent/evidence/test-native-2026-10-25T00-27-49-949Z.json", ".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json"]
     },
     "physical_audio": {
       "status": "blocked",
@@ -83,8 +82,8 @@
     }
   },
   "next_actions": [
-    "T04 (active): smallest native real-IPC slice acceptance A15 — test:native already 5/5 incl. streamed snapshot + dedup; record the task-level slice proof",
-    "After T04: fan out P02 lanes (audio/providers, UI/prompter, context/data) with isolated worktrees; max 3 workers",
+    "T04 DONE 2026-10-25: A15/C23 proven — test:native 6/6 real-binary slice (start_session, 2x ingest, persisted read-back, streamed snapshot suggestion v1, identical-resend dedup); test:ui 4/4",
+    "P02 next: verify subagent + isolated-worktree support, then fan out audio / UI-prompter / context-data lanes (max 3 workers); coordinator owns contracts/migrations",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
   ],
   "max_parallel_workers": 3

@@ -1,0 +1,64 @@
+{
+  "kind": "app_test",
+  "run_id": "test-ui-2026-10-25T01-05-29-503Z",
+  "level": "L2",
+  "command": "npm run test:ui",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T01:05:27.191Z",
+  "cases": [
+    {
+      "id": "L2-ui-build",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "L2-dashboard-renders",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "bridge label: bridge: fixture"
+    },
+    {
+      "id": "L2-start-session-journey",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "Sesi fixture-session-01 · capture live | Tersimpan 2 segmen final"
+    },
+    {
+      "id": "L2-overlay-send-journey",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "script_chars=55 meta=Saran v1 · req-fixture-1 reader=committed=0 tentative=0 confidence=tracking"
+    }
+  ],
+  "counts": {
+    "pass": 4,
+    "fail": 0,
+    "blocked": 0,
+    "total": 4
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-ui-2026-10-25T01-05-29-503Z.json"
+  ],
+  "screenshots": [
+    "dashboard.png",
+    "overlay.png"
+  ]
+}

@@ -26,12 +26,12 @@ export interface AnswerResult {
 
 // Deterministic fixture answers for browser-only development.
 const FIXTURE_SESSION = "fixture-session-01";
-const FIXTURE_FINALS: string[] = [];
+const FIXTURE_FINALS: Array<{ role: string; text: string }> = [];
 
 /** Texts ingested through the fixture bridge, in order. Backs the fixture
  *  suggestion synthesis so the browser path mirrors the native snapshot rule. */
 export function fixtureRemoteFinals(): string[] {
-  return [...FIXTURE_FINALS];
+  return FIXTURE_FINALS.filter((f) => f.role === "remote").map((f) => f.text);
 }
 
 async function fixtureInvoke<T>(cmd: string, args?: unknown): Promise<T> {
@@ -49,7 +49,7 @@ async function fixtureInvoke<T>(cmd: string, args?: unknown): Promise<T> {
       } as T;
     case "ingest_transcript_event": {
       const e = input as { role: string; status: string; text: string };
-      if (e.role === "remote" && e.status === "final") FIXTURE_FINALS.push(e.text);
+      if (e.status === "final") FIXTURE_FINALS.push({ role: e.role, text: e.text });
       return { outcome: "inserted", stored: true } as T;
     }
     case "list_sources":
@@ -60,7 +60,7 @@ async function fixtureInvoke<T>(cmd: string, args?: unknown): Promise<T> {
     case "send_answer":
       return { request_id: "req-fixture-1", generation_id: "gen-fixture-1", suggestion_version: 1 } as T;
     case "select_transcript_range":
-      return [] as T;
+      return [...FIXTURE_FINALS] as T;
     default:
       throw new Error(`fixture bridge has no implementation for ${cmd}`);
   }

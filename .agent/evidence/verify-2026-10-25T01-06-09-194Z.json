@@ -1,0 +1,460 @@
+{
+  "kind": "app_test",
+  "run_id": "verify-2026-10-25T01-06-09-194Z",
+  "level": "L0",
+  "command": "npm run verify",
+  "exit_code": 2,
+  "status": "blocked",
+  "matrix": [
+    {
+      "script": "check",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 6739,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "script": "test:unit",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 6853,
+      "counts": {
+        "pass": 26,
+        "fail": 0,
+        "ts": {
+          "pass": 23,
+          "fail": 0
+        },
+        "rs": {
+          "pass": 3,
+          "fail": 0,
+          "status": "pass"
+        }
+      }
+    },
+    {
+      "script": "test:integration",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 7596,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "script": "test:replay",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 1353,
+      "counts": {
+        "pass": 5,
+        "fail": 0,
+        "blocked": 0,
+        "total": 5
+      }
+    },
+    {
+      "script": "test:ui",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 3689,
+      "counts": {
+        "pass": 4,
+        "fail": 0,
+        "blocked": 0,
+        "total": 4
+      }
+    },
+    {
+      "script": "test:native",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 29211,
+      "counts": {
+        "pass": 6,
+        "fail": 0,
+        "blocked": 0,
+        "total": 6
+      }
+    },
+    {
+      "script": "test:audio",
+      "exit_code": 2,
+      "status": "blocked",
+      "duration_ms": 1992,
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "blocked": 4,
+        "total": 5
+      }
+    },
+    {
+      "script": "test:live",
+      "exit_code": 2,
+      "status": "blocked",
+      "duration_ms": 475,
+      "counts": {
+        "pass": 0,
+        "fail": 0,
+        "blocked": 1,
+        "total": 1
+      }
+    },
+    {
+      "script": "test:soak",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 61080,
+      "counts": {
+        "pass": 3,
+        "fail": 0,
+        "blocked": 0,
+        "total": 3
+      }
+    },
+    {
+      "script": "test:capture",
+      "exit_code": 2,
+      "status": "blocked",
+      "duration_ms": 2917,
+      "counts": {
+        "pass": 2,
+        "fail": 0,
+        "blocked": 2,
+        "total": 4
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "check:tsc --noEmit",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "check:contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "check:schemas (ajv draft 2020-12)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "check:cargo fmt --check",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "check:cargo clippy",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "test:unit:L0-domain-ts",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "test:unit:L0-domain-rs",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "test:integration:L1-normalize-soniox",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> loopback canned STT"
+      ]
+    },
+    {
+      "id": "test:integration:L1-normalize-deepgram",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> loopback canned STT"
+      ]
+    },
+    {
+      "id": "test:integration:L1-reconnect-offset",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> loopback canned STT"
+      ]
+    },
+    {
+      "id": "test:integration:L1-fixture-server",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> 127.0.0.1 loopback"
+      ]
+    },
+    {
+      "id": "test:integration:L1-rust-storage",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "test:replay:L1-replay-correction-overlap",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "test:replay:L1-replay-partial-and-overlap",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "test:replay:L1-replay-reconnect-reset",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "wall-clock -> fixture at_ms logical clock",
+        "provider audio -> authored transcript events"
+      ]
+    },
+    {
+      "id": "test:replay:L1-slice-send-fencing",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider model -> in-process registry only (no network)"
+      ]
+    },
+    {
+      "id": "test:replay:L1-slice-reader-follows-self",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider audio -> authored word lists"
+      ]
+    },
+    {
+      "id": "test:ui:L2-ui-build",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "test:ui:L2-dashboard-renders",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "bridge label: bridge: fixture"
+    },
+    {
+      "id": "test:ui:L2-start-session-journey",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "Sesi fixture-session-01 · capture live | Tersimpan 2 segmen final"
+    },
+    {
+      "id": "test:ui:L2-overlay-send-journey",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [
+        "native Tauri IPC -> labeled in-browser fixture bridge (browser proof only)"
+      ],
+      "note": "script_chars=55 meta=Saran v1 · req-fixture-1 reader=committed=0 tentative=0 confidence=tracking"
+    },
+    {
+      "id": "test:native:L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "test:native:L3-window-launches",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "title=Conversation Assistant"
+    },
+    {
+      "id": "test:native:L3-real-ipc-start-session",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"
+      ],
+      "note": "Sesi session-ca6607d3ccb94650ad87f196d730e7e0 · capture connecting"
+    },
+    {
+      "id": "test:native:L3-real-ipc-persisted-read",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Tersimpan 2 segmen final"
+    },
+    {
+      "id": "test:native:L3-real-ipc-send-answer",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"
+      ],
+      "note": "meta=Saran v1 · req-0bc0307e9 script_chars=54"
+    },
+    {
+      "id": "test:native:L3-send-dedup",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "identical resend returned Saran v1 · req-0bc0307e9"
+    },
+    {
+      "id": "test:audio:L4-endpoints-enumerated",
+      "level": "L4",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "mmdevice endpoints: total=63 active=4 render=2 capture=2"
+    },
+    {
+      "id": "test:audio:L4-default-devices-identified",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "COM default-endpoint query -> MMDevice registry enumeration"
+      ],
+      "note": "GetDefaultAudioEndpoint COM activation (REGDB_E_CLASSNOTREG) unavailable from the automation shell; default identity is resolved at stream-open time by the T05 capture module, not guessed here."
+    },
+    {
+      "id": "test:audio:L4-exclusive-lease-capture",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "WASAPI stream -> registry enumeration only"
+      ],
+      "note": "No audio stream opened. Exclusive-lease loopback/mic capture requires the T05 cpal module; opening a stream is not attempted from this probe."
+    },
+    {
+      "id": "test:audio:L4-mic-signal-quality",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "physical speech -> no controlled sound produced"
+      ],
+      "note": "Manual/controlled-speech scenario. No speech was produced or assumed; reporting signal quality without it would be fabrication."
+    },
+    {
+      "id": "test:audio:L4-loopback-correlation",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "known playback -> fixture WAV not played"
+      ],
+      "note": "Requires playing a fixture WAV to the default render endpoint while capturing loopback (T05/T18)."
+    },
+    {
+      "id": "test:live:L5-live-prerequisites",
+      "level": "L5",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "not opt-in or unconfigured; missing: LIVE_TESTS_ENABLED=true; an STT key (SONIOX_API_KEY or DEEPGRAM_API_KEY); LLM_API_KEY; budget caps (LIVE_MAX_USD in config/live-tests.env). Zero live calls made."
+    },
+    {
+      "id": "test:soak:soak-realtime-no-exceptions",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "errors=0 processed=548 cycles=124 wall_min=1.00 (true gate: real-time long-run)"
+    },
+    {
+      "id": "test:soak:soak-realtime-heap-bounded",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "heap_growth_mb=0.3 (true gate: real-time long-run)"
+    },
+    {
+      "id": "test:soak:soak-realtime-tick-lag",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "max_tick_lag_ms=0 (true gate: real-time long-run)"
+    },
+    {
+      "id": "test:capture:L6-capture-api-availability",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "os_build=26300 graphics_capture_supported=true"
+    },
+    {
+      "id": "test:capture:L6-meeting-tools-inventoried",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "found: Microsoft Teams Meeting Add-in for Microsoft Office 1.26.25904; OBS Studio 32.2.2; Teams Machine-Wide Installer 1.6.0.11166; Zoom Workplace 7.1.9 (48550)"
+    },
+    {
+      "id": "test:capture:L6-calibration-absence-in-capture",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "running app + real meeting capture -> inventory only"
+      ],
+      "note": "Requires the T04 native slice to show a calibration pattern in-app, then capture it via installed meeting tools (T20). No capture was taken, so absence is unproven."
+    },
+    {
+      "id": "test:capture:L6-scaling-focus-matrix",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [
+        "interactive desktop session -> inventory only"
+      ],
+      "note": "100/125/150% scaling, focus preservation, and scrolled-text stability need the running native app (T20)."
+    }
+  ],
+  "counts": {
+    "pass": 33,
+    "fail": 0,
+    "blocked": 7,
+    "total": 40
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\verify-2026-10-25T01-06-09-194Z.json"
+  ]
+}

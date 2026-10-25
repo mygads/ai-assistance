@@ -1,0 +1,99 @@
+{
+  "fixture_kind": "normalized_transcript_replay",
+  "license": "CC0-1.0",
+  "synthetic": true,
+  "note": "Provider amends a final via an explicit correction event (new version). Overlapping self/remote timelines; remote overlap must not steer the reader.",
+  "send_at_ms": 5000,
+  "suggested_script": "Estimasi awal salah, angka yang benar adalah empat puluh dua persen untuk kuartal ini.",
+  "events": [
+    {
+      "at_ms": 600,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-03",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-01",
+        "revision": 0,
+        "start_ms": 100,
+        "end_ms": 600,
+        "status": "partial",
+        "text": "Berapa estimasi"
+      }
+    },
+    {
+      "at_ms": 1000,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-03",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-01",
+        "revision": 1,
+        "start_ms": 100,
+        "end_ms": 1000,
+        "status": "final",
+        "text": "Berapa estimasi angkanya?"
+      }
+    },
+    {
+      "at_ms": 1500,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-03",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-01",
+        "revision": 0,
+        "start_ms": 900,
+        "end_ms": 1500,
+        "status": "final",
+        "text": "Estimasi awal salah, angka yang benar dua puluh empat persen."
+      }
+    },
+    {
+      "at_ms": 2600,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-03",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-02",
+        "revision": 0,
+        "start_ms": 2100,
+        "end_ms": 2600,
+        "status": "final",
+        "text": "Coba ulangi angkanya pelan-pelan."
+      }
+    },
+    {
+      "at_ms": 3400,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-03",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-02",
+        "revision": 0,
+        "start_ms": 2800,
+        "end_ms": 3400,
+        "status": "final",
+        "text": "Estimasi awal salah, angka yang benar adalah empat puluh dua persen untuk kuartal ini."
+      }
+    }
+  ],
+  "expectations": {
+    "answer_model_calls_before_send": 0,
+    "normal_send_answer_calls": 1,
+    "remote_never_advances_reader": true,
+    "final_text_occurrences": {
+      "Berapa estimasi angkanya?": 1
+    },
+    "min_finals": 4
+  }
+}

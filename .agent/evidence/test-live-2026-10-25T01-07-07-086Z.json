@@ -1,0 +1,34 @@
+{
+  "kind": "app_test",
+  "run_id": "test-live-2026-10-25T01-07-07-086Z",
+  "level": "L5",
+  "command": "npm run test:live",
+  "exit_code": 2,
+  "status": "blocked",
+  "started_utc": "2026-10-25T01:07:07.084Z",
+  "cases": [
+    {
+      "id": "L5-live-prerequisites",
+      "level": "L5",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "not opt-in or unconfigured; missing: LIVE_TESTS_ENABLED=true; an STT key (SONIOX_API_KEY or DEEPGRAM_API_KEY); LLM_API_KEY; budget caps (LIVE_MAX_USD in config/live-tests.env). Zero live calls made."
+    }
+  ],
+  "counts": {
+    "pass": 0,
+    "fail": 0,
+    "blocked": 1,
+    "total": 1
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-live-2026-10-25T01-07-07-086Z.json"
+  ]
+}

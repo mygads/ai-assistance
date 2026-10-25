@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { bridgeMode, fixtureRemoteFinals } from "./bridge.ts";
-import { ingest_transcript_event, send_answer, start_session, type SessionRecord } from "./ipc.ts";
+import { ingest_transcript_event, select_transcript_range, send_answer, start_session, type SessionRecord } from "./ipc.ts";
 import { emitFixtureSuggestion, onSuggestionDelta, onSuggestionDone } from "./events.ts";
 import { TranscriptStore, type TranscriptEvent } from "../domain/transcript.ts";
 import { buildScript, ReaderCursor } from "../domain/reader.ts";
@@ -25,6 +25,7 @@ export default function App() {
   const mode = bridgeMode();
   const [view, setView] = useState<"dashboard" | "overlay">("dashboard");
   const [session, setSession] = useState<SessionRecord | null>(null);
+  const [persistedFinals, setPersistedFinals] = useState<number | null>(null);
   const [answer, setAnswer] = useState<string>("");
   const [answerMeta, setAnswerMeta] = useState<string>("");
   const [sending, setSending] = useState(false);
@@ -67,6 +68,10 @@ export default function App() {
         });
       }
       setSession(s);
+      // Read back the persisted finals through real IPC: the dashboard count
+      // below proves the DB roundtrip, not just the local in-memory store.
+      const range = await select_transcript_range({ session_id: s.id });
+      setPersistedFinals(range.data.length);
     } catch (e) {
       setError(e instanceof Error ? e.message : JSON.stringify(e));
     }
@@ -148,6 +153,9 @@ export default function App() {
             <p data-testid="session-id">Sesi {session.id} · capture {session.capture}</p>
           )}
           <h2>Transkrip</h2>
+          {persistedFinals !== null && (
+            <p data-testid="persisted-count">Tersimpan {persistedFinals} segmen final</p>
+          )}
           <ul data-testid="transcript-list">
             {finals.map((f) => (
               <li key={f.event.segment_id}>

@@ -1,0 +1,28 @@
+{
+  "manifest_version": "0.3",
+  "license": "CC0-1.0",
+  "note": "All fixtures are authored synthetic text (no audio, no human subjects). Audio fixtures are TTS-labeled and land with T05/T06.",
+  "fixtures": [
+    {
+      "path": "replay/partial-and-overlap.json",
+      "kind": "normalized_transcript_replay",
+      "languages": ["id", "en"],
+      "speakers": ["remote", "self"],
+      "covers": ["partial-revision", "overlap", "mixed-language"]
+    },
+    {
+      "path": "replay/reconnect-reset.json",
+      "kind": "normalized_transcript_replay",
+      "languages": ["id"],
+      "speakers": ["remote", "self"],
+      "covers": ["reconnect-clock-reset", "duplicated-network-message"]
+    },
+    {
+      "path": "replay/correction-overlap.json",
+      "kind": "normalized_transcript_replay",
+      "languages": ["id"],
+      "speakers": ["remote", "self"],
+      "covers": ["final-amendment", "overlap"]
+    }
+  ]
+}

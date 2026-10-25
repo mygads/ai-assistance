@@ -129,6 +129,13 @@ try {
   })();
   if (!/Sesi session-/.test(sessionText)) throw new Error(`real start_session did not return a session id: ${sessionText}`);
   push("L3-real-ipc-start-session", "pass", ["external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"], sessionText.slice(0, 120));
+  // Persisted-transcript read-back through real IPC: the dashboard count must
+  // reflect the two ingested finals stored in SQLite, not the UI-local store.
+  const persistedEl = await browser.$('[data-testid="persisted-count"]');
+  await persistedEl.waitForExist({ timeout: 10000 });
+  const persistedText = await persistedEl.getText();
+  if (!/Tersimpan 2 segmen/.test(persistedText)) throw new Error(`real select_transcript_range did not read back 2 finals: ${persistedText}`);
+  push("L3-real-ipc-persisted-read", "pass", [], persistedText.slice(0, 80));
   const sendBtn = await browser.$('[data-testid="send-answer"]');
   // Send lives on the Overlay view: switch views first.
   const overlayBtn = await browser.$("button=Overlay");

@@ -1,0 +1,65 @@
+{
+  "kind": "app_test",
+  "run_id": "test-integration-2026-10-25T01-06-30-340Z",
+  "level": "L1",
+  "command": "npm run test:integration",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T01:06:23.987Z",
+  "cases": [
+    {
+      "id": "L1-normalize-soniox",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> loopback canned STT"
+      ]
+    },
+    {
+      "id": "L1-normalize-deepgram",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> loopback canned STT"
+      ]
+    },
+    {
+      "id": "L1-reconnect-offset",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> loopback canned STT"
+      ]
+    },
+    {
+      "id": "L1-fixture-server",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [
+        "provider network -> 127.0.0.1 loopback"
+      ]
+    },
+    {
+      "id": "L1-rust-storage",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": []
+    }
+  ],
+  "counts": {
+    "pass": 5,
+    "fail": 0,
+    "blocked": 0,
+    "total": 5
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-integration-2026-10-25T01-06-30-340Z.json"
+  ]
+}

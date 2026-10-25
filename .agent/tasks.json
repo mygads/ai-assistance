@@ -117,10 +117,10 @@
       "acceptance_ids": [
         "A15"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/test-native-2026-10-25T01-07-04-600Z.json", ".agent/evidence/test-ui-2026-10-25T01-06-35-381Z.json", ".agent/evidence/verify-2026-10-25T01-06-09-194Z.json"]
     },
     {
       "id": "T05",

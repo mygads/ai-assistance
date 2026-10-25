@@ -77,7 +77,9 @@ try {
   const sessionText = await page.getByTestId("session-id").textContent();
   const items = await page.getByTestId("transcript-list").locator("li").count();
   if (items < 2) throw new Error(`expected >=2 seeded transcript rows, saw ${items}`);
-  push("L2-start-session-journey", "pass", [NATIVE_BRIDGE_REPLACED], sessionText?.trim() ?? "");
+  const persisted = await page.getByTestId("persisted-count").textContent();
+  if (!/Tersimpan 2 segmen/.test(persisted ?? "")) throw new Error(`persisted finals read-back missing: ${persisted}`);
+  push("L2-start-session-journey", "pass", [NATIVE_BRIDGE_REPLACED], `${sessionText?.trim() ?? ""} | ${persisted?.trim() ?? ""}`);
   await page.screenshot({ path: path.join(artDir, "dashboard.png") });
   await page.getByRole("button", { name: "Overlay" }).click();
   await page.getByTestId("send-answer").click();

@@ -1,0 +1,99 @@
+{
+  "fixture_kind": "normalized_transcript_replay",
+  "license": "CC0-1.0",
+  "synthetic": true,
+  "note": "Reconnect with provider clock reset + duplicated network message. Session clock keeps advancing; the new connection maps provider ms through a fresh offset. Same revision arriving twice must not duplicate the final.",
+  "send_at_ms": 4200,
+  "suggested_script": "Koneksi terputus lalu tersambung lagi dengan jam yang direset.",
+  "events": [
+    {
+      "at_ms": 800,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-02",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-01",
+        "segment_id": "remote-01",
+        "revision": 1,
+        "start_ms": 0,
+        "end_ms": 800,
+        "status": "final",
+        "text": "Apakah audionya jelas?"
+      }
+    },
+    {
+      "at_ms": 2000,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-02",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-01",
+        "revision": 0,
+        "start_ms": 1200,
+        "end_ms": 2000,
+        "status": "final",
+        "text": "Koneksi terputus lalu tersambung lagi."
+      }
+    },
+    {
+      "at_ms": 3600,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-02",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-02",
+        "segment_id": "remote-02",
+        "revision": 0,
+        "start_ms": 3400,
+        "end_ms": 3600,
+        "status": "final",
+        "text": "Bagaimana sekarang, apakah jelas?"
+      }
+    },
+    {
+      "at_ms": 3650,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-02",
+        "source_id": "loopback-fixture",
+        "role": "remote",
+        "connection_id": "remote-connection-02",
+        "segment_id": "remote-02",
+        "revision": 0,
+        "start_ms": 3400,
+        "end_ms": 3600,
+        "status": "final",
+        "text": "Bagaimana sekarang, apakah jelas?"
+      }
+    },
+    {
+      "at_ms": 4000,
+      "transcript": {
+        "schema_version": "0.3",
+        "session_id": "fixture-session-02",
+        "source_id": "mic-fixture",
+        "role": "self",
+        "connection_id": "self-connection-01",
+        "segment_id": "self-02",
+        "revision": 0,
+        "start_ms": 3700,
+        "end_ms": 4000,
+        "status": "final",
+        "text": "Dengan jam yang direset."
+      }
+    }
+  ],
+  "expectations": {
+    "answer_model_calls_before_send": 0,
+    "normal_send_answer_calls": 1,
+    "remote_never_advances_reader": true,
+    "final_text_occurrences": {
+      "Bagaimana sekarang, apakah jelas?": 1
+    },
+    "min_finals": 4
+  }
+}
