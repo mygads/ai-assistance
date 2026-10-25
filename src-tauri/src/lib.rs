@@ -5,6 +5,7 @@
 
 pub mod audio;
 pub mod commands;
+pub mod providers;
 pub mod store;
 
 use store::AppState;

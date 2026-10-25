@@ -160,10 +160,10 @@
         "A04",
         "A18"
       ],
-      "status": "in_progress",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [".agent/evidence/unit-2026-10-25T01-28-10-029Z.json", ".agent/evidence/test-integration-2026-10-25T01-28-56-357Z.json", ".agent/evidence/test-replay-2026-10-25T01-28-57-571Z.json", ".agent/evidence/check-2026-10-25T01-29-15-182Z.json"]
     },
     {
       "id": "T07",
@@ -179,7 +179,7 @@
       "acceptance_ids": [
         "A12"
       ],
-      "status": "pending",
+      "status": "in_progress",
       "worktree": null,
       "baseline_commit": null,
       "evidence_refs": []

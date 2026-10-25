@@ -12,4 +12,7 @@ config/*.local.env
 .agent/runtime/
 .worktrees/
 *.log
+# Local test prerequisite: Edge WebDriver binaries for test-native
+# (downloaded once per machine, never committed).
+tools/drivers/
 

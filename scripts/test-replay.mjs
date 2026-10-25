@@ -5,6 +5,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
 import { buildContextPacket } from "../src/domain/context.ts";
+import { normalizeSttEvent } from "../src/domain/adapters.ts";
 import { GenerationRegistry } from "../src/domain/generation.ts";
 import { buildScript, ReaderCursor } from "../src/domain/reader.ts";
 import { SessionMachines } from "../src/domain/session.ts";
@@ -216,6 +217,82 @@ try {
   push("L1-slice-reader-follows-self", "pass", ["provider audio -> authored word lists"]);
 } catch (e) {
   push("L1-slice-reader-follows-self", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
+
+// T06 provider-protocol replay: scripted provider wire (tests/provider/)
+// through the real TS normalization + store + machines. Mirrors the Rust
+// stt_adapters integration: partial→final discipline, dropped empty frames,
+// typed error frames, recoverable disconnect, reconnect with fresh offset.
+// Replaced boundary: provider network -> authored wire-message JSON.
+try {
+  const providerDir = path.join(rootDir, "tests", "provider");
+  for (const file of readdirSync(providerDir).filter((f) => f.endsWith(".json"))) {
+    const fx = JSON.parse(readFileSync(path.join(providerDir, file), "utf8"));
+    const store = new TranscriptStore();
+    const machines = new SessionMachines();
+    if (!machines.setCapture("connecting").ok || !machines.setCapture("live").ok) {
+      throw new Error(`${file}: capture machine refused connecting->live`);
+    }
+    let emitted = 0;
+    let sawDisconnect = false;
+    for (const m of fx.messages) {
+      if (m.disconnect) {
+        if (!m.recoverable) throw new Error(`${file}: only recoverable disconnects are scripted`);
+        sawDisconnect = true;
+        continue;
+      }
+      const ctx = {
+        session_id: fx.session_id, source_id: fx.source_id, role: fx.role,
+        connection_id: m.connection_id, clock_offset_ms: m.clock_offset_ms ?? 0,
+        segment_id: m.segment_id, revision: m.revision,
+      };
+      const atMs = (m.payload?.segments?.[0]?.end_ms ?? 0) + (m.clock_offset_ms ?? 0) + 10;
+      if (m.expect_error) {
+        let threw = false;
+        try {
+          normalizeSttEvent(fx.provider, m.payload, ctx, atMs);
+        } catch {
+          threw = true;
+        }
+        if (!threw) throw new Error(`${file}: expected ${m.expect_error} error was not thrown`);
+        continue;
+      }
+      const { event } = normalizeSttEvent(fx.provider, m.payload, ctx, atMs);
+      if (!validateTranscript(event)) throw new Error(`${file}: normalized event failed schema`);
+      const res = store.upsert(event);
+      if (res.errors.length > 0) throw new Error(`${file}: upsert errors: ${res.errors.join("; ")}`);
+      machines.noteCapture(event.source_id, atMs);
+      machines.noteTranscribed(event.source_id, event.end_ms);
+      emitted += 1;
+    }
+    if (!sawDisconnect) throw new Error(`${file}: scripted disconnect missing`);
+    const exp = fx.expectations ?? {};
+    if (emitted !== exp.events_emitted) throw new Error(`${file}: emitted ${emitted}, want ${exp.events_emitted}`);
+    const finals = store.finals(fx.session_id);
+    if (finals.length < (exp.min_finals ?? 0)) throw new Error(`${file}: finals ${finals.length} < min ${exp.min_finals}`);
+    if (exp.committed_final_text && !finals.some((f) => f.event.text === exp.committed_final_text)) {
+      throw new Error(`${file}: committed final text missing`);
+    }
+    if (exp.reconnect_session_start_ms !== undefined) {
+      const tail = finals.find((f) => f.event.connection_id !== fx.messages[0].connection_id);
+      if (!tail) throw new Error(`${file}: no post-reconnect final found`);
+      if (tail.event.start_ms !== exp.reconnect_session_start_ms) {
+        throw new Error(`${file}: reconnect start ${tail.event.start_ms} != ${exp.reconnect_session_start_ms}`);
+      }
+      if (exp.reconnect_session_end_ms !== undefined && tail.event.end_ms !== exp.reconnect_session_end_ms) {
+        throw new Error(`${file}: reconnect end ${tail.event.end_ms} != ${exp.reconnect_session_end_ms}`);
+      }
+    }
+    // Re-ingesting the committed tail is stale, not a duplicate row.
+    const lastFinal = finals[finals.length - 1].event;
+    const stale = store.upsert(lastFinal);
+    if (stale.outcome !== "rejected-stale") throw new Error(`${file}: expected rejected-stale, got ${stale.outcome}`);
+  }
+  const registry = new GenerationRegistry();
+  if (registry.size !== 0) throw new Error("model touched during provider replay");
+  push("L1-slice-stt-protocol-replay", "pass", ["provider network -> authored wire-message JSON"]);
+} catch (e) {
+  push("L1-slice-stt-protocol-replay", "fail", [], String(e?.message ?? e).slice(0, 300));
 }
 
 finish({ script: "test:replay", level: "L1", cases, startedUtc });

@@ -118,7 +118,8 @@ try {
 // Case 6: Rust audio-routing integration (real router/rings/links/fixture
 // capture, no hardware). The target name varies per case; keep the runner
 // generic so lane tests plug in without rewriting discovery.
-for (const target of ["audio_routing"]) {
+for (const target of ["audio_routing", "stt_adapters"]) {
+  const caseId = target === "audio_routing" ? "L1-audio-routing" : "L1-stt-adapters";
   try {
     const r = spawnSync(`cargo test --test ${target}`, {
       cwd: path.join(rootDir, "src-tauri"), encoding: "utf8", timeout: 600000, shell: true, env: cargoEnv(),
@@ -126,14 +127,14 @@ for (const target of ["audio_routing"]) {
     const out = (r.stdout ?? "") + (r.stderr ?? "");
     const m = out.match(/test result: ok\. (\d+) passed; (\d+) failed/);
     if (r.status === 0 && m && Number(m[1]) > 0 && Number(m[2]) === 0) {
-      push("L1-audio-routing", "pass", ["WASAPI hardware -> deterministic fixture capture"]);
+      push(caseId, "pass", [target === "audio_routing" ? "WASAPI hardware -> deterministic fixture capture" : "provider network -> deterministic wire scripts"]);
     } else {
       throw new Error((out.split("\n").filter((l) => /error|FAILED|panicked/i.test(l)).join(" | ") || `cargo exit ${r.status}`).slice(0, 400));
     }
   } catch (e) {
     const msg = String(e?.message ?? e);
-    if (/not recognized|not found|No such file/i.test(msg)) push("L1-audio-routing", "blocked", [], "cargo unavailable: " + msg.slice(0, 200));
-    else push("L1-audio-routing", "fail", [], msg.slice(0, 300));
+    if (/not recognized|not found|No such file/i.test(msg)) push(caseId, "blocked", [], "cargo unavailable: " + msg.slice(0, 200));
+    else push(caseId, "fail", [], msg.slice(0, 300));
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 9,
+  "revision": 10,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -17,10 +17,11 @@
     "T02",
     "T03",
     "T04",
-    "T05"
+    "T05",
+    "T06"
   ],
   "active_tasks": [
-    "T06"
+    "T07"
   ],
   "blockers": [
     {
@@ -86,8 +87,10 @@
   },
   "next_actions": [
     "SERIAL FALLBACK 2026-10-25: subagent worktree isolation unavailable (Agent tool: 'Cannot create agent worktree: not in a git repository and no WorktreeCreate hooks are configured'); per AGENTS.md/EXECUTION.md executing the P02 graph serially with lane-role discipline, one lane per commit. Wave-1 worktrees removed; no worker results invented.",
-    "T05 (active, coordinator-implemented): WASAPI routing/recovery — src-tauri/src/audio/** + src-tauri/tests/audio_*.rs; required checks test:unit + test:integration; L4 stays blocked",
-    "Then T06 (providers) -> T07 (UI overlay) -> T09 (context) -> T10 integration barrier; T08 after T07",
+    "T05 (completed): WASAPI routing/recovery — src-tauri/src/audio/** + src-tauri/tests/audio_*.rs; test:unit + test:integration pass; L4 stays blocked",
+    "T06 (completed): STT adapter seam + protocol fixtures — src-tauri/src/providers/** + tests/provider/** + L1-stt-adapters + L1-slice-stt-protocol-replay; unit rs 36/0, integration 7/7, replay 6/6, check 5/5",
+    "T07 (active, coordinator-implemented): dashboard + reading overlay (A12), required check test:ui",
+    "Then T08 (voice-follow, needs T07) -> T09 (context) -> T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live"
   ],
   "max_parallel_workers": 3
