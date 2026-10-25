@@ -572,10 +572,12 @@
       "acceptance_ids": [
         "A21"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        ".agent/evidence/package-2026-10-25T05-49-46-958Z.json"
+      ]
     },
     {
       "id": "T23",
@@ -591,10 +593,13 @@
       "acceptance_ids": [
         "A21"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        ".agent/evidence/package-2026-10-25T05-49-46-958Z.json",
+        ".agent/evidence/test-installer-2026-10-25T05-51-20-675Z.json"
+      ]
     },
     {
       "id": "T24",
@@ -611,10 +616,14 @@
       "acceptance_ids": [
         "A20"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        ".agent/evidence/test-integration-2026-10-25T05-41-52-986Z.json",
+        ".agent/evidence/test-installer-2026-10-25T05-51-20-675Z.json",
+        ".agent/evidence/check-2026-10-25T05-44-56-649Z.json"
+      ]
     },
     {
       "id": "T25",

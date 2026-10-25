@@ -1,0 +1,70 @@
+{
+  "kind": "app_test",
+  "run_id": "test-installer-2026-10-25T05-51-20-675Z",
+  "level": "L6",
+  "command": "npm run test:installer",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T05:51:13.772Z",
+  "cases": [
+    {
+      "id": "L6-installer-artefact",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Conversation Assistant_0.0.0_x64_en-US.msi, Conversation Assistant_0.0.0_x64-setup.exe"
+    },
+    {
+      "id": "L6-installed-files",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Users\\USER\\AppData\\Local\\Temp\\conv-install-XbH97x\\conversation-assistant.exe"
+    },
+    {
+      "id": "L6-installed-launch",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "installed exe booted window title=Conversation Assistant"
+    },
+    {
+      "id": "L6-no-test-hooks-in-image",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "scanned 11.2 MB installed exe: no hooks, no secrets"
+    },
+    {
+      "id": "L6-update-policy",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "no auto-updater configured: updates are explicit reinstalls only"
+    },
+    {
+      "id": "L6-uninstall",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "removed cleanly"
+    }
+  ],
+  "counts": {
+    "pass": 6,
+    "fail": 0,
+    "blocked": 0,
+    "total": 6
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-installer-2026-10-25T05-51-20-675Z.json"
+  ],
+  "install_prefix": "C:\\Users\\USER\\AppData\\Local\\Temp\\conv-install-XbH97x"
+}

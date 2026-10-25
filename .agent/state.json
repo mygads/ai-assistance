@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 21,
+  "revision": 22,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -29,7 +29,10 @@
     "T14",
     "T15",
     "T16",
-    "T17"
+    "T17",
+    "T22",
+    "T23",
+    "T24"
   ],
   "active_tasks": [
     "T18"
@@ -294,6 +297,20 @@
         ".agent/evidence/verify-2026-10-25T05-42-09-252Z.json"
       ],
       "note": "7 scripts pass, 0 fail; audio/live/capture blocked on hardware/keys (B02)"
+    },
+    "package-2026-10-25T05-49": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/package-2026-10-25T05-49-46-958Z.json"
+      ],
+      "note": "MSI 4.0MB + NSIS setup 2.8MB, sha256 recorded"
+    },
+    "installer-2026-10-25T05-51": {
+      "status": "pass",
+      "evidence_refs": [
+        ".agent/evidence/test-installer-2026-10-25T05-51-20-675Z.json"
+      ],
+      "note": "pass 6/6 incl installed window boot, update-policy, uninstall, no-hooks image scan"
     }
   },
   "next_actions": [
@@ -309,7 +326,8 @@
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live",
     "P05 native/audio: T17 native IPC verification (A15) incl. L3 cancel/isolation slices; T18 physical audio (A01/A16) needs hardware lease",
-    "T17 DONE (rev21): native L3 A15 — 13/13 incl new coverage of all five bare-scalar commands; corpus 19 covered-pass / 0 fail / 13 blocked. Then T18 physical audio (needs hardware lease) + P06 packaging/review/delivery."
+    "T17 DONE (rev21): native L3 A15 — 13/13 incl new coverage of all five bare-scalar commands; corpus 19 covered-pass / 0 fail / 13 blocked. Then T18 physical audio (needs hardware lease) + P06 packaging/review/delivery.",
+    "T22/T23/T24 DONE (rev22): release bundle + installer 6/6 + production-hooks negative. Then T21 on 30-min soak, T25 independent review (needs reviewer), T26 rehearsal, T27 delivery."
   ],
   "max_parallel_workers": 3
 }

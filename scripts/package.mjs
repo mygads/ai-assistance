@@ -12,6 +12,15 @@ const startedUtc = new Date().toISOString();
 const cases = [];
 const push = (id, status, replaced_boundaries = [], note) => cases.push({ id, level: "L6", status, replaced_boundaries, ...(note ? { note } : {}) });
 const run = (cmd, args, opts = {}) => new Promise((resolve) => {
+  // .cmd shims (tauri on Windows) cannot be execFile-spawned directly
+  // (EINVAL); run them through the shell as one literal-only command string.
+  // All call sites pass fixed literals — no caller input reaches the shell.
+  if (cmd.endsWith(".cmd")) {
+    execFile(`${cmd} ${args.join(" ")}`, { timeout: 600000, maxBuffer: 256 * 1024 * 1024, shell: true, ...opts }, (error, stdout, stderr) => {
+      resolve({ ok: !error, code: error?.code ?? 0, out: (((stdout ?? "") + (stderr ?? "")).slice(-4000)) });
+    });
+    return;
+  }
   execFile(cmd, args, { timeout: 600000, maxBuffer: 256 * 1024 * 1024, ...opts }, (error, stdout, stderr) => {
     resolve({ ok: !error, code: error?.code ?? 0, out: (((stdout ?? "") + (stderr ?? "")).slice(-4000)) });
   });

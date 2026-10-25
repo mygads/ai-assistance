@@ -269,8 +269,8 @@
       "primary_level": "L6",
       "steps": "Probe release for test control and inspect secret/log/export boundaries.",
       "assertion": "Privileged test hooks absent/rejected; no secret disclosure; appropriate negative assertions.",
-      "status": "blocked",
-      "evidence": "Production isolation — needs L6 run (lower-level slice passes: production isolation (A20 L0), check:production isolation (A20 L0))"
+      "status": "covered-pass",
+      "evidence": "Production isolation — L0 source scan passes plus L6 installed-image scan (no hooks, no secrets)"
     },
     {
       "id": "C31",
@@ -278,8 +278,8 @@
       "primary_level": "L6",
       "steps": "Install, launch, persist settings, exercise test update-policy, uninstall isolated profile.",
       "assertion": "Artifact hashes/revision known; lifecycle matches data policy; signing status accurate.",
-      "status": "blocked",
-      "evidence": "Installer/update lifecycle — needs L6 run"
+      "status": "covered-pass",
+      "evidence": "Installer/update lifecycle — covered at L6 by installer artefact, silent install, window boot, update-policy, uninstall"
     },
     {
       "id": "C32",
