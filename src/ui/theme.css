@@ -1,0 +1,557 @@
+/* Tema aplikasi (T25 restyle): gaya Fluent/Windows 11 — kartu membulat,
+   tombol aksen, ikon SVG. Mode gelap via [data-theme="dark"]; default
+   mengikuti preferensi sistem. Semua testid + string teruji L2/L3 tetap. */
+
+:root {
+  color-scheme: light;
+  --ca-font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Inter", sans-serif;
+  --ca-bg: #eef1f6;
+  --ca-bg-accent: linear-gradient(180deg, #e3ecf7 0%, #eef1f6 320px);
+  --ca-surface: #ffffff;
+  --ca-surface-2: #f6f8fb;
+  --ca-text: #1b1b1b;
+  --ca-muted: #605e5c;
+  --ca-border: #e1e5ea;
+  --ca-border-strong: #c8cdd4;
+  --ca-accent: #0067c0;
+  --ca-accent-strong: #005a9e;
+  --ca-accent-soft: rgba(0, 103, 192, 0.1);
+  --ca-on-accent: #ffffff;
+  --ca-ok: #107c10;
+  --ca-ok-soft: rgba(16, 124, 16, 0.12);
+  --ca-warn: #9d5c00;
+  --ca-warn-soft: rgba(157, 92, 0, 0.12);
+  --ca-danger: #c42b1c;
+  --ca-danger-soft: rgba(196, 43, 28, 0.1);
+  --ca-token-done: #dff6dd;
+  --ca-token-next: #fff4ce;
+  --ca-shadow: 0 1.6px 3.6px rgba(0, 0, 0, 0.11), 0 0.3px 0.9px rgba(0, 0, 0, 0.07);
+  --ca-shadow-raised: 0 6.4px 14.4px rgba(0, 0, 0, 0.13), 0 1.2px 3.6px rgba(0, 0, 0, 0.1);
+  --ca-radius: 8px;
+  --ca-focus: 0 0 0 2px var(--ca-surface), 0 0 0 4px var(--ca-accent);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ca-bg: #202020;
+  --ca-bg-accent: linear-gradient(180deg, #2b3a4d 0%, #202020 340px);
+  --ca-surface: #2c2c2c;
+  --ca-surface-2: #282828;
+  --ca-text: #f3f3f3;
+  --ca-muted: #c8c6c4;
+  --ca-border: #3d3d3d;
+  --ca-border-strong: #4f4f4f;
+  --ca-accent: #4cc2ff;
+  --ca-accent-strong: #38a9e8;
+  --ca-accent-soft: rgba(76, 194, 255, 0.14);
+  --ca-on-accent: #0b0b0b;
+  --ca-ok: #6ccb77;
+  --ca-ok-soft: rgba(108, 203, 119, 0.14);
+  --ca-warn: #e8ab3d;
+  --ca-warn-soft: rgba(232, 171, 61, 0.14);
+  --ca-danger: #f28282;
+  --ca-danger-soft: rgba(242, 130, 130, 0.14);
+  --ca-token-done: rgba(108, 203, 119, 0.22);
+  --ca-token-next: rgba(232, 171, 61, 0.22);
+  --ca-shadow: 0 1.6px 3.6px rgba(0, 0, 0, 0.4), 0 0.3px 0.9px rgba(0, 0, 0, 0.3);
+  --ca-shadow-raised: 0 6.4px 14.4px rgba(0, 0, 0, 0.5), 0 1.2px 3.6px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ca-font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ca-text);
+  background: var(--ca-bg-accent), var(--ca-bg);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.ca-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 20px 24px 48px;
+}
+
+/* ——— Bilah atas ——— */
+.ca-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--ca-surface);
+  border: 1px solid var(--ca-border);
+  border-radius: 12px;
+  box-shadow: var(--ca-shadow);
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+}
+
+.ca-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ca-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--ca-accent-soft);
+  color: var(--ca-accent);
+  flex-shrink: 0;
+}
+
+.ca-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.ca-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ca-muted);
+  background: var(--ca-surface-2);
+  border: 1px solid var(--ca-border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.ca-pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ca-ok);
+}
+
+.ca-header-spacer {
+  flex: 1;
+}
+
+/* Kontrol tersegmentasi (navigasi + mode): satu bingkai, opsi aktif terisi. */
+.ca-segmented {
+  display: inline-flex;
+  background: var(--ca-surface-2);
+  border: 1px solid var(--ca-border);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.ca-segmented button {
+  border: 0;
+  background: transparent;
+  color: var(--ca-muted);
+  font: inherit;
+  font-weight: 500;
+  border-radius: 7px;
+  padding: 6px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ca-segmented button[aria-current="true"],
+.ca-segmented button[aria-pressed="true"] {
+  background: var(--ca-surface);
+  color: var(--ca-text);
+  box-shadow: var(--ca-shadow);
+}
+
+.ca-segmented button:hover:not([aria-current="true"]):not([aria-pressed="true"]) {
+  color: var(--ca-text);
+  background: var(--ca-accent-soft);
+}
+
+/* ——— Tombol ——— */
+.ca-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border: 1px solid var(--ca-border-strong);
+  background: var(--ca-surface);
+  color: var(--ca-text);
+  box-shadow: var(--ca-shadow);
+  transition: background 120ms ease, transform 60ms ease, box-shadow 120ms ease;
+}
+
+.ca-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--ca-surface-2);
+}
+
+.ca-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.ca-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.ca-btn-primary {
+  background: var(--ca-accent);
+  border-color: transparent;
+  color: var(--ca-on-accent);
+}
+
+.ca-btn-primary:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--ca-accent-strong);
+}
+
+.ca-btn-danger {
+  color: var(--ca-danger);
+  border-color: var(--ca-danger);
+  background: transparent;
+  box-shadow: none;
+}
+
+.ca-btn-danger:hover {
+  background: var(--ca-danger-soft);
+}
+
+.ca-btn-quiet {
+  box-shadow: none;
+  border-color: transparent;
+  background: transparent;
+  color: var(--ca-muted);
+  padding: 7px 10px;
+}
+
+.ca-btn-quiet:hover {
+  background: var(--ca-accent-soft);
+  color: var(--ca-text);
+}
+
+.ca-btn:focus-visible,
+.ca-segmented button:focus-visible,
+.ca-icon-btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.ca-token:focus-visible {
+  outline: none;
+  box-shadow: var(--ca-focus);
+}
+
+.ca-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ca-muted);
+  cursor: pointer;
+}
+
+.ca-icon-btn:hover {
+  background: var(--ca-accent-soft);
+  color: var(--ca-text);
+}
+
+/* ——— Kartu bagian ——— */
+.ca-card {
+  background: var(--ca-surface);
+  border: 1px solid var(--ca-border);
+  border-radius: 12px;
+  box-shadow: var(--ca-shadow);
+  padding: 18px 20px;
+  margin-top: 16px;
+}
+
+.ca-card > h2:first-child,
+.ca-card > h3:first-child {
+  margin-top: 0;
+}
+
+.ca-section-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ca-section-head svg {
+  color: var(--ca-accent);
+}
+
+.ca-muted {
+  color: var(--ca-muted);
+  font-size: 12.5px;
+}
+
+/* ——— Status ——— */
+.ca-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ca-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 4px 12px;
+  border: 1px solid var(--ca-border);
+  background: var(--ca-surface-2);
+  color: var(--ca-text);
+}
+
+.ca-status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ca-muted);
+}
+
+.ca-status.is-ok {
+  background: var(--ca-ok-soft);
+  border-color: transparent;
+  color: var(--ca-ok);
+}
+
+.ca-status.is-ok .dot {
+  background: var(--ca-ok);
+}
+
+.ca-status.is-warn {
+  background: var(--ca-warn-soft);
+  border-color: transparent;
+  color: var(--ca-warn);
+}
+
+.ca-status.is-warn .dot {
+  background: var(--ca-warn);
+}
+
+.ca-status.is-info {
+  background: var(--ca-accent-soft);
+  border-color: transparent;
+  color: var(--ca-accent);
+}
+
+.ca-status.is-info .dot {
+  background: var(--ca-accent);
+}
+
+/* ——— Daftar ——— */
+.ca-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ca-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--ca-border);
+  border-radius: var(--ca-radius);
+  padding: 9px 12px;
+  background: var(--ca-surface-2);
+}
+
+.ca-list-item svg {
+  color: var(--ca-accent);
+}
+
+.ca-role {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 5px;
+  padding: 2px 7px;
+  background: var(--ca-accent-soft);
+  color: var(--ca-accent);
+}
+
+.ca-role.is-self {
+  background: var(--ca-ok-soft);
+  color: var(--ca-ok);
+}
+
+/* ——— Form ——— */
+.ca-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--ca-muted);
+  font-weight: 500;
+}
+
+.ca-input-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+input.ca-input,
+select.ca-input {
+  font: inherit;
+  color: var(--ca-text);
+  background: var(--ca-surface);
+  border: 1px solid var(--ca-border-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 7px 10px;
+  min-width: 0;
+}
+
+input.ca-input:hover,
+select.ca-input:hover {
+  border-color: var(--ca-muted);
+}
+
+select.ca-input {
+  cursor: pointer;
+}
+
+/* ——— Teleprompter ——— */
+.ca-question {
+  font-size: 15px;
+  background: var(--ca-surface-2);
+  border: 1px solid var(--ca-border);
+  border-inline-start: 4px solid var(--ca-accent);
+  border-radius: 4px var(--ca-radius) var(--ca-radius) 4px;
+  padding: 10px 14px;
+  margin: 0 0 12px;
+}
+
+.ca-band {
+  border: 2px solid var(--ca-accent);
+  border-radius: var(--ca-radius);
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: var(--ca-accent-soft);
+  font-size: 15px;
+  box-shadow: var(--ca-shadow);
+}
+
+.ca-band-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ca-accent);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.ca-script {
+  font-size: 21px;
+  line-height: 1.65;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--ca-border);
+  border-radius: var(--ca-radius);
+  background: var(--ca-surface-2);
+}
+
+.ca-token {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 1px;
+}
+
+.ca-token.is-done {
+  background: var(--ca-token-done);
+}
+
+.ca-token.is-next {
+  background: var(--ca-token-next);
+}
+
+.ca-toolbar {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ca-drawer {
+  border: 1px solid var(--ca-border);
+  border-radius: var(--ca-radius);
+  padding: 14px 16px;
+  margin-top: 10px;
+  background: var(--ca-surface-2);
+  box-shadow: var(--ca-shadow);
+}
+
+.ca-alert {
+  border: 1px solid var(--ca-danger);
+  background: var(--ca-danger-soft);
+  color: var(--ca-danger);
+  border-radius: var(--ca-radius);
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.ca-empty {
+  border: 1px dashed var(--ca-border-strong);
+  border-radius: var(--ca-radius);
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--ca-muted);
+  margin-top: 16px;
+  background: var(--ca-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ca-btn,
+  .ca-segmented button,
+  .ca-icon-btn {
+    transition: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .ca-shell {
+    padding: 12px 12px 40px;
+  }
+
+  .ca-header {
+    flex-wrap: wrap;
+  }
+
+  .ca-title {
+    font-size: 15px;
+  }
+}

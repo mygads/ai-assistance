@@ -1,0 +1,64 @@
+{
+  "kind": "app_test",
+  "run_id": "check-2026-10-25T06-18-20-095Z",
+  "level": "L0",
+  "command": "npm run check",
+  "exit_code": 1,
+  "status": "fail",
+  "started_utc": "2026-10-25T06:17:51.417Z",
+  "cases": [
+    {
+      "id": "contract freeze (ipc-commands.json <-> commands.rs <-> ipc.ts)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "schemas (ajv draft 2020-12)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "production isolation (A20 L0)",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo fmt --check",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "cargo clippy",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": []
+    },
+    {
+      "id": "tsc --noEmit",
+      "level": "L0",
+      "status": "fail",
+      "replaced_boundaries": [],
+      "note": "tsc --noEmit: src/ui/main.tsx(3,8): error TS2882: Cannot find module or type declarations for side-effect import of './theme.css'.\n"
+    }
+  ],
+  "counts": {
+    "pass": 5,
+    "fail": 1,
+    "blocked": 0,
+    "total": 6
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\check-2026-10-25T06-18-20-095Z.json"
+  ]
+}

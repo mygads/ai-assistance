@@ -1,16 +1,29 @@
-// Shell aplikasi: navigasi Dashboard ↔ Overlay + state sesi terangkat.
+// Shell aplikasi: navigasi Dashboard ↔ Overlay + state sesi terangkat + tema.
 // Logika persiapan ada di dashboard.tsx, teleprompter di overlay.tsx.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { bridgeMode } from "./bridge.ts";
 import { TranscriptStore, type TranscriptEvent } from "../domain/transcript.ts";
 import type { SessionRecord } from "./ipc.ts";
 import Dashboard, { type OutputLanguage } from "./dashboard.tsx";
 import Overlay from "./overlay.tsx";
+import { AppIcon, MonitorIcon, MoonIcon, SunIcon } from "./icons.tsx";
 
 const SCRIPT_MD = `Terima kasih atas pertanyaannya. Izinkan saya menjelaskan pendekatan kami dalam tiga bagian.
 
 Pertama, kami memisahkan sumber audio agar atribusi tetap jelas. Kedua, transkripsi berjalan terus dan jawaban dibuat saat tombol Kirim ditekan. Ketiga, teleprompter mengikuti ucapan pengguna secara lokal.`;
+
+type Theme = "light" | "dark";
+
+function initialTheme(): Theme {
+  try {
+    const saved = localStorage.getItem("ca-theme");
+    if (saved === "light" || saved === "dark") return saved;
+  } catch {
+    /* penyimpanan tak tersedia: ikut sistem */
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 function seedEvents(sessionId: string): TranscriptEvent[] {
   const base = {
@@ -31,6 +44,16 @@ export default function App() {
   const [persistedFinals, setPersistedFinals] = useState<number | null>(null);
   const [language, setLanguage] = useState<OutputLanguage>("follow");
   const [error, setError] = useState<string>("");
+  const [theme, setTheme] = useState<Theme>(initialTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem("ca-theme", theme);
+    } catch {
+      /* abaikan: tema tetap berlaku untuk sesi ini */
+    }
+  }, [theme]);
 
   const store = useMemo(() => new TranscriptStore(), []);
   if (session) {
@@ -39,17 +62,37 @@ export default function App() {
   const finals = session ? store.finals(session.id) : [];
 
   return (
-    <main style={{ fontFamily: "system-ui, sans-serif", padding: 24, maxWidth: 900 }}>
-      <header style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <h1 style={{ fontSize: 20, margin: 0 }}>Conversation Assistant</h1>
-        <span data-testid="bridge-mode" style={{ fontSize: 12, border: "1px solid #888", padding: "2px 8px", borderRadius: 4 }}>
+    <div className="ca-shell">
+      <header className="ca-header">
+        <div className="ca-brand">
+          <span className="ca-brand-mark">
+            <AppIcon size={22} />
+          </span>
+          <h1 className="ca-title">Conversation Assistant</h1>
+        </div>
+        <span data-testid="bridge-mode" className="ca-pill" title="Mode jembatan IPC">
+          <span className="dot" />
           bridge: {mode}
         </span>
-        <nav style={{ marginLeft: "auto", display: "flex", gap: 8 }} aria-label="Navigasi utama">
-          <button onClick={() => setView("dashboard")} aria-current={view === "dashboard"}>
+        <span className="ca-header-spacer" />
+        <button
+          type="button"
+          data-testid="theme-toggle"
+          className="ca-icon-btn"
+          onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+          title={theme === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+          aria-label={theme === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+          aria-pressed={theme === "dark"}
+        >
+          {theme === "dark" ? <SunIcon size={17} /> : <MoonIcon size={17} />}
+        </button>
+        <nav className="ca-segmented" aria-label="Navigasi utama">
+          <button type="button" onClick={() => setView("dashboard")} aria-current={view === "dashboard"}>
+            <MonitorIcon size={15} />
             Dashboard
           </button>
-          <button onClick={() => setView("overlay")} aria-current={view === "overlay"}>
+          <button type="button" onClick={() => setView("overlay")} aria-current={view === "overlay"}>
+            <AppIcon size={15} />
             Overlay
           </button>
         </nav>
@@ -83,7 +126,7 @@ export default function App() {
           onError={setError}
         />
       )}
-    </main>
+    </div>
   );
 }
 

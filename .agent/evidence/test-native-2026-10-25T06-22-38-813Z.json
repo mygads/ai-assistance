@@ -1,0 +1,138 @@
+{
+  "kind": "app_test",
+  "run_id": "test-native-2026-10-25T06-22-38-813Z",
+  "level": "L3",
+  "command": "npm run test:native",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T06:21:48.550Z",
+  "cases": [
+    {
+      "id": "L3-debug-binary",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\debug\\conversation-assistant.exe"
+    },
+    {
+      "id": "L3-window-launches",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "title=Conversation Assistant"
+    },
+    {
+      "id": "L3-real-ipc-start-session",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> loopback fixture servers (not yet wired; no provider call made)"
+      ],
+      "note": "Sesi session-a2fba51abd1d46109976e8ebdf61d621 · tangkapan connecting"
+    },
+    {
+      "id": "L3-real-ipc-persisted-read",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Tersimpan 2 segmen final"
+    },
+    {
+      "id": "L3-real-ipc-send-answer",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"
+      ],
+      "note": "meta=Saran v1 · req-bb359d04e script_chars=54"
+    },
+    {
+      "id": "L3-send-dedup",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "identical resend returned Saran v1 · req-bb359d04e"
+    },
+    {
+      "id": "L3-model-switch-next-request",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [
+        "external STT/LLM -> deterministic fixture synthesis over the real snapshot (no provider call made)"
+      ],
+      "note": "profil-hemat saved; shorten streamed as v2 with ringkas marker"
+    },
+    {
+      "id": "L3-focus-preserved-after-stream",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "activeElement=action-shorten"
+    },
+    {
+      "id": "L3-cancel-after-done-settles",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "cancel_answer(false) over real IPC; settled script untouched, no alert"
+    },
+    {
+      "id": "L3-token-seek-native",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "seek_reader over real IPC; committed=5, band shows mengapa"
+    },
+    {
+      "id": "L3-source-labels-native",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "list_sources over real IPC: self + remote labels"
+    },
+    {
+      "id": "L3-doc-import-native",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "import_document over real IPC: 1 dokumen workspace"
+    },
+    {
+      "id": "L3-pause-resume-session",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "resume/pause/resume roundtrip over real IPC (connecting -> live -> paused -> live)"
+    },
+    {
+      "id": "L3-stop-session-ends-capture",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "stop_session over real IPC; dashboard back to pre-session state"
+    },
+    {
+      "id": "L3-restart-reopens-clean",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "same db reused bytes=131072->139264; Sesi session-3527c38d0ba44698982dbf5252ec521b · tangkapan co"
+    }
+  ],
+  "counts": {
+    "pass": 15,
+    "fail": 0,
+    "blocked": 0,
+    "total": 15
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-native-2026-10-25T06-22-38-813Z.json"
+  ]
+}

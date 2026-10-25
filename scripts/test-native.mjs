@@ -213,6 +213,17 @@ try {
     throw new Error(`cancel-after-done raised an alert: ${await browser.$('[role="alert"]').getText().catch(() => "?")}`);
   }
   push("L3-cancel-after-done-settles", "pass", [], "cancel_answer(false) over real IPC; settled script untouched, no alert");
+  // T17 follow-up: token seek over real IPC. Clicking a token calls
+  // seek_reader (struct input, always worked) and moves the stable cursor:
+  // committed=5 with the band showing the committed words. Mirrors the L2
+  // token-seek proof against the real WebView2 window.
+  const token5 = await browser.$('[data-testid="token-5"]');
+  await token5.waitForExist({ timeout: 10000 });
+  await token5.click();
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="reader-state"]').getText()) ?? "").includes("committed=5"), { timeout: 10000 });
+  const bandText = await browser.$('[data-testid="reading-band"]').getText();
+  if (!bandText.includes("mengapa")) throw new Error(`reading band missing committed words after native seek: ${bandText.slice(0, 160)}`);
+  push("L3-token-seek-native", "pass", [], "seek_reader over real IPC; committed=5, band shows mengapa");
   // T17: pause/resume over real IPC. A fresh native session rests in
   // "connecting" (nothing has claimed live capture in this build), so the
   // dashboard offers resume first: connecting -> live -> paused -> live.
@@ -230,6 +241,18 @@ try {
   await remoteLabel.waitForExist({ timeout: 10000 });
   if (!(await remoteLabel.getText()).includes("remote")) throw new Error(`remote source label wrong: ${await remoteLabel.getText()}`);
   push("L3-source-labels-native", "pass", [], "list_sources over real IPC: self + remote labels");
+  // T17 follow-up: document import over real IPC. Fills the dashboard form
+  // and proves import_document persists to the default workspace (doc count
+  // flips to 1). Mirrors the L2 dashboard-readiness proof natively.
+  const docName = await browser.$('[data-testid="doc-import-name"]');
+  await docName.waitForExist({ timeout: 10000 });
+  await docName.setValue("materi-native.txt");
+  const docText = await browser.$('[data-testid="doc-import-text"]');
+  await docText.setValue("fakta uji isolasi workspace default");
+  const docSubmit = await browser.$('[data-testid="doc-import-submit"]');
+  await docSubmit.click();
+  await browser.waitUntil(async () => ((await browser.$('[data-testid="doc-count"]').getText()) ?? "").includes("1 dokumen"), { timeout: 10000 });
+  push("L3-doc-import-native", "pass", [], "import_document over real IPC: 1 dokumen workspace");
   // Click a capture-transition button until the expected status observably
   // appears: a single click can race a re-render/re-mount and get swallowed.
   // Short 3s polls per click attempt; the full diagnosis (alert + window text)

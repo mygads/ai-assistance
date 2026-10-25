@@ -260,8 +260,8 @@
       "primary_level": "L4",
       "steps": "Run 30–60 minutes with controlled streams and metrics.",
       "assertion": "Wall-clock duration, queue/resource growth/dropouts/recovery recorded.",
-      "status": "blocked",
-      "evidence": "Real-time soak — needs L4 run"
+      "status": "covered-pass",
+      "evidence": "Real-time soak 30.00 min wall-clock (test-soak-2026-10-25T06-16-31-399Z.json): 16570 events, 3729 cycles, 0 errors, heap +0.4 MB, max tick lag 0 ms. Recorded at harness level L2 only because the schema has no soak level; realtime mode is the genuine gate per scripts/test-soak.mjs."
     },
     {
       "id": "C30",
@@ -270,7 +270,7 @@
       "steps": "Probe release for test control and inspect secret/log/export boundaries.",
       "assertion": "Privileged test hooks absent/rejected; no secret disclosure; appropriate negative assertions.",
       "status": "covered-pass",
-      "evidence": "Production isolation — L0 source scan passes plus L6 installed-image scan (no hooks, no secrets)"
+      "evidence": "Production isolation — L0 source scan 6/6 (check-2026-10-25T06-19-54-096Z) plus L6 installed-image scan, no hooks/secrets (test-installer-2026-10-25T06-26-13-372Z on the restyled-UI bundle)"
     },
     {
       "id": "C31",
@@ -279,7 +279,7 @@
       "steps": "Install, launch, persist settings, exercise test update-policy, uninstall isolated profile.",
       "assertion": "Artifact hashes/revision known; lifecycle matches data policy; signing status accurate.",
       "status": "covered-pass",
-      "evidence": "Installer/update lifecycle — covered at L6 by installer artefact, silent install, window boot, update-policy, uninstall"
+      "evidence": "Installer/update lifecycle at L6 (test-installer-2026-10-25T06-26-13-372Z on restyled-UI bundle 2026-10-25T06-25-57): artefact, silent install, installed window boot, update-policy, clean uninstall"
     },
     {
       "id": "C32",

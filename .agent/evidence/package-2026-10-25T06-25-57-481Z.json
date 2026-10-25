@@ -1,0 +1,47 @@
+{
+  "kind": "app_test",
+  "run_id": "package-2026-10-25T06-25-57-481Z",
+  "level": "L6",
+  "command": "npm run package",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T06:24:09.357Z",
+  "cases": [
+    {
+      "id": "L6-release-bundle",
+      "level": "L6",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "artefacts: Conversation Assistant_0.0.0_x64_en-US.msi (4.0 MB), Conversation Assistant_0.0.0_x64-setup.exe (2.8 MB)"
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "fail": 0,
+    "blocked": 0,
+    "total": 1
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\package-2026-10-25T06-25-57-481Z.json"
+  ],
+  "bundle_artifacts": [
+    {
+      "path": "src-tauri\\target\\release\\bundle\\msi\\Conversation Assistant_0.0.0_x64_en-US.msi",
+      "bytes": 4157440,
+      "sha256": "c63c22cc6b4686751d2e4cf4b7785d04e2e0394faa7f881295f920ff0eaaac1e"
+    },
+    {
+      "path": "src-tauri\\target\\release\\bundle\\nsis\\Conversation Assistant_0.0.0_x64-setup.exe",
+      "bytes": 2905051,
+      "sha256": "780a7dac237a28b2ddaeccaddfb608c63730ed08193ac21f7d1c2ace23c97e0e"
+    }
+  ],
+  "build_log_tail": "oga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri)\n    Finished `release` profile [optimized] target(s) in 1m 11s\n       Built application at: C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\conversation-assistant.exe\n        Info Patching C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\conversation-assistant.exe with bundle type information: msi\n        Info Target: x64\n     Running candle for \"C:\\\\Yoga\\\\Programming\\\\Windows_Conversation_Assistant_Agent_Pack\\\\src-tauri\\\\target\\\\release\\\\wix\\\\x64\\\\main.wxs\"\n     Running light to produce C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\bundle\\msi\\Conversation Assistant_0.0.0_x64_en-US.msi\n        Info Patching C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\conversation-assistant.exe with bundle type information: nsis\n        Info Target: x64\n     Running makensis to produce C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\bundle\\nsis\\Conversation Assistant_0.0.0_x64-setup.exe\n    Finished 2 bundles at:\n        C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\bundle\\msi\\Conversation Assistant_0.0.0_x64_en-US.msi (3.96 MiB)\n        C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack\\src-tauri\\target\\release\\bundle\\nsis\\Conversation Assistant_0.0.0_x64-setup.exe (2.77 MiB)\n\n"
+}

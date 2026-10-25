@@ -7,7 +7,7 @@
 // ditutup mengembalikan fokus ke tombol pembukanya. Scroll mengikuti
 // prefers-reduced-motion. Klik token = seek manual (follow mati).
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import { bridgeMode, cancelFixtureSuggestion, fixtureRemoteFinals } from "./bridge.ts";
 import { emitFixtureSuggestion, onSuggestionDelta, onSuggestionDone } from "./events.ts";
 import {
@@ -24,6 +24,20 @@ import {
 import { buildScript, ReaderSession, type ScriptToken } from "../domain/reader.ts";
 import type { StoredSegment } from "../domain/transcript.ts";
 import type { OutputLanguage } from "./dashboard.ts";
+import {
+  BookIcon,
+  CancelIcon,
+  ContinueIcon,
+  FollowIcon,
+  LoopbackIcon,
+  MicIcon,
+  PauseIcon,
+  PlayIcon,
+  RefreshIcon,
+  SendIcon,
+  ShortenIcon,
+  SparkleIcon,
+} from "./icons.tsx";
 
 type OverlayMode = "compact" | "reading";
 type SendAction = SendAnswerInput["action"];
@@ -34,6 +48,14 @@ const ACTION_LABEL: Record<SendAction, string> = {
   continue_unread: "Lanjutkan",
   shorten: "Lebih singkat",
   expand: "Lebih lengkap",
+};
+
+const ACTION_ICON: Record<SendAction, (props: { size?: number }) => JSX.Element> = {
+  answer: SendIcon,
+  revise_unread: RefreshIcon,
+  continue_unread: ContinueIcon,
+  shorten: ShortenIcon,
+  expand: SparkleIcon,
 };
 
 interface OverlayProps {
@@ -235,7 +257,13 @@ export default function Overlay(props: OverlayProps) {
     drawerToggleRef.current?.focus();
   }
 
-  if (!session) return <p>Belum ada sesi. Mulai sesi dari Dashboard.</p>;
+  if (!session)
+    return (
+      <div className="ca-empty">
+        <BookIcon size={28} />
+        <p>Belum ada sesi. Mulai sesi dari Dashboard.</p>
+      </div>
+    );
 
   const question = [...props.finals].reverse().find((f) => f.event.role === "remote")?.event.text ?? "—";
   const bandText =
@@ -246,149 +274,200 @@ export default function Overlay(props: OverlayProps) {
           .map((t) => t.word)
           .join(" ");
   const transcription = `transkripsi ${session.capture === "live" ? "berjalan" : session.capture === "paused" ? "dijeda" : session.capture} · ${props.finals.length} segmen final`;
+  const genTone = genStatus.startsWith("done") ? "is-ok" : genStatus === "streaming" ? "is-info" : genStatus === "cancelled" ? "is-warn" : "";
 
   return (
     <section aria-label="Overlay teleprompter">
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <button
-          data-testid="mode-toggle-compact"
-          onClick={() => setOverlayMode("compact")}
-          aria-pressed={overlayMode === "compact"}
-        >
-          Ringkas
-        </button>
-        <button
-          data-testid="mode-toggle-reading"
-          onClick={() => setOverlayMode("reading")}
-          aria-pressed={overlayMode === "reading"}
-        >
-          Membaca
-        </button>
-      </div>
-
-      {overlayMode === "compact" && (
-        <div data-testid="overlay-mode-compact">
-          <h2>Ringkas</h2>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {(["self", "remote"] as const).map((role) => {
-              const src = sources.find((x) => x.role === role);
-              return (
-                <li key={role} data-testid={role === "self" ? "compact-source-self" : "compact-source-remote"}>
-                  {role === "self" ? "Mikrofon" : "Loopback"} · {src ? `${src.device_id} · ${src.enabled ? "aktif" : "nonaktif"}` : "memuat…"}
-                </li>
-              );
-            })}
-          </ul>
-          <p data-testid="transcription-status" role="status">
-            {transcription}
-          </p>
-          <p data-testid="generation-status" role="status">
-            generasi {genStatus}
-          </p>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button data-testid="send-answer-compact" onClick={() => void send("answer")} aria-disabled={sending}>
-              {sending ? "Mengirim…" : "Kirim"}
-            </button>
-            <button data-testid="pause-compact" onClick={() => void togglePause()}>
-              {session.capture === "live" ? "Pause" : "Sambung"}
-            </button>
-          </div>
+      <div className="ca-card">
+        <div className="ca-segmented" role="group" aria-label="Mode overlay">
+          <button
+            type="button"
+            data-testid="mode-toggle-compact"
+            onClick={() => setOverlayMode("compact")}
+            aria-pressed={overlayMode === "compact"}
+          >
+            Ringkas
+          </button>
+          <button
+            type="button"
+            data-testid="mode-toggle-reading"
+            onClick={() => setOverlayMode("reading")}
+            aria-pressed={overlayMode === "reading"}
+          >
+            Membaca
+          </button>
         </div>
-      )}
 
-      {overlayMode === "reading" && (
-        <div data-testid="overlay-mode-reading">
-          <h2>Naskah</h2>
-          <p data-testid="latest-question">
-            <strong>Tanya:</strong> {question}
-          </p>
-          <p data-testid="transcription-status" role="status">
-            {transcription}
-          </p>
-          <p data-testid="generation-status" role="status">
-            generasi {genStatus}
-          </p>
-          <p data-testid="reader-state">
-            committed={readerState.committed} tentative={readerState.tentative} confidence={readerState.confidence}
-          </p>
-          <div ref={bandRef} data-testid="reading-band" style={{ border: "2px solid #1971c2", borderRadius: 6, padding: "8px 12px", margin: "8px 0" }}>
-            <span style={{ fontSize: 12 }}>BAND BACA: </span>
-            {bandText}
-          </div>
-          <div data-testid="script" style={{ fontSize: 22, lineHeight: 1.6, maxHeight: 320, overflowY: "auto" }}>
-            {script.map((t) => (
-              <span
-                key={t.index}
-                data-testid={`token-${t.index}`}
-                onClick={() => void seekToken(t.index)}
-                title={`Klik untuk lompat ke kata ${t.index + 1}`}
-                style={{
-                  cursor: "pointer",
-                  background: t.index < readerState.committed ? "#d3f9d8" : t.index < readerState.tentative ? "#fff3bf" : "transparent",
-                }}
-              >
-                {script[t.index]?.word ?? ""}{" "}
-              </span>
-            ))}
-          </div>
-          <div style={{ marginTop: 16, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-            {(["answer", "revise_unread", "continue_unread", "shorten"] as const).map((a) => (
-              <button
-                key={a}
-                data-testid={a === "answer" ? "send-answer" : `action-${a}`}
-                onClick={() => void send(a)}
-                // aria-disabled, bukan disabled: tombol yang sedang difokus
-                // lalu menjadi disabled akan kehilangan fokus ke <body>.
-                // Guard sending di send() yang menolak klik ganda.
-                aria-disabled={sending}
-              >
-                {sending && a === "answer" ? "Mengirim…" : ACTION_LABEL[a]}
-              </button>
-            ))}
-            <button data-testid="cancel-send" onClick={() => void cancel()} aria-disabled={!sending}>
-              Batalkan
-            </button>
-            <button data-testid="follow-toggle" onClick={() => setFollow((f) => !f)} aria-pressed={follow}>
-              Follow: {follow ? "aktif" : "mati"}
-            </button>
-            <button data-testid="pause-toggle" onClick={() => void togglePause()} title="Jeda/sambung tangkapan sesi">
-              {session.capture === "live" ? "Pause" : "Sambung"}
-            </button>
-            {answerMeta !== "" && <span data-testid="answer-meta">Saran {answerMeta}</span>}
-          </div>
-          <p data-testid="follow-state-text" style={{ fontSize: 12 }}>
-            follow {follow ? "mengikuti" : "dijeda (klik Follow untuk lanjut)"} · klik kata pada naskah untuk seek manual
-          </p>
-          <div style={{ marginTop: 8 }}>
-            <button ref={drawerToggleRef} data-testid="drawer-toggle" onClick={() => (drawerOpen ? closeDrawer() : setDrawerOpen(true))} aria-expanded={drawerOpen}>
-              {drawerOpen ? "Tutup transkrip" : "Buka transkrip"}
-            </button>
-          </div>
-          {drawerOpen && (
-            <div data-testid="transcript-drawer" role="region" aria-label="Transkrip dan instruksi" style={{ border: "1px solid #888", borderRadius: 6, padding: 12, marginTop: 8 }}>
-              <h3>Transkrip sesi</h3>
-              <ul>
-                {props.finals.map((f) => (
-                  <li key={f.event.segment_id}>
-                    <strong>[{f.event.role}]</strong> {f.event.text}
+        {overlayMode === "compact" && (
+          <div data-testid="overlay-mode-compact" style={{ marginTop: 12 }}>
+            <h2 className="ca-section-head">Ringkas</h2>
+            <ul className="ca-list">
+              {(["self", "remote"] as const).map((role) => {
+                const src = sources.find((x) => x.role === role);
+                return (
+                  <li key={role} data-testid={role === "self" ? "compact-source-self" : "compact-source-remote"} className="ca-list-item">
+                    {role === "self" ? <MicIcon size={16} /> : <LoopbackIcon size={16} />}
+                    <span className={`ca-role${role === "self" ? " is-self" : ""}`}>{role}</span>
+                    <span>
+                      {role === "self" ? "Mikrofon" : "Loopback"} · {src ? `${src.device_id} · ${src.enabled ? "aktif" : "nonaktif"}` : "memuat…"}
+                    </span>
                   </li>
-                ))}
-              </ul>
-              <label htmlFor="instruction-input">Instruksi tambahan: </label>
-              <input
-                id="instruction-input"
-                data-testid="instruction-input"
-                value={instruction}
-                onChange={(e) => setInstruction(e.target.value)}
-                placeholder="mis. gunakan bahasa sederhana…"
-                style={{ width: "100%", maxWidth: 480 }}
-              />
+                );
+              })}
+            </ul>
+            <div className="ca-status-row">
+              <p data-testid="transcription-status" role="status" className="ca-status" style={{ margin: 0 }}>
+                <span className="dot" />
+                {transcription}
+              </p>
+              <p data-testid="generation-status" role="status" className={`ca-status ${genTone}`} style={{ margin: 0 }}>
+                <span className="dot" />
+                generasi {genStatus}
+              </p>
             </div>
-          )}
-          {mode === "fixture" && <p style={{ fontSize: 12 }}>Mode fixture: browser saja, bukan bukti IPC native.</p>}
-        </div>
-      )}
-      {props.error !== "" && <p role="alert">{props.error}</p>}
+            <div className="ca-toolbar">
+              <button type="button" data-testid="send-answer-compact" className="ca-btn ca-btn-primary" onClick={() => void send("answer")} aria-disabled={sending}>
+                <SendIcon size={15} />
+                {sending ? "Mengirim…" : "Kirim"}
+              </button>
+              <button type="button" data-testid="pause-compact" className="ca-btn" onClick={() => void togglePause()}>
+                {session.capture === "live" ? <PauseIcon size={15} /> : <PlayIcon size={15} />}
+                {session.capture === "live" ? "Pause" : "Sambung"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {overlayMode === "reading" && (
+          <div data-testid="overlay-mode-reading" style={{ marginTop: 12 }}>
+            <h2 className="ca-section-head">
+              <SparkleIcon size={16} />
+              Naskah
+            </h2>
+            <p data-testid="latest-question" className="ca-question">
+              <strong>Tanya:</strong> {question}
+            </p>
+            <div className="ca-status-row">
+              <p data-testid="transcription-status" role="status" className="ca-status" style={{ margin: 0 }}>
+                <span className="dot" />
+                {transcription}
+              </p>
+              <p data-testid="generation-status" role="status" className={`ca-status ${genTone}`} style={{ margin: 0 }}>
+                <span className="dot" />
+                generasi {genStatus}
+              </p>
+              <p data-testid="reader-state" className="ca-pill" style={{ margin: 0 }}>
+                committed={readerState.committed} tentative={readerState.tentative} confidence={readerState.confidence}
+              </p>
+              {follow && (
+                <span className="ca-status is-ok" style={{ margin: 0 }}>
+                  <FollowIcon size={14} />
+                  mengikuti
+                </span>
+              )}
+            </div>
+            <div ref={bandRef} data-testid="reading-band" className="ca-band">
+              <span className="ca-band-label">BAND BACA</span>
+              {bandText}
+            </div>
+            <div data-testid="script" className="ca-script">
+              {script.map((t) => (
+                <span
+                  key={t.index}
+                  data-testid={`token-${t.index}`}
+                  onClick={() => void seekToken(t.index)}
+                  title={`Klik untuk lompat ke kata ${t.index + 1}`}
+                  className={`ca-token${t.index < readerState.committed ? " is-done" : t.index < readerState.tentative ? " is-next" : ""}`}
+                >
+                  {script[t.index]?.word ?? ""}{" "}
+                </span>
+              ))}
+            </div>
+            <div className="ca-toolbar">
+              {(["answer", "revise_unread", "continue_unread", "shorten"] as const).map((a) => {
+                const Icon = ACTION_ICON[a];
+                return (
+                  <button
+                    key={a}
+                    type="button"
+                    data-testid={a === "answer" ? "send-answer" : `action-${a}`}
+                    className={`ca-btn${a === "answer" ? " ca-btn-primary" : ""}`}
+                    onClick={() => void send(a)}
+                    // aria-disabled, bukan disabled: tombol yang sedang difokus
+                    // lalu menjadi disabled akan kehilangan fokus ke <body>.
+                    // Guard sending di send() yang menolak klik ganda.
+                    aria-disabled={sending}
+                  >
+                    <Icon size={15} />
+                    {sending && a === "answer" ? "Mengirim…" : ACTION_LABEL[a]}
+                  </button>
+                );
+              })}
+              <button type="button" data-testid="cancel-send" className="ca-btn ca-btn-danger" onClick={() => void cancel()} aria-disabled={!sending}>
+                <CancelIcon size={15} />
+                Batalkan
+              </button>
+              <button type="button" data-testid="follow-toggle" className="ca-btn ca-btn-quiet" onClick={() => setFollow((f) => !f)} aria-pressed={follow}>
+                <FollowIcon size={15} />
+                Follow: {follow ? "aktif" : "mati"}
+              </button>
+              <button type="button" data-testid="pause-toggle" className="ca-btn ca-btn-quiet" onClick={() => void togglePause()} title="Jeda/sambung tangkapan sesi">
+                {session.capture === "live" ? <PauseIcon size={15} /> : <PlayIcon size={15} />}
+                {session.capture === "live" ? "Pause" : "Sambung"}
+              </button>
+              {answerMeta !== "" && (
+                <span data-testid="answer-meta" className="ca-pill">
+                  <SparkleIcon size={13} />
+                  Saran {answerMeta}
+                </span>
+              )}
+            </div>
+            <p data-testid="follow-state-text" className="ca-muted">
+              follow {follow ? "mengikuti" : "dijeda (klik Follow untuk lanjut)"} · klik kata pada naskah untuk seek manual
+            </p>
+            <div style={{ marginTop: 8 }}>
+              <button
+                type="button"
+                ref={drawerToggleRef}
+                data-testid="drawer-toggle"
+                className="ca-btn"
+                onClick={() => (drawerOpen ? closeDrawer() : setDrawerOpen(true))}
+                aria-expanded={drawerOpen}
+              >
+                <BookIcon size={15} />
+                {drawerOpen ? "Tutup transkrip" : "Buka transkrip"}
+              </button>
+            </div>
+            {drawerOpen && (
+              <div data-testid="transcript-drawer" role="region" aria-label="Transkrip dan instruksi" className="ca-drawer">
+                <h3 className="ca-section-head">Transkrip sesi</h3>
+                <ul className="ca-list">
+                  {props.finals.map((f) => (
+                    <li key={f.event.segment_id} className="ca-list-item">
+                      <span className={`ca-role${f.event.role === "self" ? " is-self" : ""}`}>{f.event.role}</span>
+                      <span>{f.event.text}</span>
+                    </li>
+                  ))}
+                </ul>
+                <label className="ca-field" htmlFor="instruction-input">
+                  Instruksi tambahan
+                  <input
+                    id="instruction-input"
+                    data-testid="instruction-input"
+                    className="ca-input"
+                    value={instruction}
+                    onChange={(e) => setInstruction(e.target.value)}
+                    placeholder="mis. gunakan bahasa sederhana…"
+                    style={{ width: "100%", maxWidth: 480 }}
+                  />
+                </label>
+              </div>
+            )}
+            {mode === "fixture" && <p className="ca-muted">Mode fixture: browser saja, bukan bukti IPC native.</p>}
+          </div>
+        )}
+      </div>
+      {props.error !== "" && <p role="alert" className="ca-alert">{props.error}</p>}
     </section>
   );
 }

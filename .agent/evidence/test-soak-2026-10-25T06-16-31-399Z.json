@@ -1,0 +1,49 @@
+{
+  "kind": "app_test",
+  "run_id": "test-soak-2026-10-25T06-16-31-399Z",
+  "level": "L2",
+  "command": "npm run test:soak",
+  "exit_code": 0,
+  "status": "pass",
+  "started_utc": "2026-10-25T05:46:31.341Z",
+  "cases": [
+    {
+      "id": "soak-realtime-no-exceptions",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "errors=0 processed=16570 cycles=3729 wall_min=30.00 (true gate: real-time long-run)"
+    },
+    {
+      "id": "soak-realtime-heap-bounded",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "heap_growth_mb=0.4 (true gate: real-time long-run)"
+    },
+    {
+      "id": "soak-realtime-tick-lag",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "max_tick_lag_ms=0 (true gate: real-time long-run)"
+    }
+  ],
+  "counts": {
+    "pass": 3,
+    "fail": 0,
+    "blocked": 0,
+    "total": 3
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\test-soak-2026-10-25T06-16-31-399Z.json"
+  ],
+  "note": "Soak provenance: realtime mode is the gate; accelerated mode is labeled non-gate. L2 is the closest schema level; these cases assert long-run stability, not browser behavior."
+}

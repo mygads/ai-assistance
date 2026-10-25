@@ -553,10 +553,13 @@
       "acceptance_ids": [
         "A19"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        ".agent/evidence/test-soak-2026-10-25T06-16-31-399Z.json",
+        ".agent/evidence/verify-2026-10-25T06-20-45-812Z.json"
+      ]
     },
     {
       "id": "T22",

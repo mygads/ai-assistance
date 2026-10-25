@@ -1,0 +1,251 @@
+{
+  "kind": "app_test",
+  "run_id": "report-2026-10-25T06-23-50-269Z",
+  "level": "L0",
+  "command": "npm run report",
+  "exit_code": 2,
+  "status": "blocked",
+  "started_utc": "2026-10-25T06:23:49.922Z",
+  "cases": [
+    {
+      "id": "corpus:C01",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Separated roles in overlapping replay — covered at L1 by slice-send-fencing"
+    },
+    {
+      "id": "corpus:C02",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Real loopback routing — needs L4 run"
+    },
+    {
+      "id": "corpus:C03",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "No hidden generation calls — covered at L3 by real-ipc-send-answer, send-dedup"
+    },
+    {
+      "id": "corpus:C04",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Partial upsert — covered at L1 by normalize-soniox, rust-storage"
+    },
+    {
+      "id": "corpus:C05",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Reconnect time mapping — covered at L1 by reconnect-offset, stt-protocol-replay"
+    },
+    {
+      "id": "corpus:C06",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Multi-part question snapshot — covered at L3 by real-ipc-send-answer"
+    },
+    {
+      "id": "corpus:C07",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "ASR watermark lag — covered at L1 by stt-protocol-replay"
+    },
+    {
+      "id": "corpus:C08",
+      "level": "L3",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Cancel old stream — needs L3 run"
+    },
+    {
+      "id": "corpus:C09",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Unread revision — covered at L1 by reader-version-rebase"
+    },
+    {
+      "id": "corpus:C10",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Self lexical following — covered at L1 by slice-reader-follows-self"
+    },
+    {
+      "id": "corpus:C11",
+      "level": "L0",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Skip/repeat/number/acronym — covered at L0 by domain-ts"
+    },
+    {
+      "id": "corpus:C12",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Off-script and interim retraction — covered at L1 by reader-skip-repeat-offscript"
+    },
+    {
+      "id": "corpus:C13",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Known-source import — covered at L1 by context-retrieval"
+    },
+    {
+      "id": "corpus:C14",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Cross-language and scale retrieval — covered at L1 by context-retrieval"
+    },
+    {
+      "id": "corpus:C15",
+      "level": "L3",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Workspace isolation — needs L3 run"
+    },
+    {
+      "id": "corpus:C16",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Suggestion contamination — covered at L1 by memory-learning"
+    },
+    {
+      "id": "corpus:C17",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Correction and rollback — covered at L1 by memory-learning"
+    },
+    {
+      "id": "corpus:C18",
+      "level": "L1",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Compaction — covered at L1 by compaction"
+    },
+    {
+      "id": "corpus:C19",
+      "level": "L2",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Browser reading UI — covered at L2 by dashboard-renders, overlay-send-journey, token-seek-band"
+    },
+    {
+      "id": "corpus:C20",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Native focus/scaling — covered at L3 by focus-preserved-after-stream"
+    },
+    {
+      "id": "corpus:C21",
+      "level": "L5",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Model interchange — needs L5 run"
+    },
+    {
+      "id": "corpus:C22",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Restart recovery — covered at L3 by restart-reopens-clean"
+    },
+    {
+      "id": "corpus:C23",
+      "level": "L3",
+      "status": "pass",
+      "replaced_boundaries": [],
+      "note": "Native real backend flow — covered at L3 by real-ipc-send-answer"
+    },
+    {
+      "id": "corpus:C24",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Physical mic — needs L4 run"
+    },
+    {
+      "id": "corpus:C25",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Device recovery — needs L4 run"
+    },
+    {
+      "id": "corpus:C26",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Capture compatibility — needs L6 run"
+    },
+    {
+      "id": "corpus:C27",
+      "level": "L5",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Live STT — needs L5 run"
+    },
+    {
+      "id": "corpus:C28",
+      "level": "L5",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Live grounded LLM — needs L5 run"
+    },
+    {
+      "id": "corpus:C29",
+      "level": "L4",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Real-time soak — needs L4 run"
+    },
+    {
+      "id": "corpus:C30",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Production isolation — needs L6 run (lower-level slice passes: production isolation (A20 L0), check:production isolation (A20 L0))"
+    },
+    {
+      "id": "corpus:C31",
+      "level": "L6",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Installer/update lifecycle — needs L6 run"
+    },
+    {
+      "id": "corpus:C32",
+      "level": "L3",
+      "status": "blocked",
+      "replaced_boundaries": [],
+      "note": "Final rehearsal and review — needs L3 run"
+    }
+  ],
+  "counts": {
+    "pass": 19,
+    "fail": 0,
+    "blocked": 13,
+    "total": 32
+  },
+  "code_revision": "working-tree",
+  "environment": {
+    "os": "win32-x64",
+    "versions": {
+      "node": "v26.11.1"
+    }
+  },
+  "evidence_refs": [
+    ".agent\\evidence\\report-2026-10-25T06-23-50-269Z.json"
+  ]
+}
