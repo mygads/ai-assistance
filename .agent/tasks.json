@@ -405,10 +405,15 @@
         "A14",
         "A16"
       ],
-      "status": "pending",
+      "status": "completed",
       "worktree": null,
       "baseline_commit": null,
-      "evidence_refs": []
+      "evidence_refs": [
+        "check-2026-10-25T05-10-03-871Z.json",
+        "unit-2026-10-25T05-10-04-321Z.json",
+        "test-integration-2026-10-25T05-10-44-637Z.json",
+        "test-replay-2026-10-25T05-09-51-613Z.json"
+      ]
     },
     {
       "id": "T16",

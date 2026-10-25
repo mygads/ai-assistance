@@ -223,8 +223,38 @@ pub fn migrate(conn: &Connection) -> Result<(), CommandError> {
 
 pub fn open_db(path: &std::path::Path) -> Result<Connection, CommandError> {
     let conn = Connection::open(path).map_err(|e| CommandError::Storage(e.to_string()))?;
+    // WAL keeps readers (UI snapshot loads) from blocking writers (ingest
+    // callbacks) and survives an app crash: committed frames are in the WAL
+    // and replay on the next open. synchronous=NORMAL is durable with WAL
+    // for app/process crashes (only OS/power loss could lose a tail frame).
+    conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;")
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
     migrate(&conn)?;
     Ok(conn)
+}
+
+/// Restart recovery (T15/A14): the in-memory machines are gone, so any
+/// generation left in a non-terminal state was interrupted by the crash —
+/// never resumed. Mark those rows cancelled so history stays honest and a
+/// fresh Send after restart is never fenced by a dead stream. Terminal rows
+/// are untouched; calling twice marks nothing new. Returns rows settled.
+pub fn recover_session_after_restart(
+    conn: &Connection,
+    session_id: &str,
+) -> Result<usize, CommandError> {
+    if session_id.trim().is_empty() {
+        return Err(CommandError::InvalidInput(
+            "session_id must not be empty".to_string(),
+        ));
+    }
+    let n = conn
+        .execute(
+            "UPDATE generation_requests SET status='cancelled' \
+             WHERE session_id=?1 AND status IN ('preparing_context','streaming')",
+            params![session_id],
+        )
+        .map_err(|e| CommandError::Storage(e.to_string()))?;
+    Ok(n)
 }
 
 pub async fn init_db<R: tauri::Runtime>(handle: &tauri::AppHandle<R>) -> Result<(), CommandError> {

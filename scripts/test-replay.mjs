@@ -204,6 +204,51 @@ try {
   push("L1-slice-send-fencing", "fail", [], String(e?.message ?? e).slice(0, 300));
 }
 
+// T15 adverse generation (A14 L1): interrupted streams keep their visible
+// partial text, timeouts fail instead of hanging, and a retry is a new
+// request whose text never concatenates the interrupted output. Replaced
+// boundary: provider network -> in-process registry only (no network).
+try {
+  const reg = new GenerationRegistry();
+  const snap = (req) => ({
+    request_id: req, session_id: "adverse-1", action: "answer", snapshot_revision: 1,
+    cutoff_ms: 100, target_segment_ids: ["q-1"], target_revisions: { "q-1": 1 },
+    self_segment_ids: [], context_packet_id: `ctx-${req}`, model_profile_id: "default",
+    output_language: "id", answer_style: "spoken", provisional_segments: [], read_cursor_token: 0,
+  });
+  const fp = (req) => GenerationRegistry.fingerprint(snap(req));
+  // Stream shows partial text, then the provider connection drops: cancel
+  // preserves what was already shown as the interrupted version.
+  reg.start(snap("req-adv-1"), fp("req-adv-1"));
+  const d1 = reg.applyDelta("req-adv-1", "Arsitektur ini ");
+  const d2 = reg.applyDelta("req-adv-1", "memisahkan jalur audio.");
+  if (!d1.applied || !d2.applied) throw new Error("active stream must accept deltas");
+  reg.cancel("req-adv-1");
+  const interrupted = reg.get("req-adv-1");
+  if (interrupted.state !== "cancelled") throw new Error("drop must cancel, not erase");
+  if (interrupted.visible_text !== "Arsitektur ini memisahkan jalur audio.") {
+    throw new Error(`interrupted text lost: ${JSON.stringify(interrupted.visible_text)}`);
+  }
+  // A stream that stalls with no completion event times out to failed.
+  reg.start(snap("req-adv-2"), fp("req-adv-2"));
+  reg.applyDelta("req-adv-2", "Sebagian...");
+  const timedOut = reg.finish("req-adv-2", false);
+  if (timedOut.state !== "failed") throw new Error("stalled stream must fail on timeout");
+  // Retry after failure is a new request: fallback output is never
+  // concatenated onto the interrupted/failed text.
+  const retry = reg.start(snap("req-adv-3"), fp("req-adv-3"));
+  if (retry.duplicate) throw new Error("retry with new request id must not dedup");
+  reg.applyDelta("req-adv-3", "Jawaban baru.");
+  const done = reg.finish("req-adv-3", true);
+  if (done.visible_text.includes("Arsitektur ini") || done.visible_text.includes("Sebagian")) {
+    throw new Error(`retry concatenated older output: ${JSON.stringify(done.visible_text)}`);
+  }
+  if (done.visible_text !== "Jawaban baru.") throw new Error("retry text wrong");
+  push("L1-adverse-generation", "pass", ["provider network -> in-process registry only (no network)"]);
+} catch (e) {
+  push("L1-adverse-generation", "fail", [], String(e?.message ?? e).slice(0, 300));
+}
+
 // Reader follows self speech with a coherent script: self words commit
 // tokens, remote words never advance the cursor.
 try {

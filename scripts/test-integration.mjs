@@ -125,6 +125,7 @@ for (const [target, caseId, boundary] of [
   ["context_assembly", "L1-context-assembly", "provider network -> sanitized FTS query + profile budgets"],
   ["memory_learning", "L1-memory-learning", "provider network -> local user-evidence rules (no model call)"],
   ["compaction", "L1-compaction", "provider network -> local coverage/grounding rules (no model call)"],
+  ["restart_recovery", "L1-restart-recovery", "app restart -> close/reopen same DB file (WAL durability)"],
   ["llm_streaming", "L1-llm-adapters", "provider network -> deterministic LLM scripts"],
 ]) {
   try {

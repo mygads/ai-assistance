@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "revision": 18,
+  "revision": 19,
   "application_implemented": false,
   "phase": "P00",
   "coordinator": {
@@ -10,7 +10,7 @@
     "checkout": "C:\\Yoga\\Programming\\Windows_Conversation_Assistant_Agent_Pack",
     "baseline_commit": "e6c8b785ed5a6e744f7cf971f42478994098d9e5"
   },
-  "last_integrated_commit": "b162aa9",
+  "last_integrated_commit": "f41d6c3",
   "completed_task_ids": [
     "T00",
     "T01",
@@ -26,10 +26,11 @@
     "T11",
     "T12",
     "T13",
-    "T14"
+    "T14",
+    "T15"
   ],
   "active_tasks": [
-    "T15"
+    "T16"
   ],
   "blockers": [
     {
@@ -175,6 +176,30 @@
       "evidence_refs": [
         "test-integration-2026-10-25T05-07-19-119Z.json"
       ]
+    },
+    "check-2026-10-25T05-10": {
+      "status": "pass",
+      "evidence_refs": [
+        "check-2026-10-25T05-10-03-871Z.json"
+      ]
+    },
+    "unit-2026-10-25T05-10": {
+      "status": "pass",
+      "evidence_refs": [
+        "unit-2026-10-25T05-10-04-321Z.json"
+      ]
+    },
+    "integration-2026-10-25T05-10": {
+      "status": "pass",
+      "evidence_refs": [
+        "test-integration-2026-10-25T05-10-44-637Z.json"
+      ]
+    },
+    "replay-2026-10-25T05-09": {
+      "status": "pass",
+      "evidence_refs": [
+        "test-replay-2026-10-25T05-09-51-613Z.json"
+      ]
     }
   },
   "next_actions": [
@@ -189,7 +214,7 @@
     "T12 (completed): model switch + retrieval-backed context + action-aware flow (A02/A04/A05 L1+L3, A13 L1 with L5 blocked on B02, A15 L3) — context.rs budgets + sanitized FTS query + greedy pack, snapshot carries profile/retrieval/packet, action-aware synthesis mirrored in TS, fence release on settle, L1-model-switch-repack + L1-context-assembly + L3-model-switch-next-request; check 5/5, unit ts 41/0 + rs 50/0, integration 10/10, replay 9/9, ui 10/10, native 7/7, verify 49/0/7 blocked (known prerequisites)",
     "Then T10 integration barrier; P03–P06 after",
     "B02 owner/user: supply STT/LLM keys + live budget caps to unblock test:live",
-    "T15: recovery and adverse network behavior (A14/A16); then T16 E2E corpus + strict report aggregation"
+    "T16: E2E corpus + strict report aggregation (A20/A22); memory/summary IPC surface; A09-L3, A12-L2/L3, A14-L3 native evidence"
   ],
   "max_parallel_workers": 3
 }

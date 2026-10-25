@@ -30,3 +30,10 @@ Initial entry: implementation handoff prepared on 2026-10-24. No application sou
 - L1-compaction 3/3 Rust (incl. parallel-db isolation fix: distinct temp names per test); TS compaction.test.ts 7 tests.
 - Gates: check 5/5, unit ts=54/0 rs=50/0, integration 12/12. Also fixed T13 checkpoint schema violation (gates must be {status, evidence_refs} objects per state.schema.json).
 - No contract/schema changes; summary IPC surface deferred to T16.
+
+## 2026-10-25T05-10Z rev19 T15 completed (A14 L1 + adverse replay; A16 stays blocked)
+- open_db: WAL + synchronous=NORMAL; recover_session_after_restart settles interrupted preparing/streaming rows to cancelled (idempotent, terminal rows untouched).
+- L1-restart-recovery 3/3: close/reopen same file; revision+settings+finals+snapshot+memory survive; machines reset stopped/idle/inactive; summaries survive with coverage intact.
+- L1-adverse-generation replay: drop preserves visible partial, stall times out to failed, retry never concatenates older output.
+- Gates: check 5/5, unit ts=54/0 rs=50/0, integration 13/13, replay 10/10.
+- NOT run (honest): A14-L3 native restart, A16-L4 device/reconnect (B02 hardware/keys, owner user).
